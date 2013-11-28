@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Library\Atsumilib.cs" />
     <Compile Include="Source\Account.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,7 +68,6 @@
     <Compile Include="Source\Account_change.Designer.cs">
       <DependentUpon>Account_change.cs</DependentUpon>
     </Compile>
-    <Compile Include="Atsumilib.cs" />
     <Compile Include="Source\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
