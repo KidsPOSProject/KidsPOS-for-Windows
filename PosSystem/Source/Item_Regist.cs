@@ -18,6 +18,8 @@ namespace PosSystem
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            practice_status.Text = (Form1.isPractice) ? "練習モードなので登録は出来ません。" : "商品の登録が出来ます";
+
         }
 
         private void Item_Regist_Load(object sender, EventArgs e)

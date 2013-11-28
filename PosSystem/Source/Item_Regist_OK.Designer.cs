@@ -45,10 +45,10 @@
             // regist_status_text
             // 
             this.regist_status_text.AutoSize = true;
-            this.regist_status_text.Font = new System.Drawing.Font("MS UI Gothic", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.regist_status_text.Location = new System.Drawing.Point(32, 42);
+            this.regist_status_text.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.regist_status_text.Location = new System.Drawing.Point(180, 21);
             this.regist_status_text.Name = "regist_status_text";
-            this.regist_status_text.Size = new System.Drawing.Size(767, 64);
+            this.regist_status_text.Size = new System.Drawing.Size(445, 37);
             this.regist_status_text.TabIndex = 2;
             this.regist_status_text.Text = " 商品の登録に失敗しました。";
             // 

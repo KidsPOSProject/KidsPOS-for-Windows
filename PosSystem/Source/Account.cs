@@ -11,6 +11,8 @@ namespace PosSystem
 {
     public partial class Account : Form
     {
+        //フォームの名前
+        public string form_name = "かいけい";
 
         ListView main_list;
         public Account(ListView _main_list)
@@ -24,6 +26,8 @@ namespace PosSystem
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             reg_goods_sum.Text = Form1.reg_item_price_sum.ToString();
+            Form1.change_form_text(this, form_name);
+
         }
 
         private void Account_Load(object sender, EventArgs e)
@@ -69,7 +73,8 @@ namespace PosSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (reg_goods_sum.Text != "" && received_money.Text != "")
+            bool check = 0 >= (int.Parse(reg_goods_sum.Text) - int.Parse(received_money.Text));
+            if (reg_goods_sum.Text != "" && received_money.Text != "" && check)
             {
                 Account_change ac = new Account_change(received_money.Text, reg_goods_list.Items.Count.ToString(), Form1.item_list);
                 ac.ShowDialog();

@@ -34,9 +34,9 @@
             this.disp_store_name = new System.Windows.Forms.ToolStripStatusLabel();
             this.debug_Test = new System.Windows.Forms.ToolStripStatusLabel();
             this.top_menu = new System.Windows.Forms.MenuStrip();
-            this.商品登録ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.商品リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.売上リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Item_Regist = new System.Windows.Forms.ToolStripMenuItem();
+            this.Items_List = new System.Windows.Forms.ToolStripMenuItem();
+            this.Sales_List = new System.Windows.Forms.ToolStripMenuItem();
             this.display_timer = new System.Windows.Forms.Timer(this.components);
             this.reg_goods_list = new System.Windows.Forms.ListView();
             this.disp_scan_goods = new System.Windows.Forms.Panel();
@@ -46,6 +46,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.reg_account = new System.Windows.Forms.Button();
             this.reg_clear = new System.Windows.Forms.Button();
+            this.モード切替ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.practice_mode = new System.Windows.Forms.ToolStripMenuItem();
+            this.take_mode = new System.Windows.Forms.ToolStripMenuItem();
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
@@ -57,62 +60,63 @@
             this.disp_now_time,
             this.disp_store_name,
             this.debug_Test});
-            this.debug_display.Location = new System.Drawing.Point(0, 541);
+            this.debug_display.Location = new System.Drawing.Point(0, 542);
             this.debug_display.Name = "debug_display";
-            this.debug_display.Size = new System.Drawing.Size(897, 23);
+            this.debug_display.Size = new System.Drawing.Size(897, 22);
             this.debug_display.TabIndex = 0;
             this.debug_display.Text = "statusStrip1";
             // 
             // disp_now_time
             // 
             this.disp_now_time.Name = "disp_now_time";
-            this.disp_now_time.Size = new System.Drawing.Size(12, 18);
+            this.disp_now_time.Size = new System.Drawing.Size(9, 17);
             this.disp_now_time.Text = " ";
             // 
             // disp_store_name
             // 
             this.disp_store_name.Name = "disp_store_name";
-            this.disp_store_name.Size = new System.Drawing.Size(12, 18);
+            this.disp_store_name.Size = new System.Drawing.Size(9, 17);
             this.disp_store_name.Text = " ";
             // 
             // debug_Test
             // 
             this.debug_Test.Name = "debug_Test";
-            this.debug_Test.Size = new System.Drawing.Size(12, 18);
+            this.debug_Test.Size = new System.Drawing.Size(9, 17);
             this.debug_Test.Text = " ";
             // 
             // top_menu
             // 
             this.top_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.商品登録ToolStripMenuItem,
-            this.商品リストToolStripMenuItem,
-            this.売上リストToolStripMenuItem});
+            this.Item_Regist,
+            this.Items_List,
+            this.Sales_List,
+            this.モード切替ToolStripMenuItem});
             this.top_menu.Location = new System.Drawing.Point(0, 0);
             this.top_menu.Name = "top_menu";
-            this.top_menu.Size = new System.Drawing.Size(897, 26);
+            this.top_menu.Size = new System.Drawing.Size(897, 24);
             this.top_menu.TabIndex = 1;
             this.top_menu.Text = "menuStrip1";
             // 
-            // 商品登録ToolStripMenuItem
+            // Item_Regist
             // 
-            this.商品登録ToolStripMenuItem.Name = "商品登録ToolStripMenuItem";
-            this.商品登録ToolStripMenuItem.Size = new System.Drawing.Size(68, 22);
-            this.商品登録ToolStripMenuItem.Text = "商品登録";
-            this.商品登録ToolStripMenuItem.Click += new System.EventHandler(this.商品登録ToolStripMenuItem_Click);
+            this.Item_Regist.Name = "Item_Regist";
+            this.Item_Regist.Size = new System.Drawing.Size(65, 20);
+            this.Item_Regist.Text = "商品登録";
+            this.Item_Regist.Click += new System.EventHandler(this.Item_Regist_Click);
             // 
-            // 商品リストToolStripMenuItem
+            // Items_List
             // 
-            this.商品リストToolStripMenuItem.Name = "商品リストToolStripMenuItem";
-            this.商品リストToolStripMenuItem.Size = new System.Drawing.Size(80, 22);
-            this.商品リストToolStripMenuItem.Text = "商品リスト";
-            this.商品リストToolStripMenuItem.Click += new System.EventHandler(this.商品リストToolStripMenuItem_Click);
+            this.Items_List.Name = "Items_List";
+            this.Items_List.Size = new System.Drawing.Size(65, 20);
+            this.Items_List.Text = "商品リスト";
+            this.Items_List.Click += new System.EventHandler(this.Items_List_Click);
             // 
-            // 売上リストToolStripMenuItem
+            // Sales_List
             // 
-            this.売上リストToolStripMenuItem.Name = "売上リストToolStripMenuItem";
-            this.売上リストToolStripMenuItem.Size = new System.Drawing.Size(80, 22);
-            this.売上リストToolStripMenuItem.Text = "売上リスト";
-            this.売上リストToolStripMenuItem.Click += new System.EventHandler(this.売上リストToolStripMenuItem_Click);
+            this.Sales_List.Name = "Sales_List";
+            this.Sales_List.Size = new System.Drawing.Size(65, 20);
+            this.Sales_List.Text = "売上リスト";
+            this.Sales_List.Click += new System.EventHandler(this.Sales_List_Click);
             // 
             // display_timer
             // 
@@ -131,7 +135,6 @@
             this.reg_goods_list.Size = new System.Drawing.Size(873, 308);
             this.reg_goods_list.TabIndex = 2;
             this.reg_goods_list.UseCompatibleStateImageBehavior = false;
-            this.reg_goods_list.SelectedIndexChanged += new System.EventHandler(this.reg_goods_list_SelectedIndexChanged);
             this.reg_goods_list.SizeChanged += new System.EventHandler(this.reg_goods_list_SizeChanged);
             this.reg_goods_list.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.reg_goods_list_MouseDoubleClick);
             // 
@@ -179,7 +182,6 @@
             this.reg_goods_sum.TabIndex = 5;
             this.reg_goods_sum.Text = "0";
             this.reg_goods_sum.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.reg_goods_sum.TextChanged += new System.EventHandler(this.reg_goods_sum_TextChanged);
             // 
             // label1
             // 
@@ -217,6 +219,29 @@
             this.reg_clear.UseVisualStyleBackColor = true;
             this.reg_clear.Click += new System.EventHandler(this.reg_clear_Click);
             // 
+            // モード切替ToolStripMenuItem
+            // 
+            this.モード切替ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.practice_mode,
+            this.take_mode});
+            this.モード切替ToolStripMenuItem.Name = "モード切替ToolStripMenuItem";
+            this.モード切替ToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.モード切替ToolStripMenuItem.Text = "モード切替";
+            // 
+            // practice_mode
+            // 
+            this.practice_mode.Name = "practice_mode";
+            this.practice_mode.Size = new System.Drawing.Size(152, 22);
+            this.practice_mode.Text = "練習モード";
+            this.practice_mode.Click += new System.EventHandler(this.practice_mode_Click);
+            // 
+            // take_mode
+            // 
+            this.take_mode.Name = "take_mode";
+            this.take_mode.Size = new System.Drawing.Size(152, 22);
+            this.take_mode.Text = "本番モード";
+            this.take_mode.Click += new System.EventHandler(this.take_mode_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -250,9 +275,9 @@
 
         private System.Windows.Forms.StatusStrip debug_display;
         private System.Windows.Forms.MenuStrip top_menu;
-        private System.Windows.Forms.ToolStripMenuItem 商品登録ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 商品リストToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 売上リストToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem Item_Regist;
+        private System.Windows.Forms.ToolStripMenuItem Items_List;
+        private System.Windows.Forms.ToolStripMenuItem Sales_List;
         private System.Windows.Forms.ToolStripStatusLabel disp_now_time;
         private System.Windows.Forms.ToolStripStatusLabel disp_store_name;
         private System.Windows.Forms.Timer display_timer;
@@ -265,6 +290,9 @@
         private System.Windows.Forms.Button reg_clear;
         public System.Windows.Forms.ListView reg_goods_list;
         internal System.Windows.Forms.TextBox reg_goods_sum;
+        private System.Windows.Forms.ToolStripMenuItem モード切替ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem practice_mode;
+        private System.Windows.Forms.ToolStripMenuItem take_mode;
     }
 }
 

@@ -12,6 +12,8 @@ namespace PosSystem
 {
     public partial class Account_change : Form
     {
+        string form_name = "おつり";
+
         public Account_change(string _rec_money, string _rec_points, string _rec_items)
         {
             InitializeComponent();
@@ -22,12 +24,18 @@ namespace PosSystem
             reg_goods_sum.Text = Form1.reg_item_price_sum.ToString();
             received_money.Text = _rec_money;
             change.Text =   (int.Parse(received_money.Text) - int.Parse(reg_goods_sum.Text)).ToString();
-            Insert(new SalesTable(
-                Form1.BARCODE_PREFIX + Form1.store_num + atsumi_pos.read_count_num(Form1.db_file, "sales_list").ToString("D3"),
-                (Unix_Time.ToUnixTime(DateTime.Now)).ToString(),
-                _rec_points,
-                Form1.reg_item_price_sum.ToString(),
-                _rec_items));
+            practice_status.Text = (Form1.isPractice) ? "練習モードなので売上は記録されません。" : "";
+
+            if (!Form1.isPractice)
+            {
+                Insert(new SalesTable(
+                    Form1.BARCODE_PREFIX + Form1.store_num + atsumi_pos.read_count_num(Form1.db_file, "sales_list").ToString("D3"),
+                    (Unix_Time.ToUnixTime(DateTime.Now)).ToString(),
+                    _rec_points,
+                    Form1.reg_item_price_sum.ToString(),
+                    _rec_items));
+            }
+            Form1.change_form_text(this, form_name);
         }
 
         private void Account_change_Load(object sender, EventArgs e)

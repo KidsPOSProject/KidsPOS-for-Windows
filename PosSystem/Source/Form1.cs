@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Collections;
 using System.Data.SQLite;
@@ -14,6 +8,9 @@ namespace PosSystem
 {
     public partial class Form1 : Form
     {
+        //フォームの名前
+        public string form_name = "POS";
+
         //後々サーバーと通信する
         public static string store_num = "004";
         public static string store_name = "④";
@@ -24,6 +21,9 @@ namespace PosSystem
         public static string item_sum = "";
         public static string item_list = "";
 
+        public static bool isPractice = false;
+
+        #region HashTableなど
 
         Hashtable day_of_week = new Hashtable();
         public static Hashtable genre = new Hashtable();
@@ -35,16 +35,20 @@ namespace PosSystem
         public static string BARCODE_PREFIX = "4903";
         public static int reg_item_price_sum = 0;
 
+        #endregion
         public Form1()
         {
             InitializeComponent();
             InitializeValues();
             InitializeListView(reg_goods_list);
-            this.Text += " - " + store_name + "店";
-            disp_store_name.Text = store_name + "店";
             this.KeyPreview = !this.KeyPreview;
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
-
+            take_mode.Enabled = false;
+            change_form_text(this, form_name, debug_Test);
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            CreateTable();
         }
         public void InitializeValues(){
             #region HashTable day_or_week
@@ -61,7 +65,6 @@ namespace PosSystem
             genre.Add("汎用", 02);
 
         }
-        // ListViewコントロールを初期化します。
         public static void InitializeListView(ListView listview)
         {
             // ListViewコントロールのプロパティを設定
@@ -99,13 +102,33 @@ namespace PosSystem
             ColumnHeader[] colHeaderRegValue = {goods_id, goods_order, goods_item, goods_price };
             listview.Columns.AddRange(colHeaderRegValue);
         }
-
-
-        private void Form1_Load(object sender, EventArgs e)
+        public void InitializeREG()
         {
-            CreateTable();
+            reg_goods_list.Items.Clear();
+            reg_item_price_sum = 0;
+            reg_goods_sum.Text = "0";
+            scan_goods_name.Text = "";
+            scan_goods_price.Text = "";
         }
-
+        public void CreateTable()
+        {
+            if (!File.Exists(db_file))
+            {
+                using (var conn = new SQLiteConnection("Data Source=" + db_file))
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = conn.CreateCommand())
+                    {
+                        command.CommandText = "create table item_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INTEGER)";
+                        command.ExecuteNonQuery();
+                        command.CommandText = "create table sales_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, buycode INTEGER UNIQUE, registdated_at TEXT, points INTEGER, price INTEGER, items TEXT)";
+                        command.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+            }
+        }
+        
         //スキャンしたときの処理
         public void scan_goods(string item_num)
         {
@@ -133,14 +156,69 @@ namespace PosSystem
             }
             //debug_Test.Text = reg_goods_list.Items.Count.ToString();
         }
+        private string[] read_data_from_barcode(string barcode)
+        {
+            string[] ret = {"","",""};
+            using (var conn = new SQLiteConnection("Data Source=" + db_file))
+            {
+                conn.Open();
+                using (SQLiteCommand command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT id,name,price FROM item_list WHERE barcode ='" +barcode + "'";
+
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ret[0] = reader.GetInt32(0).ToString();
+                        ret[1] = reader.GetString(1);
+                        ret[2] = reader.GetInt32(2).ToString();
+                    }
+                }
+            }
+
+            return ret;
+        }
+        public static void change_form_text(Form form ,string _form_name,ToolStripStatusLabel tssl = null)
+        {
+            form.Text = _form_name + " - " + Form1.store_name + "店 " + "現行モード: " + ((isPractice) ? "練習モード" : "本番モード");
+            if (tssl != null) tssl.Text = Form1.store_name + "店 " + "現行モード: " + ((isPractice) ? "練習モード" : "本番モード");
+        }
+
+        #region Event
 
         //タイマー  ステータスバーの日付等更新
         private void display_timer_Tick(object sender, EventArgs e)
         {
             DateTime dt = DateTime.Now;
             disp_now_time.Text = dt.ToString("yyyy年MM月dd日(" + day_of_week[dt.DayOfWeek] + ") HH時mm分ss秒");
-        }
+        }        
         
+        private void reg_clear_Click(object sender, EventArgs e)
+        {
+            InitializeREG();
+        }
+        private void reg_goods_list_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            debug_Test.Text = reg_goods_list.SelectedItems[0].SubItems[1].Text;
+        }
+        private void reg_account_Click(object sender, EventArgs e)
+        {
+            if (reg_goods_sum.Text != "" && reg_goods_sum.Text != "0")
+            {
+                for (int i = 0; i < reg_goods_list.Items.Count; i++)
+                {
+                    item_list += reg_goods_list.Items[i].SubItems[0].Text + ((i != reg_goods_list.Items.Count - 1) ? "," : "");
+                }
+                Account ac = new Account(reg_goods_list);
+                ac.ShowDialog(this);
+                ac.Dispose();
+            }
+            //売上テーブルにインサート処理
+
+            InitializeREG();
+        }
+
         #region リストのカラム幅調整
         private bool Resizing = false;
         private void reg_goods_list_SizeChanged(object sender, EventArgs e)
@@ -167,7 +245,7 @@ namespace PosSystem
             Resizing = false;
         }
         #endregion
-        
+
         #region キー入力の処理
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -192,9 +270,10 @@ namespace PosSystem
             if (BARCODE_PREFIX.Length > input_count && !e.KeyCode.ToString().Equals("D" + BARCODE_PREFIX[input_count])) return false;
             return true;
         }
-        public string get_barcode(){
+        public string get_barcode()
+        {
             string ret = "";
-            for (int i = 0; i < input_num -1; i++)
+            for (int i = 0; i < input_num - 1; i++)
             {
                 ret += input[i][1];
             }
@@ -202,118 +281,42 @@ namespace PosSystem
         }
         #endregion
 
-        private void reg_account_Click(object sender, EventArgs e)
-        {
-            if (reg_goods_sum.Text != "" && reg_goods_sum.Text != "0")
-            {
-                for (int i = 0; i < reg_goods_list.Items.Count; i++)
-                {
-                    item_list += reg_goods_list.Items[i].SubItems[0].Text + ((i!=reg_goods_list.Items.Count-1)?",":"");
-                }
-                Account ac = new Account(reg_goods_list);
-                ac.ShowDialog(this);
-                ac.Dispose();
-            }
-            //売上テーブルにインサート処理
-
-            InitializeREG();
-        }
-        public void InitializeREG()
-        {
-            reg_goods_list.Items.Clear();
-            reg_item_price_sum = 0;
-            reg_goods_sum.Text = "0";
-            scan_goods_name.Text = "";
-            scan_goods_price.Text = "";
-        }
-        private void 商品登録ToolStripMenuItem_Click(object sender, EventArgs e)
+        #endregion
+        #region ツールメニュー
+        private void Item_Regist_Click(object sender, EventArgs e)
         {
             Item_Regist win = new Item_Regist();
             win.ShowDialog(this);
             win.Dispose();
         }
-
-        private string[] read_data_from_barcode(string barcode)
-        {
-            string[] ret = {"","",""};
-            
-
-            using (var conn = new SQLiteConnection("Data Source=" + db_file))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT id,name,price FROM item_list WHERE barcode ='" +barcode + "'";
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        ret[0] = reader.GetInt32(0).ToString();
-                        ret[1] = reader.GetString(1);
-                        ret[2] = reader.GetInt32(2).ToString();
-                    }
-                }
-            }
-
-            return ret;
-        }
-
-        public void CreateTable()
-        {
-            if(!File.Exists(db_file)){
-                using (var conn = new SQLiteConnection("Data Source=" + db_file))
-                {
-                    conn.Open();
-                    using (SQLiteCommand command = conn.CreateCommand())
-                    {
-                        command.CommandText = "create table item_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INTEGER)";
-                        command.ExecuteNonQuery();
-                        command.CommandText = "create table sales_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, buycode INTEGER UNIQUE, registdated_at TEXT, points INTEGER, price INTEGER, items TEXT)";
-                        command.ExecuteNonQuery();
-                    }
-                    conn.Close();
-                }
-            }
-        }
-
-        private void reg_clear_Click(object sender, EventArgs e)
-        {
-            InitializeREG();
-        }
-
-        private void reg_goods_sum_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void reg_goods_list_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void reg_goods_list_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            debug_Test.Text = reg_goods_list.SelectedItems[0].SubItems[1].Text;
-        }
-
-        private void 商品リストToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Item_List il = new Item_List();
-            il.ShowDialog();
-            il.Dispose();
-        }
-
-        private void 売上リストToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Sales_List_Click(object sender, EventArgs e)
         {
             Sales_List sl = new Sales_List();
             sl.ShowDialog();
             sl.Dispose();
         }
-
-        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        private void Items_List_Click(object sender, EventArgs e)
         {
+            Item_List il = new Item_List();
+            il.ShowDialog();
+            il.Dispose();
+        }
+        #endregion
+
+        private void practice_mode_Click(object sender, EventArgs e)
+        {
+            isPractice = true;
+            practice_mode.Enabled = false;
+            take_mode.Enabled = true;
+            change_form_text(this,form_name,debug_Test);
         }
 
+        private void take_mode_Click(object sender, EventArgs e)
+        {
+            isPractice = false;
+            take_mode.Enabled = false;
+            practice_mode.Enabled = true;
+            change_form_text(this, form_name, debug_Test);
+        }
     }
 }

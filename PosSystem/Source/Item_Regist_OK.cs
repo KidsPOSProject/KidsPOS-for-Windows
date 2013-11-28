@@ -40,10 +40,16 @@ namespace PosSystem
         private void Item_Regist_OK_Load(object sender, EventArgs e)
         {
             // 4:prifix 3:store_num 2:ganre 3:item 1:check
-
-            if (!Insert(new ItemTable(reg_barcode, reg_item_name, reg_item_price.ToString(), Form1.store_num.ToString())))
+            if (Form1.isPractice)
             {
-                regist_status_text.Text = "商品の登録に失敗しました。";
+                regist_status_text.Text = "練習モードなので\n商品の登録は出来ません。";
+            }
+            else
+            {
+                if (Insert(new ItemTable(reg_barcode, reg_item_name, reg_item_price.ToString(), Form1.store_num.ToString())))
+                {
+                    regist_status_text.Text = "商品の登録に成功しました。";
+                }
             }
         }
 

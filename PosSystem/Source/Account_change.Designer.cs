@@ -35,6 +35,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.change = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.practice_status = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label2
@@ -43,7 +45,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label2.Location = new System.Drawing.Point(49, 60);
+            this.label2.Location = new System.Drawing.Point(48, 109);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(150, 37);
             this.label2.TabIndex = 12;
@@ -54,7 +56,7 @@
             this.received_money.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.received_money.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.received_money.Location = new System.Drawing.Point(250, 60);
+            this.received_money.Location = new System.Drawing.Point(249, 109);
             this.received_money.Name = "received_money";
             this.received_money.ReadOnly = true;
             this.received_money.Size = new System.Drawing.Size(271, 44);
@@ -68,7 +70,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(55, 13);
+            this.label1.Location = new System.Drawing.Point(54, 62);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(144, 37);
             this.label1.TabIndex = 10;
@@ -79,7 +81,7 @@
             this.reg_goods_sum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.reg_goods_sum.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.reg_goods_sum.Location = new System.Drawing.Point(250, 10);
+            this.reg_goods_sum.Location = new System.Drawing.Point(249, 59);
             this.reg_goods_sum.Name = "reg_goods_sum";
             this.reg_goods_sum.ReadOnly = true;
             this.reg_goods_sum.Size = new System.Drawing.Size(271, 44);
@@ -90,7 +92,7 @@
             // button2
             // 
             this.button2.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button2.Location = new System.Drawing.Point(140, 201);
+            this.button2.Location = new System.Drawing.Point(12, 225);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(276, 58);
             this.button2.TabIndex = 14;
@@ -104,7 +106,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(81, 129);
+            this.label3.Location = new System.Drawing.Point(80, 172);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(118, 37);
             this.label3.TabIndex = 15;
@@ -116,7 +118,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.change.Enabled = false;
             this.change.Font = new System.Drawing.Font("MS UI Gothic", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.change.Location = new System.Drawing.Point(205, 117);
+            this.change.Location = new System.Drawing.Point(204, 160);
             this.change.Name = "change";
             this.change.ReadOnly = true;
             this.change.Size = new System.Drawing.Size(271, 55);
@@ -124,11 +126,32 @@
             this.change.Text = "0";
             this.change.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("MS UI Gothic", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button1.Location = new System.Drawing.Point(339, 225);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(182, 58);
+            this.button1.TabIndex = 17;
+            this.button1.Text = "レシート印刷";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // practice_status
+            // 
+            this.practice_status.AutoSize = true;
+            this.practice_status.Font = new System.Drawing.Font("MS UI Gothic", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.practice_status.Location = new System.Drawing.Point(12, 9);
+            this.practice_status.Name = "practice_status";
+            this.practice_status.Size = new System.Drawing.Size(0, 27);
+            this.practice_status.TabIndex = 18;
+            // 
             // Account_change
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(534, 295);
+            this.Controls.Add(this.practice_status);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.change);
             this.Controls.Add(this.button2);
@@ -153,5 +176,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox change;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label practice_status;
     }
 }

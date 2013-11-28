@@ -67,10 +67,10 @@
             this.reg_goods_sum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.reg_goods_sum.Font = new System.Drawing.Font("MS UI Gothic", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.reg_goods_sum.Location = new System.Drawing.Point(245, 293);
+            this.reg_goods_sum.Location = new System.Drawing.Point(263, 293);
             this.reg_goods_sum.Name = "reg_goods_sum";
             this.reg_goods_sum.ReadOnly = true;
-            this.reg_goods_sum.Size = new System.Drawing.Size(331, 71);
+            this.reg_goods_sum.Size = new System.Drawing.Size(313, 71);
             this.reg_goods_sum.TabIndex = 7;
             this.reg_goods_sum.Text = "0";
             this.reg_goods_sum.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -92,9 +92,9 @@
             this.received_money.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.received_money.Font = new System.Drawing.Font("MS UI Gothic", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.received_money.Location = new System.Drawing.Point(245, 390);
+            this.received_money.Location = new System.Drawing.Point(263, 390);
             this.received_money.Name = "received_money";
-            this.received_money.Size = new System.Drawing.Size(331, 71);
+            this.received_money.Size = new System.Drawing.Size(313, 71);
             this.received_money.TabIndex = 9;
             this.received_money.Text = "0";
             this.received_money.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
