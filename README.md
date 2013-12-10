@@ -6,7 +6,8 @@ PosSystem_for_KidsBusinessTownIchikawa
 システム詳細
 ==========
 ## 動作環境
- .Net Framework 3.5以上がインストールされているPC  
+1. Windows NT以降
+2. .Net Framework 3.5以上
   
 ## インストール
  binディレクトリのPosSystem.exeを起動  
