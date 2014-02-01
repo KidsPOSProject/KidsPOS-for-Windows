@@ -159,6 +159,7 @@ namespace PosSystem
             }
             catch (Exception e)
             {
+                System_log.ShowDialog(e.ToString());
                 return false;
             }
         }

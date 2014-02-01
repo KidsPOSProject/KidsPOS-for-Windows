@@ -12,8 +12,8 @@ namespace PosSystem
         public string form_name = "POS";
 
         //後々サーバーと通信する
-        public static string store_num = "004";
-        public static string store_name = "④";
+        public static string store_num = "001";
+        public static string store_name = "デパート";
         public static string store_kind = "食品";
 
         //変数
@@ -29,10 +29,17 @@ namespace PosSystem
         public static Hashtable genre = new Hashtable();
 
         //バーコード関係の変数
-        public static int input_num = 14;
-        public static string[] input = new string[input_num];
+
+
+        //バーコードの長さ
+        public static int BARCODE_NUM = 14;
+
+        //読み取った数値格納
+        public static string[] input = new string[BARCODE_NUM];
+
+        //現在読み取っている数値の場所
         public int input_count = 0;
-        public static string BARCODE_PREFIX = "4903";
+
         public static int reg_item_price_sum = 0;
 
         #endregion
@@ -50,6 +57,8 @@ namespace PosSystem
         {
             CreateTable();
         }
+
+        #region Initialize
         public void InitializeValues(){
             #region HashTable day_or_week
             day_of_week.Add(DayOfWeek.Sunday, "日");
@@ -128,7 +137,8 @@ namespace PosSystem
                 }
             }
         }
-        
+        #endregion
+
         //スキャンしたときの処理
         public void scan_goods(string item_num)
         {
@@ -247,33 +257,73 @@ namespace PosSystem
         #endregion
 
         #region キー入力の処理
+
+        //バーコードが入力されたとき
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!key_check(e) || input_count == 14) init_input();
+
+            if (!key_check(e) || input_count == BARCODE_NUM) init_input();
+
             input[input_count] = e.KeyCode.ToString();
             input_count++;
-            if (input_count == 14)
+
+            if (input_count == BARCODE_NUM)
             {
-                scan_goods(get_barcode());
+                string temp_barcode = comb_input_barcode();
+                //14ケタの数値がくる input
+
+                switch (key_check(temp_barcode))
+                {
+                    case 1:
+                        scan_goods(temp_barcode);
+                        break;
+                    case 2:
+                        //
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         public void init_input()
         {
             //配列の初期化
-            input = new string[input_num];
+            input = new string[BARCODE_NUM];
             //参照要素ナンバーの初期化
             input_count = 0;
         }
         public bool key_check(KeyEventArgs e)
         {
-            if (BARCODE_PREFIX.Length > input_count && !e.KeyCode.ToString().Equals("D" + BARCODE_PREFIX[input_count])) return false;
+            //プリフィックスの長さ分だけ見るのよ
+
+            if (BarCode_Prefix.NUM > input_count &&
+                 (
+                     !e.KeyCode.ToString().Equals("D" + BarCode_Prefix.ITEM[input_count]) ||
+                     !e.KeyCode.ToString().Equals("D" + BarCode_Prefix.STAFF[input_count])
+                 )) return false;
+            
             return true;
         }
-        public string get_barcode()
+
+        /// <summary>
+        /// 入力された値のチェックをします。
+        /// </summary>
+        /// <param name="key_value">結合されたバーコード</param>
+        /// <returns>-1:失敗 1:商品 2:スタッフ</returns>
+        public int key_check(string key_value)
+        {
+            if(key_value.StartsWith(BarCode_Prefix.ITEM)){
+                return 1;
+            }else if(key_value.StartsWith(BarCode_Prefix.STAFF)){
+                return 2;
+            }
+            return -1;
+        }
+        public string comb_input_barcode()
         {
             string ret = "";
-            for (int i = 0; i < input_num - 1; i++)
+            for (int i = 0; i < BARCODE_NUM - 1; i++)
             {
                 ret += input[i][1];
             }
@@ -282,6 +332,7 @@ namespace PosSystem
         #endregion
 
         #endregion
+
         #region ツールメニュー
         private void Item_Regist_Click(object sender, EventArgs e)
         {
@@ -303,6 +354,7 @@ namespace PosSystem
         }
         #endregion
 
+        //練習モードとの切り替え
         private void practice_mode_Click(object sender, EventArgs e)
         {
             isPractice = true;
@@ -310,7 +362,7 @@ namespace PosSystem
             take_mode.Enabled = true;
             change_form_text(this,form_name,debug_Test);
         }
-
+        //本番モードとの切り替え
         private void take_mode_Click(object sender, EventArgs e)
         {
             isPractice = false;

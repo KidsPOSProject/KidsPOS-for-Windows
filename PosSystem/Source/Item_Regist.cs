@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -59,6 +60,67 @@ namespace PosSystem
             this.Close();
         }
 
+        private void load_csv_file_Click(object sender, EventArgs e)
+        {
+            do_load(atsumi_pos.file_load());
+        }
+        public bool do_load(ArrayList csv)
+        {
+            int item_position = -1;
+            for (int i = 0; i < csv.Count; i++)
+            {
+                if (csv[i].ToString().StartsWith("##商品リスト"))
+                {
+                    item_position = i;
+                    break;
+                }
+            }
+            if (item_position == -1)
+            {
+                MessageBox.Show(
+                    "ファイルがおかしいよ"+Environment.NewLine+
+                    "・CSV形式であるか"+Environment.NewLine+
+                    "・しっかりフォーマットに沿っているか"+Environment.NewLine+
+                    "を確認してください","読み込みエラー",MessageBoxButtons.OK,MessageBoxIcon.Question
+                    );
+                return false;
+            }
+
+            int column_count = 0;
+            for (int i = item_position + 1; i < csv.Count; i++)
+            {
+                if (!csv[i].ToString().StartsWith("#")) break;
+                column_count++;
+            }
+
+            if (column_count == 0)
+            {
+                MessageBox.Show(
+                    "ファイルがおかしいよ" + Environment.NewLine +
+                    "・しっかりフォーマットに沿っているか" + Environment.NewLine +
+                    "を確認してください", "読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
+                    );
+                return false;
+            }
+
+
+            for (int i = item_position + column_count + 1; i < csv.Count; i += column_count)
+            {
+                string reg_barcode = BarCode_Prefix.ITEM + Form1.store_num + atsumi_pos.read_count_num(Form1.db_file, "item_list").ToString("D5");
+                reg_barcode = reg_barcode + atsumi_pos.create_check_digit(reg_barcode);
+                if (atsumi_pos.Insert(new atsumi_pos.ItemTable(reg_barcode, csv[i].ToString(), csv[i + 2].ToString(), Form1.store_num.ToString())))
+                {
+                    MessageBox.Show("アイテムの登録が出来田っぽい");
+                }
+                else
+                {
+
+                    MessageBox.Show("アイテムの登録は出来て内っぽい");
+                }
+            }
+
+            return true;
+       } 
     }
 
     public sealed class Validation

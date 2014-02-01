@@ -29,7 +29,7 @@ namespace PosSystem
             if (!Form1.isPractice)
             {
                 Insert(new SalesTable(
-                    Form1.BARCODE_PREFIX + Form1.store_num + atsumi_pos.read_count_num(Form1.db_file, "sales_list").ToString("D3"),
+                    BarCode_Prefix.ITEM + Form1.store_num + atsumi_pos.read_count_num(Form1.db_file, "sales_list").ToString("D3"),
                     (Unix_Time.ToUnixTime(DateTime.Now)).ToString(),
                     _rec_points,
                     Form1.reg_item_price_sum.ToString(),
@@ -91,6 +91,7 @@ namespace PosSystem
             }
             catch (Exception e)
             {
+                System_log.ShowDialog(e.ToString());
                 return false;
             }
         }

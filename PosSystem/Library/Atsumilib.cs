@@ -1,13 +1,57 @@
 ﻿using System;
+using System.Windows.Forms;
+using System.Collections;
 using System.Data.SQLite;
 using System.Drawing;
 using System.Drawing.Printing;
 using ZXing;
+using Microsoft.VisualBasic.FileIO;
 
 namespace PosSystem
 {
+
+
+    class BarCode_Prefix
+    {
+        public static int NUM = 4;
+        public static string ITEM = "4903";
+        public static string STAFF = "4904";
+    }
+
     class atsumi_pos
     {
+
+        //商品のテーブル
+        public class ItemTable
+        {
+            public string id = null;
+            public string barcode;
+            public string name;
+            public string price;
+            public string shop;
+
+            public ItemTable(string _barcode, string _name, string _price, string _shop)
+            {
+                barcode = _barcode;
+                name = _name;
+                price = _price;
+                shop = _shop;
+            }
+        }
+        //従業員のテーブル
+        public class StaffTable
+        {
+            public string id = null;
+            public string barcode;
+            public string name;
+
+            public StaffTable(string _barcode, string _name)
+            {
+                barcode = _barcode;
+                name = _name;
+            }
+        }
+
         /// <summary>
         /// table に含まれるレコードの数を表示
         /// </summary>
@@ -83,6 +127,110 @@ namespace PosSystem
             }
             return ret;
         }
+        //データベースにインサート
+        public static bool Insert(ItemTable it)
+        {
+            try
+            {
+                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file))
+                {
+                    conn.Open();
+                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
+                    {
+                        using (SQLiteCommand command = conn.CreateCommand())
+                        {
+                            string query = "insert into item_list (barcode, name, price, shop) values('" + it.barcode + "', '" + it.name + "', '" + it.price + "', '" + it.shop + "')";
+                            command.CommandText = query;
+                            command.ExecuteNonQuery();
+                        }
+                        sqlt.Commit();
+                    }
+                    conn.Close();
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                System_log.ShowDialog(e.ToString());
+                return false;
+            }
+        }
+        //データベースにインサート
+        public static bool Insert(StaffTable it)
+        {
+            try
+            {
+                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file))
+                {
+                    conn.Open();
+                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
+                    {
+                        using (SQLiteCommand command = conn.CreateCommand())
+                        {
+                            string query = "insert into item_list (barcode, name) values('" + it.barcode + "', '" + it.name + "')";
+                            command.CommandText = query;
+                            command.ExecuteNonQuery();
+                        }
+                        sqlt.Commit();
+                    }
+                    conn.Close();
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                System_log.ShowDialog(e.ToString());
+                return false;
+            }
+        }
+
+        public static string create_check_digit(string barcode)
+        {
+            int even = 0;
+            int odd = 0;
+
+            for (int i = 0; i < barcode.Length; i++)
+            {
+                if (i == 0 || i % 2 == 0) odd += int.Parse(barcode[i].ToString());
+                else even += int.Parse(barcode[i].ToString());
+            }
+
+            int check_digit = 10 - (even * 3 + odd) % 10; if (check_digit == 10) check_digit = 0;
+
+            return check_digit.ToString();
+        }
+        
+        public static ArrayList file_load()
+        {
+            ArrayList al = new ArrayList();
+
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                TextFieldParser parser = new TextFieldParser(ofd.FileName, System.Text.Encoding.GetEncoding("Shift_JIS"));
+                parser.TextFieldType = FieldType.Delimited;
+                // 区切り文字はコンマ
+                parser.SetDelimiters(",");
+
+                
+                while (!parser.EndOfData)
+                {
+                    // 1行読み込み
+                    string[] row = parser.ReadFields();
+                    foreach (string field in row)
+                    {
+                        string f = field;
+                        // 改行をnで表示
+                        f = f.Replace("\r\n", "n");
+                        // 空白を_で表示 
+                        f = f.Replace(" ", "");
+                        // TAB区切りで出力 
+                        if (!(f == "")) al.Add(f);
+                    }
+                }
+            }
+            return al;
+        }
     }
     class Unix_Time
     {
@@ -144,6 +292,12 @@ namespace PosSystem
                 }
             }
             e.HasMorePages = false;
+        }
+    }
+    class System_log{
+        public static void ShowDialog(string msg)
+        {
+            MessageBox.Show(msg, "例外発生", MessageBoxButtons.OK, MessageBoxIcon.Question);
         }
     }
 }
