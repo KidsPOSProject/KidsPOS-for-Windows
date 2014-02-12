@@ -89,7 +89,7 @@ namespace PosSystem
             int column_count = 0;
             for (int i = item_position + 1; i < csv.Count; i++)
             {
-                if (!csv[i].ToString().StartsWith("#")) break;
+                if (!csv[i].ToString().StartsWith("#")) continue;
                 column_count++;
             }
 
@@ -106,9 +106,11 @@ namespace PosSystem
 
             for (int i = item_position + column_count + 1; i < csv.Count; i += column_count)
             {
-                string reg_barcode = BarCode_Prefix.ITEM + Form1.store_num + atsumi_pos.read_count_num(Form1.db_file, "item_list").ToString("D5");
-                reg_barcode = reg_barcode + atsumi_pos.create_check_digit(reg_barcode);
-                if (atsumi_pos.Insert(new atsumi_pos.ItemTable(reg_barcode, csv[i].ToString(), csv[i + 2].ToString(), Form1.store_num.ToString())))
+                Barcode bar = new Barcode(
+                    BarCode_Prefix.ITEM,
+                    Form1.store_num, atsumi_pos.read_count_num(Form1.db_file, "item_list").ToString("D5"));
+
+                if (atsumi_pos.Insert(new atsumi_pos.ItemTable(bar.show(), csv[i].ToString(), csv[i + 2].ToString(), Form1.store_num.ToString())))
                 {
                     MessageBox.Show("アイテムの登録が出来田っぽい");
                 }

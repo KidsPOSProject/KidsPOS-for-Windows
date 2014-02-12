@@ -22,11 +22,9 @@ namespace PosSystem
             reg_item_name = _name;
             reg_item_price = _price;
 
-            reg_barcode =
-                BarCode_Prefix.ITEM +
-                Form1.store_num + atsumi_pos.read_count_num(Form1.db_file,"item_list").ToString("D5");
-            
-            reg_barcode = reg_barcode + atsumi_pos.create_check_digit(reg_barcode);
+            Barcode bar = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file, "item_list").ToString("D5"));
+
+            reg_barcode = bar.show();
 
             ireg_ok_name.Text = _name;
             ireg_ok_price.Text = _price;

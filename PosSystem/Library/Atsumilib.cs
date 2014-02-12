@@ -7,16 +7,93 @@ using System.Drawing.Printing;
 using ZXing;
 using Microsoft.VisualBasic.FileIO;
 
+
 namespace PosSystem
 {
 
-
     class BarCode_Prefix
     {
-        public static int NUM = 4;
-        public static string ITEM = "4903";
-        public static string STAFF = "4904";
+        public const int BARCODE_NUM = 14;
+
+        public const string PREFIX = "49";
+
+        public const string ITEM        = "00";
+        public const string STAFF       = "01";
+
+        //画面遷移
+        public const string ITEM_REGIST = "10";
+        public const string ITEM_LIST   = "11";
+        public const string SALE_LIST   = "12";
+        public const string ACCOUNT     = "13";
+        
+        //操作
+        public const string ENTER       = "20";
+        public const string BACK        = "21";
+
+        //動作モード変更
+        public const string MODE_TAKE = "30";
+        public const string MODE_PRACTICE = "31";
+
+        //MONEY
+        public const string M100 = "81";
+        public const string M200 = "82";
+        public const string M300 = "83";
+        public const string M400 = "84";
     }
+
+    class Barcode
+    {
+        public bool isSet = false;
+        public bool isCreated = false;
+
+        private string prefix = "";
+        private string store = "";
+        private string item_num = "";
+        private string barcode = "";
+
+        Barcode(string _prefix)
+        {
+            this.prefix = _prefix;
+        }
+        public Barcode(string _prefix, string _store_num, string _item_num)
+        {
+            this.prefix = _prefix.ToString();
+            this.store = _store_num;
+            this.item_num = _item_num;
+            this.isSet = true;
+            this.comb_barcode();
+        }
+        public void comb_barcode()
+        {
+            if (this.isSet)
+            {
+                string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
+                temp += atsumi_pos.create_check_digit(temp);
+                if (temp.Length == BarCode_Prefix.BARCODE_NUM -1)
+                {
+                    this.barcode = temp;
+                    this.isCreated = true;
+                }
+                else
+                {
+                    throw new Exception("作られたバーコードの長さがおかしいなぁ・・"+Environment.NewLine+
+                    temp);
+                }
+            }
+        }
+        public string show()
+        {
+            return (this.isCreated) ? this.barcode : "";
+        }
+    }
+    /*             reg_barcode =
+                BarCode_Prefix.ITEM +
+                Form1.store_num + atsumi_pos.read_count_num(Form1.db_file,"item_list").ToString("D5");      
+            reg_barcode = reg_barcode + atsumi_pos.create_check_digit(reg_barcode);
+     * 
+     
+     
+     */
 
     class atsumi_pos
     {

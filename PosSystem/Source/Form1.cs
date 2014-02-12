@@ -8,6 +8,8 @@ namespace PosSystem
 {
     public partial class Form1 : Form
     {
+        #region 定数
+
         //フォームの名前
         public string form_name = "POS";
 
@@ -17,12 +19,13 @@ namespace PosSystem
         public static string store_kind = "食品";
 
         //変数
-        public static string db_file = "KidsDB.db";
+        public static string db_file = "KidsDB1.db";
         public static string item_sum = "";
         public static string item_list = "";
 
         public static bool isPractice = false;
 
+        #endregion
         #region HashTableなど
 
         Hashtable day_of_week = new Hashtable();
@@ -30,12 +33,8 @@ namespace PosSystem
 
         //バーコード関係の変数
 
-
-        //バーコードの長さ
-        public static int BARCODE_NUM = 14;
-
         //読み取った数値格納
-        public static string[] input = new string[BARCODE_NUM];
+        public static string[] input = new string[BarCode_Prefix.BARCODE_NUM];
 
         //現在読み取っている数値の場所
         public int input_count = 0;
@@ -166,6 +165,12 @@ namespace PosSystem
             }
             //debug_Test.Text = reg_goods_list.Items.Count.ToString();
         }
+        
+        /// <summary>
+        /// 商品リストから商品データを読み込む
+        /// </summary>
+        /// <param name="barcode">読み取ったバーコード</param>
+        /// <returns>バーコード、商品名、値段</returns>
         private string[] read_data_from_barcode(string barcode)
         {
             string[] ret = {"","",""};
@@ -258,28 +263,67 @@ namespace PosSystem
 
         #region キー入力の処理
 
+        //bool F_key_check = false;
+
         //バーコードが入力されたとき
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
 
-            if (!key_check(e) || input_count == BARCODE_NUM) init_input();
+            if (key_check(e) || input_count == BarCode_Prefix.BARCODE_NUM) init_input();
 
             input[input_count] = e.KeyCode.ToString();
             input_count++;
 
-            if (input_count == BARCODE_NUM)
+            if (input_count == BarCode_Prefix.BARCODE_NUM)
             {
                 string temp_barcode = comb_input_barcode();
-                //14ケタの数値がくる input
-
-                switch (key_check(temp_barcode))
+                
+                switch (temp_barcode[BarCode_Prefix.PREFIX.Length].ToString()+
+                    temp_barcode[BarCode_Prefix.PREFIX.Length+1].ToString())
                 {
-                    case 1:
+                    
+                    case BarCode_Prefix.ITEM:
+                        MessageBox.Show("商品だよー", "アラート", MessageBoxButtons.OK, MessageBoxIcon.Question);
                         scan_goods(temp_barcode);
                         break;
-                    case 2:
-                        //
+                    
+                    case BarCode_Prefix.STAFF:
+                        MessageBox.Show("スタッフだよー","アラート",  MessageBoxButtons.OK, MessageBoxIcon.Question);
                         break;
+
+                    //商品登録を読み込んだ時
+                    case BarCode_Prefix.ITEM_REGIST:
+                        Item_Regist win = new Item_Regist();
+                        win.ShowDialog(this);
+                        win.Dispose();
+                        break;
+
+                    case BarCode_Prefix.ITEM_LIST:
+                        Item_List il = new Item_List();
+                        il.ShowDialog(this);
+                        il.Dispose();
+                        break;
+
+                    case BarCode_Prefix.SALE_LIST:
+                        Sales_List sl = new Sales_List();
+                        sl.ShowDialog(this);
+                        sl.Dispose();
+                        break;
+
+                    case BarCode_Prefix.MODE_PRACTICE:
+                        isPractice = true;
+                        practice_mode.Enabled = false;
+                        take_mode.Enabled = true;
+                        change_form_text(this,form_name,debug_Test);
+                        break;
+
+                    case BarCode_Prefix.MODE_TAKE:
+                        isPractice = false;
+                        take_mode.Enabled = false;
+                        practice_mode.Enabled = true;
+                        change_form_text(this, form_name, debug_Test);
+                        break;
+
                     default:
                         break;
                 }
@@ -289,41 +333,31 @@ namespace PosSystem
         public void init_input()
         {
             //配列の初期化
-            input = new string[BARCODE_NUM];
+            input = new string[BarCode_Prefix.BARCODE_NUM];
             //参照要素ナンバーの初期化
             input_count = 0;
         }
         public bool key_check(KeyEventArgs e)
         {
+            string input_text = e.KeyCode.ToString();
             //プリフィックスの長さ分だけ見るのよ
 
-            if (BarCode_Prefix.NUM > input_count &&
-                 (
-                     !e.KeyCode.ToString().Equals("D" + BarCode_Prefix.ITEM[input_count]) ||
-                     !e.KeyCode.ToString().Equals("D" + BarCode_Prefix.STAFF[input_count])
-                 )) return false;
-            
-            return true;
+            if (BarCode_Prefix.PREFIX.Length > input_count){ 
+                 if(
+                     !input_text.Equals("D" + BarCode_Prefix.PREFIX[input_count])
+                     )
+                 {
+                     return true;
+                 }
+            }
+            return false;
         }
 
-        /// <summary>
-        /// 入力された値のチェックをします。
-        /// </summary>
-        /// <param name="key_value">結合されたバーコード</param>
-        /// <returns>-1:失敗 1:商品 2:スタッフ</returns>
-        public int key_check(string key_value)
-        {
-            if(key_value.StartsWith(BarCode_Prefix.ITEM)){
-                return 1;
-            }else if(key_value.StartsWith(BarCode_Prefix.STAFF)){
-                return 2;
-            }
-            return -1;
-        }
+
         public string comb_input_barcode()
         {
             string ret = "";
-            for (int i = 0; i < BARCODE_NUM - 1; i++)
+            for (int i = 0; i < BarCode_Prefix.BARCODE_NUM - 1; i++)
             {
                 ret += input[i][1];
             }
@@ -369,6 +403,25 @@ namespace PosSystem
             take_mode.Enabled = false;
             practice_mode.Enabled = true;
             change_form_text(this, form_name, debug_Test);
+        }
+
+
+        /// <summary>
+        /// 設定ファイルへの書き込み
+        /// </summary>
+        public void write_ini()
+        {
+            //TODO
+        }
+
+        private void ダミーデータ登録ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            string[] data = read_data_from_barcode("4903333147434");
+            if (data[0] == "")
+            {
+                atsumi_pos.Insert(new atsumi_pos.ItemTable("4903333147434", "ガーナミルクチョコレート", "100", "デパート"));
+            }
         }
     }
 }
