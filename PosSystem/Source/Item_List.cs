@@ -68,7 +68,7 @@ namespace PosSystem
         public void InsertListView()
         {
             reg_goods_list.Items.Clear();
-            string[,] st = atsumi_pos.read_item_list(Form1.db_file);
+            string[,] st = atsumi_pos.read_item_list(Form1.db_file_item);
             for (int i = 0; i < st.GetLength(0); i++)
             {
                 reg_goods_list.Items.Add(new ListViewItem(new string[] { st[i, 0], st[i, 1], st[i, 2], st[i, 3] }));
@@ -138,7 +138,7 @@ namespace PosSystem
         {
             try
             {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file))
+                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
                 {
                     conn.Open();
                     using (SQLiteTransaction sqlt = conn.BeginTransaction())

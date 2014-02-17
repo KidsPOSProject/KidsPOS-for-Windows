@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Drawing.Printing;
 
 namespace PosSystem
 {
@@ -14,7 +15,10 @@ namespace PosSystem
     {
         string form_name = "おつり";
 
-        public Account_change(string _rec_money, string _rec_points, string _rec_items)
+        ListView item_list = null;
+        string barcode = "";
+
+        public Account_change(string _rec_money, ListView _rec_points, string _rec_items)
         {
             InitializeComponent();
 
@@ -26,12 +30,15 @@ namespace PosSystem
             change.Text =   (int.Parse(received_money.Text) - int.Parse(reg_goods_sum.Text)).ToString();
             practice_status.Text = (Form1.isPractice) ? "練習モードなので売上は記録されません。" : "";
 
+            item_list = _rec_points;
+
             if (!Form1.isPractice)
             {
-                Insert(new SalesTable(
-                    BarCode_Prefix.ITEM + Form1.store_num + atsumi_pos.read_count_num(Form1.db_file, "sales_list").ToString("D3"),
+                Barcode bc = new Barcode(BarCode_Prefix.SALE,Form1.store_num,atsumi_pos.read_count_num(Form1.db_file_item, "sales_list").ToString("D5"));
+                barcode = bc.show();
+                Insert(new SalesTable(bc.show(),
                     (Unix_Time.ToUnixTime(DateTime.Now)).ToString(),
-                    _rec_points,
+                    _rec_points.Items.Count.ToString(),
                     Form1.reg_item_price_sum.ToString(),
                     _rec_items));
             }
@@ -40,7 +47,14 @@ namespace PosSystem
 
         private void Account_change_Load(object sender, EventArgs e)
         {
+            print_template.check_default_printer();
 
+            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+            PrintDialog pdlg = new PrintDialog();
+            pdlg.Document = pd;
+            pd.Print();
         }
 
         //売上のテーブル
@@ -48,15 +62,15 @@ namespace PosSystem
         {
             public string id = null;
             public string buycode;
-            public string registdated_at;
+            public string created_at;
             public string points;
             public string price;
             public string items;
 
-            public SalesTable(string _buycode, string _registdated_at, string _points, string _price,string _items)
+            public SalesTable(string _buycode, string _created_at, string _points, string _price,string _items)
             {
                 buycode = _buycode;
-                registdated_at = _registdated_at;
+                created_at = _created_at;
                 points = _points;
                 price = _price;
                 items = _items;
@@ -67,16 +81,16 @@ namespace PosSystem
         {
             try
             {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file))
+                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
                 {
                     conn.Open();
                     using (SQLiteTransaction sqlt = conn.BeginTransaction())
                     {
                         using (SQLiteCommand command = conn.CreateCommand())
                         {
-                            string query = string.Format("INSERT INTO sales_list (buycode,registdated_at,points,price,items) VALUES('{0}','{1}','{2}','{3}','{4}')",
+                            string query = string.Format("INSERT INTO sales_list (buycode,created_at,points,price,items) VALUES('{0}','{1}','{2}','{3}','{4}')",
                                 st.buycode,
-                                st.registdated_at,
+                                st.created_at,
                                 st.points,
                                 st.price,
                                 st.items);
@@ -99,6 +113,23 @@ namespace PosSystem
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            print_template.check_default_printer();
+            //ひだり みぎ うえ した
+            printDocument1.DefaultPageSettings.Margins = new Margins(0, 300, 0, 0);
+            printDocument1.OriginAtMargins = true;
+            
+            this.printPreviewDialog1.ShowDialog();
+            
+        }
+
+        private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            
+            print_template.print_receipt(item_list, received_money.Text, e, barcode);
         }
     }
 }

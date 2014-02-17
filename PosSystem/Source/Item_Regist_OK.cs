@@ -22,7 +22,7 @@ namespace PosSystem
             reg_item_name = _name;
             reg_item_price = _price;
 
-            Barcode bar = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file, "item_list").ToString("D5"));
+            Barcode bar = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_item, "item_list").ToString("D5"));
 
             reg_barcode = bar.show();
 
@@ -55,7 +55,20 @@ namespace PosSystem
 
         private void print_Click(object sender, EventArgs e)
         {
+            print_template.check_default_printer(false);
             this.printPreviewDialog1.ShowDialog();
+
+            /*
+            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+            PrintDialog pdlg = new PrintDialog();
+            pdlg.Document = pd;
+            if (pdlg.ShowDialog() == DialogResult.OK)
+            {
+                pd.Print();
+            }
+            */
         }
 
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)

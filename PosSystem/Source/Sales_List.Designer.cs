@@ -58,7 +58,9 @@
             this.reg_goods_list.Size = new System.Drawing.Size(775, 220);
             this.reg_goods_list.TabIndex = 5;
             this.reg_goods_list.UseCompatibleStateImageBehavior = false;
+            this.reg_goods_list.SelectedIndexChanged += new System.EventHandler(this.reg_goods_list_SelectedIndexChanged);
             this.reg_goods_list.SizeChanged += new System.EventHandler(this.reg_goods_list_SizeChanged);
+            this.reg_goods_list.DoubleClick += new System.EventHandler(this.reg_goods_list_DoubleClick);
             // 
             // label2
             // 

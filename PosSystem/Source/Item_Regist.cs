@@ -108,7 +108,7 @@ namespace PosSystem
             {
                 Barcode bar = new Barcode(
                     BarCode_Prefix.ITEM,
-                    Form1.store_num, atsumi_pos.read_count_num(Form1.db_file, "item_list").ToString("D5"));
+                    Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_item, "item_list").ToString("D5"));
 
                 if (atsumi_pos.Insert(new atsumi_pos.ItemTable(bar.show(), csv[i].ToString(), csv[i + 2].ToString(), Form1.store_num.ToString())))
                 {
@@ -116,7 +116,6 @@ namespace PosSystem
                 }
                 else
                 {
-
                     MessageBox.Show("アイテムの登録は出来て内っぽい");
                 }
             }

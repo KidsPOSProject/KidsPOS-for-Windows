@@ -19,7 +19,8 @@ namespace PosSystem
         public static string store_kind = "食品";
 
         //変数
-        public static string db_file = "KidsDB1.db";
+        public static string db_file_item = "KidsDB-ITEM.db";
+        public static string db_file_staff = "KidsDB-STAFF.db";
         public static string item_sum = "";
         public static string item_list = "";
 
@@ -120,28 +121,46 @@ namespace PosSystem
         }
         public void CreateTable()
         {
-            if (!File.Exists(db_file))
+            if (!File.Exists(db_file_item))
             {
-                using (var conn = new SQLiteConnection("Data Source=" + db_file))
+                using (var conn = new SQLiteConnection("Data Source=" + db_file_item))
                 {
                     conn.Open();
                     using (SQLiteCommand command = conn.CreateCommand())
                     {
+                        //商品リスト
                         command.CommandText = "create table item_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INTEGER)";
                         command.ExecuteNonQuery();
-                        command.CommandText = "create table sales_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, buycode INTEGER UNIQUE, registdated_at TEXT, points INTEGER, price INTEGER, items TEXT)";
+
+                        //売上リスト
+                        command.CommandText = "create table sales_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, buycode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT)";
                         command.ExecuteNonQuery();
                     }
                     conn.Close();
                 }
             }
+            if (!File.Exists(db_file_staff))
+            {
+                using (var conn = new SQLiteConnection("Data Source=" + db_file_staff))
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = conn.CreateCommand())
+                    {
+                        //商品リスト
+                        command.CommandText = "create table staff_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT)";
+                        command.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+            }
+
         }
         #endregion
 
         //スキャンしたときの処理
         public void scan_goods(string item_num)
         {
-            string[] data = read_data_from_barcode(item_num);
+            string[] data = read_items(item_num);
             if (data[0] != "" && data[1] != "" && data[2] != "")
             {
                 //TODO item_num をデータベースから検索し表示
@@ -171,10 +190,10 @@ namespace PosSystem
         /// </summary>
         /// <param name="barcode">読み取ったバーコード</param>
         /// <returns>バーコード、商品名、値段</returns>
-        private string[] read_data_from_barcode(string barcode)
+        public static string[] read_items(string barcode)
         {
             string[] ret = {"","",""};
-            using (var conn = new SQLiteConnection("Data Source=" + db_file))
+            using (var conn = new SQLiteConnection("Data Source=" + db_file_item))
             {
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
@@ -191,9 +210,9 @@ namespace PosSystem
                     }
                 }
             }
-
             return ret;
         }
+
         public static void change_form_text(Form form ,string _form_name,ToolStripStatusLabel tssl = null)
         {
             form.Text = _form_name + " - " + Form1.store_name + "店 " + "現行モード: " + ((isPractice) ? "練習モード" : "本番モード");
@@ -283,12 +302,19 @@ namespace PosSystem
                 {
                     
                     case BarCode_Prefix.ITEM:
-                        MessageBox.Show("商品だよー", "アラート", MessageBoxButtons.OK, MessageBoxIcon.Question);
+                        //MessageBox.Show("商品だよー", "アラート", MessageBoxButtons.OK, MessageBoxIcon.Question);
                         scan_goods(temp_barcode);
                         break;
                     
+                    case BarCode_Prefix.SALE:
+                        Sales sl = new Sales(temp_barcode);
+                        sl.ShowDialog(this);
+                        sl.Dispose();
+
+                        break;
+
                     case BarCode_Prefix.STAFF:
-                        MessageBox.Show("スタッフだよー","アラート",  MessageBoxButtons.OK, MessageBoxIcon.Question);
+                        //MessageBox.Show("スタッフだよー","アラート",  MessageBoxButtons.OK, MessageBoxIcon.Question);
                         break;
 
                     //商品登録を読み込んだ時
@@ -305,9 +331,9 @@ namespace PosSystem
                         break;
 
                     case BarCode_Prefix.SALE_LIST:
-                        Sales_List sl = new Sales_List();
-                        sl.ShowDialog(this);
-                        sl.Dispose();
+                        Sales_List sll = new Sales_List();
+                        sll.ShowDialog(this);
+                        sll.Dispose();
                         break;
 
                     case BarCode_Prefix.MODE_PRACTICE:
@@ -416,12 +442,27 @@ namespace PosSystem
 
         private void ダミーデータ登録ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            string[] data = read_data_from_barcode("4903333147434");
+            Barcode bc = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, "00000");
+            string[] data = read_items(bc.show());
             if (data[0] == "")
             {
-                atsumi_pos.Insert(new atsumi_pos.ItemTable("4903333147434", "ガーナミルクチョコレート", "100", "デパート"));
+                atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
             }
+        }
+
+        private void debug_display_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void reg_goods_list_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void top_menu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

@@ -40,6 +40,7 @@
             this.モード切替ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.practice_mode = new System.Windows.Forms.ToolStripMenuItem();
             this.take_mode = new System.Windows.Forms.ToolStripMenuItem();
+            this.ダミーデータ登録ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.display_timer = new System.Windows.Forms.Timer(this.components);
             this.reg_goods_list = new System.Windows.Forms.ListView();
             this.disp_scan_goods = new System.Windows.Forms.Panel();
@@ -49,7 +50,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.reg_account = new System.Windows.Forms.Button();
             this.reg_clear = new System.Windows.Forms.Button();
-            this.ダミーデータ登録ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
@@ -66,6 +66,7 @@
             this.debug_display.Size = new System.Drawing.Size(897, 23);
             this.debug_display.TabIndex = 0;
             this.debug_display.Text = "statusStrip1";
+            this.debug_display.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.debug_display_ItemClicked);
             // 
             // disp_now_time
             // 
@@ -98,6 +99,7 @@
             this.top_menu.Size = new System.Drawing.Size(897, 26);
             this.top_menu.TabIndex = 1;
             this.top_menu.Text = "menuStrip1";
+            this.top_menu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.top_menu_ItemClicked);
             // 
             // Item_Regist
             // 
@@ -143,6 +145,13 @@
             this.take_mode.Text = "本番モード";
             this.take_mode.Click += new System.EventHandler(this.take_mode_Click);
             // 
+            // ダミーデータ登録ToolStripMenuItem
+            // 
+            this.ダミーデータ登録ToolStripMenuItem.Name = "ダミーデータ登録ToolStripMenuItem";
+            this.ダミーデータ登録ToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.ダミーデータ登録ToolStripMenuItem.Text = "ダミーデータ登録";
+            this.ダミーデータ登録ToolStripMenuItem.Click += new System.EventHandler(this.ダミーデータ登録ToolStripMenuItem_Click);
+            // 
             // display_timer
             // 
             this.display_timer.Enabled = true;
@@ -160,6 +169,7 @@
             this.reg_goods_list.Size = new System.Drawing.Size(873, 308);
             this.reg_goods_list.TabIndex = 2;
             this.reg_goods_list.UseCompatibleStateImageBehavior = false;
+            this.reg_goods_list.SelectedIndexChanged += new System.EventHandler(this.reg_goods_list_SelectedIndexChanged);
             this.reg_goods_list.SizeChanged += new System.EventHandler(this.reg_goods_list_SizeChanged);
             this.reg_goods_list.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.reg_goods_list_MouseDoubleClick);
             // 
@@ -243,13 +253,6 @@
             this.reg_clear.Text = "クリア";
             this.reg_clear.UseVisualStyleBackColor = true;
             this.reg_clear.Click += new System.EventHandler(this.reg_clear_Click);
-            // 
-            // ダミーデータ登録ToolStripMenuItem
-            // 
-            this.ダミーデータ登録ToolStripMenuItem.Name = "ダミーデータ登録ToolStripMenuItem";
-            this.ダミーデータ登録ToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.ダミーデータ登録ToolStripMenuItem.Text = "ダミーデータ登録";
-            this.ダミーデータ登録ToolStripMenuItem.Click += new System.EventHandler(this.ダミーデータ登録ToolStripMenuItem_Click);
             // 
             // Form1
             // 

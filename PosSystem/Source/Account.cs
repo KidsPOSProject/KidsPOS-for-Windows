@@ -76,7 +76,7 @@ namespace PosSystem
             bool check = 0 >= (int.Parse(reg_goods_sum.Text) - int.Parse(received_money.Text));
             if (reg_goods_sum.Text != "" && received_money.Text != "" && check)
             {
-                Account_change ac = new Account_change(received_money.Text, reg_goods_list.Items.Count.ToString(), Form1.item_list);
+                Account_change ac = new Account_change(received_money.Text, reg_goods_list, Form1.item_list);
                 ac.ShowDialog();
                 ac.Dispose();
                 this.Dispose();
