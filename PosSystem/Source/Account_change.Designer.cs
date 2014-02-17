@@ -101,6 +101,7 @@
             this.button2.TabIndex = 14;
             this.button2.Text = "レジモードへ戻る";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label3
@@ -138,6 +139,7 @@
             this.button1.TabIndex = 17;
             this.button1.Text = "レシート印刷";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // practice_status
@@ -178,9 +180,11 @@
             this.Controls.Add(this.received_money);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.reg_goods_sum);
+            this.KeyPreview = true;
             this.Name = "Account_change";
             this.Text = "Account_change";
             this.Load += new System.EventHandler(this.Account_change_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Account_change_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

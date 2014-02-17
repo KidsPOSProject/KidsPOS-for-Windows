@@ -121,9 +121,11 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.reg_goods_sum);
             this.Controls.Add(this.reg_goods_list);
+            this.KeyPreview = true;
             this.Name = "Account";
             this.Text = "Account";
             this.Load += new System.EventHandler(this.Account_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Account_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

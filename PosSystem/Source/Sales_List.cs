@@ -49,7 +49,7 @@ namespace PosSystem
             goods_id.TextAlign = HorizontalAlignment.Center;
 
             goods_order.Text = "金額";
-            goods_order.Tag = 3;
+            goods_order.Tag = 2;
             goods_order.TextAlign = HorizontalAlignment.Center;
 
             goods_price.Text = "点数";
@@ -123,6 +123,11 @@ namespace PosSystem
             Sales sl = new Sales(reg_goods_list.SelectedItems[0].SubItems[0].Text);
             sl.ShowDialog(this);
             sl.Dispose();
+        }
+
+        private void Sales_List_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) this.Close();
         }
         
     }

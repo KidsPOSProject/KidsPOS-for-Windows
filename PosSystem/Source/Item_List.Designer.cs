@@ -39,6 +39,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
+            this.edit_panel = new System.Windows.Forms.Panel();
+            this.edit_panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // reg_goods_list
@@ -50,7 +52,7 @@
             this.reg_goods_list.Location = new System.Drawing.Point(12, 63);
             this.reg_goods_list.MultiSelect = false;
             this.reg_goods_list.Name = "reg_goods_list";
-            this.reg_goods_list.Size = new System.Drawing.Size(768, 232);
+            this.reg_goods_list.Size = new System.Drawing.Size(768, 216);
             this.reg_goods_list.TabIndex = 3;
             this.reg_goods_list.UseCompatibleStateImageBehavior = false;
             this.reg_goods_list.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.reg_goods_list_ColumnWidthChanged);
@@ -71,9 +73,9 @@
             // 
             this.change_item_name.Enabled = false;
             this.change_item_name.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.change_item_name.Location = new System.Drawing.Point(259, 298);
+            this.change_item_name.Location = new System.Drawing.Point(260, 16);
             this.change_item_name.Name = "change_item_name";
-            this.change_item_name.Size = new System.Drawing.Size(324, 44);
+            this.change_item_name.Size = new System.Drawing.Size(283, 44);
             this.change_item_name.TabIndex = 5;
             this.change_item_name.Text = " ";
             // 
@@ -81,7 +83,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label2.Location = new System.Drawing.Point(26, 301);
+            this.label2.Location = new System.Drawing.Point(27, 19);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(227, 37);
             this.label2.TabIndex = 6;
@@ -91,7 +93,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(109, 348);
+            this.label3.Location = new System.Drawing.Point(110, 66);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(144, 37);
             this.label3.TabIndex = 8;
@@ -101,9 +103,9 @@
             // 
             this.change_item_price.Enabled = false;
             this.change_item_price.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.change_item_price.Location = new System.Drawing.Point(259, 348);
+            this.change_item_price.Location = new System.Drawing.Point(260, 66);
             this.change_item_price.Name = "change_item_price";
-            this.change_item_price.Size = new System.Drawing.Size(324, 44);
+            this.change_item_price.Size = new System.Drawing.Size(283, 44);
             this.change_item_price.TabIndex = 7;
             this.change_item_price.Text = " ";
             // 
@@ -111,9 +113,9 @@
             // 
             this.button1.Enabled = false;
             this.button1.Font = new System.Drawing.Font("MS UI Gothic", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button1.Location = new System.Drawing.Point(589, 301);
+            this.button1.Location = new System.Drawing.Point(582, 19);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(191, 91);
+            this.button1.Size = new System.Drawing.Size(168, 91);
             this.button1.TabIndex = 9;
             this.button1.Text = "こうしん";
             this.button1.UseVisualStyleBackColor = true;
@@ -123,7 +125,7 @@
             // 
             this.button2.Enabled = false;
             this.button2.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button2.Location = new System.Drawing.Point(33, 411);
+            this.button2.Location = new System.Drawing.Point(10, 117);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(272, 40);
             this.button2.TabIndex = 10;
@@ -146,22 +148,35 @@
             this.printPreviewDialog1.Name = "printPreviewDialog1";
             this.printPreviewDialog1.Visible = false;
             // 
+            // edit_panel
+            // 
+            this.edit_panel.Controls.Add(this.label2);
+            this.edit_panel.Controls.Add(this.button2);
+            this.edit_panel.Controls.Add(this.change_item_name);
+            this.edit_panel.Controls.Add(this.button1);
+            this.edit_panel.Controls.Add(this.change_item_price);
+            this.edit_panel.Controls.Add(this.label3);
+            this.edit_panel.Location = new System.Drawing.Point(12, 285);
+            this.edit_panel.Name = "edit_panel";
+            this.edit_panel.Size = new System.Drawing.Size(768, 160);
+            this.edit_panel.TabIndex = 11;
+            this.edit_panel.Visible = false;
+            // 
             // Item_List
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 473);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.change_item_price);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.change_item_name);
+            this.ClientSize = new System.Drawing.Size(792, 457);
+            this.Controls.Add(this.edit_panel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.reg_goods_list);
+            this.KeyPreview = true;
             this.Name = "Item_List";
             this.Text = "Item_List";
             this.Load += new System.EventHandler(this.Item_List_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Item_List_KeyDown);
+            this.edit_panel.ResumeLayout(false);
+            this.edit_panel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,5 +194,6 @@
         private System.Windows.Forms.Button button2;
         private System.Drawing.Printing.PrintDocument printDocument1;
         private System.Windows.Forms.PrintPreviewDialog printPreviewDialog1;
+        private System.Windows.Forms.Panel edit_panel;
     }
 }

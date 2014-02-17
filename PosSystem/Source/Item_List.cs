@@ -16,7 +16,7 @@ namespace PosSystem
         int selected_item_id = -1;
         string selected_item_barcode = "";
 
-        public Item_List()
+        public Item_List(bool _isEdit = false)
         {
             InitializeComponent();
             InitializeListView(reg_goods_list);
@@ -25,6 +25,8 @@ namespace PosSystem
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
+
+            if (_isEdit) edit_panel.Visible = true;
         }
 
         private void Item_List_Load(object sender, EventArgs e)
@@ -187,6 +189,11 @@ namespace PosSystem
         {
 
             this.printPreviewDialog1.ShowDialog();
+        }
+
+        private void Item_List_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) this.Close();
         }
     }
 }

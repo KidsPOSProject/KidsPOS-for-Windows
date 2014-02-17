@@ -47,14 +47,15 @@ namespace PosSystem
 
         private void Account_change_Load(object sender, EventArgs e)
         {
-            print_template.check_default_printer();
+            if (print_template.check_default_printer())
+            {
+                System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+                pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
 
-            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
-
-            PrintDialog pdlg = new PrintDialog();
-            pdlg.Document = pd;
-            pd.Print();
+                PrintDialog pdlg = new PrintDialog();
+                pdlg.Document = pd;
+                pd.Print();
+            }
         }
 
         //売上のテーブル
@@ -130,6 +131,11 @@ namespace PosSystem
         {
             
             print_template.print_receipt(item_list, received_money.Text, e, barcode);
+        }
+
+        private void Account_change_KeyDown(object sender, KeyEventArgs e)
+        {
+            this.Close();
         }
     }
 }

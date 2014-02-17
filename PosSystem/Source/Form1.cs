@@ -24,6 +24,8 @@ namespace PosSystem
         public static string item_sum = "";
         public static string item_list = "";
 
+        public static string shop_person = "";
+
         public static bool isPractice = false;
 
         #endregion
@@ -147,7 +149,7 @@ namespace PosSystem
                     using (SQLiteCommand command = conn.CreateCommand())
                     {
                         //商品リスト
-                        command.CommandText = "create table staff_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT)";
+                        command.CommandText = "create table staff_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, name TEXT)";
                         command.ExecuteNonQuery();
                     }
                     conn.Close();
@@ -224,6 +226,7 @@ namespace PosSystem
         //タイマー  ステータスバーの日付等更新
         private void display_timer_Tick(object sender, EventArgs e)
         {
+            //if(isActive) this.Activate();
             DateTime dt = DateTime.Now;
             disp_now_time.Text = dt.ToString("yyyy年MM月dd日(" + day_of_week[dt.DayOfWeek] + ") HH時mm分ss秒");
         }        
@@ -302,38 +305,128 @@ namespace PosSystem
                 {
                     
                     case BarCode_Prefix.ITEM:
-                        //MessageBox.Show("商品だよー", "アラート", MessageBoxButtons.OK, MessageBoxIcon.Question);
                         scan_goods(temp_barcode);
                         break;
                     
                     case BarCode_Prefix.SALE:
+                        
                         Sales sl = new Sales(temp_barcode);
                         sl.ShowDialog(this);
                         sl.Dispose();
 
                         break;
 
+                    //従業員のバーコードを読み込んだとき
                     case BarCode_Prefix.STAFF:
-                        //MessageBox.Show("スタッフだよー","アラート",  MessageBoxButtons.OK, MessageBoxIcon.Question);
+                        string[,] ret = atsumi_pos.find_user(Form1.db_file_staff, temp_barcode);
+                        if (ret[0, 0] != "")
+                        {
+                            reg_user.Text = ret[0, 2];
+                            shop_person = ret[0, 2];
+                        }
+                        else
+                        {
+                            Staff_Regist unreg_str = new Staff_Regist(temp_barcode);
+                            unreg_str.ShowDialog(this);
+                            unreg_str.Dispose();
+                        }
                         break;
 
                     //商品登録を読み込んだ時
                     case BarCode_Prefix.ITEM_REGIST:
+                        
                         Item_Regist win = new Item_Regist();
                         win.ShowDialog(this);
                         win.Dispose();
                         break;
 
+                    //商品リストを読み込んだ時
                     case BarCode_Prefix.ITEM_LIST:
+                        
                         Item_List il = new Item_List();
                         il.ShowDialog(this);
                         il.Dispose();
+                        
                         break;
 
+                    //売上リストを読み込んだ時
                     case BarCode_Prefix.SALE_LIST:
+                        
                         Sales_List sll = new Sales_List();
                         sll.ShowDialog(this);
                         sll.Dispose();
+                        
+                        break;
+
+                    //会計を読み込んだ時
+                    case BarCode_Prefix.ACCOUNT:
+                        if (reg_goods_sum.Text != "" && reg_goods_sum.Text != "0")
+                        {
+                            for (int i = 0; i < reg_goods_list.Items.Count; i++)
+                            {
+                                item_list += reg_goods_list.Items[i].SubItems[0].Text + ((i != reg_goods_list.Items.Count - 1) ? "," : "");
+                            }
+                            
+                            Account ac = new Account(reg_goods_list);
+                            ac.ShowDialog(this);
+                            ac.Dispose();
+                            
+                        }
+                        //売上テーブルにインサート処理
+
+                        InitializeREG();
+                        break;
+
+                    //スタッフリストを読み込んだ時
+                    case BarCode_Prefix.STAFF_LIST:
+                        
+                        Staff_List stf = new Staff_List();
+                        stf.ShowDialog(this);
+                        stf.Dispose();
+                        
+                        break;
+
+                    //スタッフ登録を読み込んだ時
+                    case BarCode_Prefix.STAFF_REGIST:
+                        
+                        Staff_Regist str = new Staff_Regist();
+                        str.ShowDialog(this);
+                        str.Dispose();
+                        
+                        break;
+
+                    //ツールバー表示を読み込んだ時
+                    case BarCode_Prefix.SHOW_TOOLBAR:
+                            top_menu.Visible = true;
+                        break;
+
+                    //ツールバー非表示を読み込んだ時
+                    case BarCode_Prefix.HIDE_TOOLBAR:
+                        top_menu.Visible = false;
+                        break;
+
+                    //ダミーアイテムを読み込んだ時
+                    case BarCode_Prefix.DUMMY_ITEM:
+                        Barcode bc = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, "00000");
+                        string[] data = read_items(bc.show());
+                        if (data[0] == "")
+                        {
+                            atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
+                        }
+                        break;
+
+                    //ダミーユーザーを読み込んだ時
+                    case BarCode_Prefix.DUMMY_USER:
+                        atsumi_pos.regist_user("千葉 商太郎");
+                        break;
+                    
+                    //商品リストEditを読み込んだとき
+                    case BarCode_Prefix.ITEM_LIST_EDIT:
+                         
+                        Item_List ile = new Item_List(true);
+                        ile.ShowDialog(this);
+                        ile.Dispose();
+                        
                         break;
 
                     case BarCode_Prefix.MODE_PRACTICE:
@@ -379,7 +472,6 @@ namespace PosSystem
             return false;
         }
 
-
         public string comb_input_barcode()
         {
             string ret = "";
@@ -412,6 +504,24 @@ namespace PosSystem
             il.ShowDialog();
             il.Dispose();
         }
+
+        private void ユーザ登録ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Staff_Regist sr = new Staff_Regist();
+            sr.ShowDialog();
+            sr.Dispose();
+        }
+
+        private void ダミーデータ登録ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Barcode bc = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, "00000");
+            string[] data = read_items(bc.show());
+            if (data[0] == "")
+            {
+                atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
+            }
+        }
+
         #endregion
 
         //練習モードとの切り替え
@@ -440,29 +550,25 @@ namespace PosSystem
             //TODO
         }
 
-        private void ダミーデータ登録ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ユーザリストToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Barcode bc = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, "00000");
-            string[] data = read_items(bc.show());
-            if (data[0] == "")
-            {
-                atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
-            }
+            Staff_List sl = new Staff_List();
+            sl.ShowDialog(this);
+            sl.Dispose();
         }
 
-        private void debug_display_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void 印刷ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            System.Drawing.Printing.PrintDocument pd =
+                new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(print_template.print_system_barcode);
+            pd.Print();
         }
 
-        private void reg_goods_list_SelectedIndexChanged(object sender, EventArgs e)
+        private void reg_user_Click(object sender, EventArgs e)
         {
-
+            shop_person = reg_user.Text;
         }
 
-        private void top_menu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
     }
 }

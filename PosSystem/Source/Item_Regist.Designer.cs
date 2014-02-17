@@ -107,6 +107,8 @@
             this.ireg_name.Name = "ireg_name";
             this.ireg_name.Size = new System.Drawing.Size(419, 42);
             this.ireg_name.TabIndex = 10;
+            this.ireg_name.TextChanged += new System.EventHandler(this.ireg_name_TextChanged);
+            this.ireg_name.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ireg_name_KeyDown);
             // 
             // ireg_price
             // 
@@ -117,6 +119,7 @@
             this.ireg_price.TabIndex = 12;
             this.ireg_price.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.ireg_price.TextChanged += new System.EventHandler(this.ireg_price_TextChanged);
+            this.ireg_price.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ireg_price_KeyDown);
             // 
             // label5
             // 

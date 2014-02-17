@@ -28,6 +28,8 @@ namespace PosSystem
             ireg_genre.SelectedIndex = 0;
             ireg_store.Text = Form1.store_name;
             ireg_kind.Text = Form1.store_kind;
+
+            this.ActiveControl = this.ireg_name;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -121,7 +123,22 @@ namespace PosSystem
             }
 
             return true;
-       } 
+       }
+
+        private void ireg_name_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void ireg_name_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) this.ActiveControl = this.ireg_price;
+        }
+
+        private void ireg_price_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        } 
     }
 
     public sealed class Validation

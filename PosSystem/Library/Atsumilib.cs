@@ -26,20 +26,29 @@ namespace PosSystem
         public const string ITEM_LIST   = "11";
         public const string SALE_LIST   = "12";
         public const string ACCOUNT     = "13";
+        public const string STAFF_REGIST = "14";
+        public const string STAFF_LIST  ="15";
+        public const string ITEM_LIST_EDIT = "16";
         
         //操作
         public const string ENTER       = "20";
         public const string BACK        = "21";
+        public const string SHOW_TOOLBAR = "22";
+        public const string HIDE_TOOLBAR = "23";
 
         //動作モード変更
         public const string MODE_TAKE = "30";
         public const string MODE_PRACTICE = "31";
 
         //MONEY
-        public const string M100 = "81";
-        public const string M200 = "82";
-        public const string M300 = "83";
-        public const string M400 = "84";
+        public const string M100 = "80";
+        public const string M200 = "81";
+        public const string M300 = "82";
+        public const string M400 = "83";
+
+        //ダミーデータ登録
+        public const string DUMMY_ITEM = "90";
+        public const string DUMMY_USER = "91";
     }
 
     class Barcode
@@ -205,6 +214,59 @@ namespace PosSystem
             }
             return ret;
         }
+        public static string[,] read_staff_list(string db_file_path)
+        {
+            int c_num = read_count_num(db_file_path, "staff_list");
+            string[,] ret = new string[c_num, 3];
+
+            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
+            {
+                conn.Open();
+                using (SQLiteCommand command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM staff_list";
+
+                    var reader = command.ExecuteReader();
+
+                    int count = 0;
+                    while (reader.Read())
+                    {
+                        ret[count, 0] = reader.GetInt32(0).ToString();
+                        ret[count, 1] = reader.GetString(1);
+                        ret[count, 2] = reader.GetString(2);
+                        count++;
+                    }
+                }
+                conn.Close();
+            }
+            return ret;
+        }
+
+        public static string[,] find_user(string db_file_path, string _barcode)
+        {
+            string[,] ret = new string[1, 3];
+
+            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
+            {
+                conn.Open();
+                using (SQLiteCommand command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM staff_list WHERE barcode ='" + _barcode + "'";
+
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ret[0, 0] = reader.GetInt32(0).ToString();
+                        ret[0, 1] = reader.GetString(1);
+                        ret[0, 2] = reader.GetString(2);
+                    }
+                }
+                conn.Close();
+            }
+            return ret;
+        }
+        
         //データベースにインサート
         public static bool Insert(ItemTable it)
         {
@@ -277,7 +339,29 @@ namespace PosSystem
 
             return check_digit.ToString();
         }
-        
+        public static string regist_user(string _name, string _barcode = "")
+        {
+            string ret = "";
+            try
+            {
+                if (_barcode == "")
+                {
+                    Barcode bc = new Barcode(BarCode_Prefix.STAFF, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_staff, "staff_list").ToString("D5"));
+                    atsumi_pos.Insert(new atsumi_pos.StaffTable(bc.show(), _name));
+                    ret = bc.show();
+                }
+                else
+                {
+                    atsumi_pos.Insert(new atsumi_pos.StaffTable(_barcode, _name));
+                    ret = _barcode;
+                }
+            }
+            catch
+            {
+                ret = "";
+            }
+            return ret;
+        }
         public static ArrayList file_load()
         {
             ArrayList al = new ArrayList();
@@ -356,6 +440,7 @@ namespace PosSystem
                 try
                 {
                     SetDefaultPrinter("PRP-250");
+                    if (check_default_printer()) return true;
                 }
                 catch
                 {
@@ -490,6 +575,11 @@ namespace PosSystem
 
             drawString(g, f_big, "おみせ：　" + Form1.store_name, margin_min, draw_height_position);
             draw_height_position += line_height;
+
+            drawString(g, f_big, "れじのたんとう：　" + Form1.shop_person, margin_min, draw_height_position);
+            draw_height_position += line_height + 5;
+
+
             drawString(g, f_big, 
                 "印字保護のためこちらの面を"+Environment.NewLine+
                 "内側に折って保管してください", margin_min + 3, draw_height_position);
@@ -510,6 +600,129 @@ namespace PosSystem
             e.HasMorePages = false;
         }
 
+        public static void print_system_barcode(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            int margin_min = 3;
+            int margin_max = 70;
+            int align_center = 27;
+            int line_height = 7;
+            int draw_height_position = 0;
+
+            Graphics g = e.Graphics;
+            g.PageUnit = GraphicsUnit.Millimeter;
+            Font f = new Font("MS UI Gothic", 10);
+            Font f_big = new Font("MS UI Gothic", 13);
+
+            g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
+
+            draw_height_position += line_height + 22;
+
+            drawString(g, f_big, "<システムバーコード>", align_center - 20, draw_height_position);
+
+            draw_height_position += line_height + 3;
+
+            g.DrawLine(new Pen(Brushes.Black),
+                new Point(margin_min, draw_height_position),
+                new Point(margin_max, draw_height_position));
+
+            draw_height_position += line_height + 2;
+
+            int margin_str_barcode = 1;
+            int margin_barcode = 40;
+
+            /* ---  バーコード生成  --- */
+            /* 2つずつ書いています。もうなんか読みづらくてすみませ・・・・、、 */
+
+            hoge("商品登録", BarCode_Prefix.ITEM_REGIST, "商品リスト", BarCode_Prefix.ITEM_LIST, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
+            
+            hoge("売上リスト", BarCode_Prefix.SALE_LIST, "会計", BarCode_Prefix.ACCOUNT, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
+            
+            hoge("スタッフリスト", BarCode_Prefix.STAFF_LIST, "スタッフ登録", BarCode_Prefix.STAFF_REGIST, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
+
+            hoge("ツールバー表示", BarCode_Prefix.SHOW_TOOLBAR, "ツールバー非表示", BarCode_Prefix.HIDE_TOOLBAR, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
+
+            hoge("ダミーアイテム", BarCode_Prefix.DUMMY_ITEM, "ダミーユーザー", BarCode_Prefix.DUMMY_USER, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
+
+            hoge("商品リストEdit", BarCode_Prefix.ITEM_LIST_EDIT, "意味無", BarCode_Prefix.M100, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
+
+
+            g.DrawLine(new Pen(Brushes.Black),
+                new Point(margin_min, draw_height_position),
+                new Point(margin_max, draw_height_position));
+
+            e.HasMorePages = false;
+        }
+
+        public static void hoge(
+            string fir, string fir_p,
+            string sec, string sec_p,
+            Graphics g, Font f,
+            int margin_min, 
+            int margin_barcode,
+            int line_height,
+            int margin_str_barcode,
+            ref int height)
+        {
+            drawString(g, f, fir, margin_min, height);
+            drawString(g, f, sec, margin_min + margin_barcode, height);
+            height += line_height + margin_str_barcode;
+            create(g, fir_p, margin_min, height);
+            create(g, sec_p, margin_min + margin_barcode, height);
+            height += line_height + 25;
+        }
+
+        public static void create(Graphics g, string _barcode_prefix, int weight, int height)
+        {
+            Barcode bc = new Barcode(_barcode_prefix, "000", "00000");
+            BarcodeWriter bw = new BarcodeWriter();
+            bw.Format = BarcodeFormat.EAN_13;
+            Bitmap barcode = bw.Write(bc.show());
+            g.DrawImage(barcode, new Point(weight, height));
+        }
+        public static void print_user(string _barcode, string _name, PrintPageEventArgs e)
+        {
+            int margin_min = 3;
+            int margin_max = 70;
+            int align_center = 27;
+            int line_height = 7;
+            int draw_height_position = 0;
+            Font f = new Font("MS UI Gothic", 10);
+            Font f_big = new Font("MS UI Gothic", 13);
+            Graphics g = e.Graphics;
+            g.PageUnit = GraphicsUnit.Millimeter;
+            BarcodeWriter bw = new BarcodeWriter();
+            bw.Format = BarcodeFormat.EAN_13;
+            Bitmap barcode = bw.Write(_barcode);
+
+
+            g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
+
+            draw_height_position += line_height + 22;
+
+            drawString(g, f_big, "< " + _name + " さん >", align_center - 20, draw_height_position);
+
+            draw_height_position += line_height + 3;
+
+            g.DrawLine(new Pen(Brushes.Black),
+                new Point(margin_min, draw_height_position),
+                new Point(margin_max, draw_height_position));
+
+            draw_height_position += line_height + 2;
+
+            drawString(g, f, "担当するお店 : " + Form1.store_name, margin_min, draw_height_position);
+
+            draw_height_position += line_height;
+
+            g.DrawImage(barcode, new Point(align_center, draw_height_position));
+            
+
+            g.DrawLine(new Pen(Brushes.Black),
+                new Point(margin_min, draw_height_position + 30 ),
+                new Point(margin_max, draw_height_position + 30)
+                );
+
+            e.HasMorePages = false;
+        }
     }
     class System_log{
         public static void ShowDialog(string msg)

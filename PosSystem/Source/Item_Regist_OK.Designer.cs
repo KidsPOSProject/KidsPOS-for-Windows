@@ -75,7 +75,7 @@
             // print
             // 
             this.print.Font = new System.Drawing.Font("MS UI Gothic", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.print.Location = new System.Drawing.Point(546, 165);
+            this.print.Location = new System.Drawing.Point(569, 272);
             this.print.Name = "print";
             this.print.Size = new System.Drawing.Size(230, 71);
             this.print.TabIndex = 8;

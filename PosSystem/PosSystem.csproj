@@ -109,6 +109,18 @@
     <Compile Include="Source\Sales_List.Designer.cs">
       <DependentUpon>Sales_List.cs</DependentUpon>
     </Compile>
+    <Compile Include="Source\Staff_Regist.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Source\Staff_Regist.Designer.cs">
+      <DependentUpon>Staff_Regist.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Staff_List.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Source\Staff_List.Designer.cs">
+      <DependentUpon>Staff_List.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Source\Account.resx">
       <DependentUpon>Account.cs</DependentUpon>
     </EmbeddedResource>
@@ -141,6 +153,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Source\Sales_List.resx">
       <DependentUpon>Sales_List.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Source\Staff_Regist.resx">
+      <DependentUpon>Staff_Regist.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Source\Staff_List.resx">
+      <DependentUpon>Staff_List.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

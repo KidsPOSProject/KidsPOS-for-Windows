@@ -28,6 +28,9 @@ namespace PosSystem
             reg_goods_sum.Text = Form1.reg_item_price_sum.ToString();
             Form1.change_form_text(this, form_name);
 
+
+            this.ActiveControl = this.received_money;
+
         }
 
         private void Account_Load(object sender, EventArgs e)
@@ -80,6 +83,14 @@ namespace PosSystem
                 ac.ShowDialog();
                 ac.Dispose();
                 this.Dispose();
+            }
+        }
+
+        private void Account_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                button1.PerformClick();
             }
         }
     }
