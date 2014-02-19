@@ -8,7 +8,7 @@ using ZXing;
 using Microsoft.VisualBasic.FileIO;
 
 
-namespace PosSystem_Master
+namespace PosSystem_Client
 {
 
     class BarCode_Prefix
@@ -115,15 +115,13 @@ namespace PosSystem_Master
             public string name;
             public string price;
             public string shop;
-            public string genre;
 
-            public ItemTable(string _barcode, string _name, string _price, string _shop, string _genre)
+            public ItemTable(string _barcode, string _name, string _price, string _shop)
             {
                 barcode = _barcode;
                 name = _name;
                 price = _price;
                 shop = _shop;
-                genre = _genre;
             }
         }
         //従業員のテーブル
@@ -140,31 +138,6 @@ namespace PosSystem_Master
             }
         }
 
-        //店名のテーブル
-        public class StoreNameTable
-        {
-            public string id = null;
-            public string name;
-
-            public StoreNameTable(string _name)
-            {
-                name = _name;
-            }
-        }
-
-        //商品ジャンルのテーブル
-        public class ItemGenreTable
-        {
-            public string id = null;
-            public string name;
-            public string store;
-
-            public ItemGenreTable(string _name, string _store)
-            {
-                name = _name;
-                store = _store;
-            }
-        }
         /// <summary>
         /// table に含まれるレコードの数を表示
         /// </summary>
@@ -269,53 +242,6 @@ namespace PosSystem_Master
             return ret;
         }
 
-        public static string[,] find_store(string db_file_path, string _store_name)
-        {
-            string[,] ret = new string[1, 3];
-
-            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM store_kind WHERE name ='" + _store_name + "'";
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        ret[0, 0] = reader.GetInt32(0).ToString();
-                        ret[0, 1] = reader.GetString(1);
-                    }
-                }
-                conn.Close();
-            }
-            return ret;
-        }
-
-        public static string find_genre(string db_file_path, string _genre_name)
-        {
-            string ret = "";
-            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT id FROM item_genre WHERE name ='" + _genre_name + "'";
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        ret = reader.GetInt32(0).ToString();
-                    }
-                }
-                conn.Close();
-            }
-            return ret;
-        }
-        
-
         public static string[,] find_user(string db_file_path, string _barcode)
         {
             string[,] ret = new string[1, 3];
@@ -353,7 +279,7 @@ namespace PosSystem_Master
                     {
                         using (SQLiteCommand command = conn.CreateCommand())
                         {
-                            string query = "insert into item_list (barcode, name, price, shop, genre) values('" + it.barcode + "', '" + it.name + "', '" + it.price + "', '" + it.shop + "', '" + it.genre + "')";
+                            string query = "insert into item_list (barcode, name, price, shop) values('" + it.barcode + "', '" + it.name + "', '" + it.price + "', '" + it.shop + "')";
                             command.CommandText = query;
                             command.ExecuteNonQuery();
                         }
@@ -369,64 +295,6 @@ namespace PosSystem_Master
                 return false;
             }
         }
-
-        //データベースにインサート
-        public static bool Insert(StoreNameTable snt)
-        {
-            try
-            {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_master))
-                {
-                    conn.Open();
-                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
-                    {
-                        using (SQLiteCommand command = conn.CreateCommand())
-                        {
-                            string query = "insert into store_kind (name) values('"+ snt.name + "')";
-                            command.CommandText = query;
-                            command.ExecuteNonQuery();
-                        }
-                        sqlt.Commit();
-                    }
-                    conn.Close();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                System_log.ShowDialog(e.ToString());
-                return false;
-            }
-        }
-        //データベースにインサート
-        public static bool Insert(ItemGenreTable igt)
-        {
-            try
-            {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
-                {
-                    conn.Open();
-                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
-                    {
-                        using (SQLiteCommand command = conn.CreateCommand())
-                        {
-                            string query = "insert into item_genre (name,store) values('" + igt.name + "','" + igt.store + "')";
-                            command.CommandText = query;
-                            command.ExecuteNonQuery();
-                        }
-                        sqlt.Commit();
-                    }
-                    conn.Close();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                System_log.ShowDialog(e.ToString());
-                return false;
-            }
-        }
-        
         //データベースにインサート
         public static bool Insert(StaffTable it)
         {

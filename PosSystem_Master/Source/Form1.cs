@@ -13,16 +13,17 @@ namespace PosSystem_Master
         #region 定数
 
         //フォームの名前
-        public string form_name = "POS";
+        public string form_name = "POSシステム 練習用クライアント";
 
         //後々サーバーと通信する
         public static string store_num = "001";
         public static string store_name = "デパート";
-        public static string store_kind = "食品";
+        //public static string store_kind = "食品";
 
         //変数
         public static string db_file_item = "KidsDB-ITEM.db";
         public static string db_file_staff = "KidsDB-STAFF.db";
+        public static string db_file_master = "KidsDB-STORE.db";
         public static string item_sum = "";
         public static string item_list = "";
 
@@ -55,6 +56,8 @@ namespace PosSystem_Master
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
             this.WindowState = FormWindowState.Maximized;
 
+            this.Text = form_name;
+
             //this.MaximizeBox = false;
             this.MinimizeBox = false;
             //this.ControlBox = false;
@@ -62,6 +65,7 @@ namespace PosSystem_Master
         private void Form1_Load(object sender, EventArgs e)
         {
             CreateTable();
+            disp_store_name.Text = Form1.store_name;
         }
 
         #region Initialize
@@ -134,8 +138,12 @@ namespace PosSystem_Master
                     conn.Open();
                     using (SQLiteCommand command = conn.CreateCommand())
                     {
+                        //商品ジャンルリスト
+                        command.CommandText = "create table item_genre(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
+                        command.ExecuteNonQuery();
+
                         //商品リスト
-                        command.CommandText = "create table item_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INTEGER)";
+                        command.CommandText = "create table item_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop TEXT, genre TEXT)";
                         command.ExecuteNonQuery();
 
                         //売上リスト
@@ -159,9 +167,31 @@ namespace PosSystem_Master
                     conn.Close();
                 }
             }
+            if (!File.Exists(db_file_master))
+            {
+                using (var conn = new SQLiteConnection("Data Source=" + db_file_master))
+                {
+                    conn.Open();
+                    using (SQLiteCommand command = conn.CreateCommand())
+                    {
+                        //商品リスト 現在、お店の名前は完全ユニークだと考えています。
+                        command.CommandText = "create table store_kind(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
+                        command.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+                Item_Regist ir = new Item_Regist();
+                ir.ShowDialog();
+                ir.Dispose();
+            }
 
         }
         #endregion
+
+        public void empty_item_database()
+        {
+            atsumi_pos.read_count_num(db_file_master, "store_kind");
+        }
 
         //スキャンしたときの処理
         public void scan_goods(string item_num)
@@ -386,7 +416,7 @@ namespace PosSystem_Master
                         string[] data = read_items(bc.show());
                         if (data[0] == "")
                         {
-                            atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
+                            atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート", "00000"));
                         }
                         break;
 
@@ -493,10 +523,11 @@ namespace PosSystem_Master
             string[] data = read_items(bc.show());
             if (data[0] == "")
             {
-                atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
+                atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート", "00000"));
             }
         }
         #endregion
+
 
     }
 }
