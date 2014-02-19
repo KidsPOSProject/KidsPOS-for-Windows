@@ -56,6 +56,10 @@ namespace PosSystem_Client
             take_mode.Enabled = false;
             this.Text = form_name;
 
+            this.WindowState = FormWindowState.Maximized;
+            //this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            //this.ControlBox = false;
         }
         private void Form1_Load(object sender, EventArgs e)
         {

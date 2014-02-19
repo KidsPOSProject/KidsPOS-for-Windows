@@ -26,7 +26,6 @@ namespace PosSystem_Master
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             reg_goods_sum.Text = Form1.reg_item_price_sum.ToString();
-            Form1.change_form_text(this, form_name);
 
 
             this.ActiveControl = this.received_money;

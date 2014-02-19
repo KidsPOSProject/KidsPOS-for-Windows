@@ -34,11 +34,6 @@
             this.disp_store_name = new System.Windows.Forms.ToolStripStatusLabel();
             this.debug_Test = new System.Windows.Forms.ToolStripStatusLabel();
             this.top_menu = new System.Windows.Forms.MenuStrip();
-            this.モード切替ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.practice_mode = new System.Windows.Forms.ToolStripMenuItem();
-            this.take_mode = new System.Windows.Forms.ToolStripMenuItem();
-            this.Item_Regist = new System.Windows.Forms.ToolStripMenuItem();
-            this.ユーザ登録ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.各種リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.商品リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.商品リストEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,9 +94,6 @@
             // top_menu
             // 
             this.top_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.モード切替ToolStripMenuItem,
-            this.Item_Regist,
-            this.ユーザ登録ToolStripMenuItem,
             this.各種リストToolStripMenuItem,
             this.ダミーデータ挿入ToolStripMenuItem,
             this.システムバーコードToolStripMenuItem});
@@ -110,36 +102,6 @@
             this.top_menu.Size = new System.Drawing.Size(897, 26);
             this.top_menu.TabIndex = 1;
             this.top_menu.Text = "menuStrip1";
-            // 
-            // モード切替ToolStripMenuItem
-            // 
-            this.モード切替ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.practice_mode,
-            this.take_mode});
-            this.モード切替ToolStripMenuItem.Name = "モード切替ToolStripMenuItem";
-            this.モード切替ToolStripMenuItem.Size = new System.Drawing.Size(80, 22);
-            this.モード切替ToolStripMenuItem.Text = "モード切替";
-            // 
-            // practice_mode
-            // 
-            this.practice_mode.Name = "practice_mode";
-            this.practice_mode.Size = new System.Drawing.Size(136, 22);
-            this.practice_mode.Text = "練習モード";
-            this.practice_mode.Click += new System.EventHandler(this.practice_mode_Click);
-            // 
-            // take_mode
-            // 
-            this.take_mode.Name = "take_mode";
-            this.take_mode.Size = new System.Drawing.Size(136, 22);
-            this.take_mode.Text = "本番モード";
-            this.take_mode.Click += new System.EventHandler(this.take_mode_Click);
-            // 
-            // ユーザ登録ToolStripMenuItem
-            // 
-            this.ユーザ登録ToolStripMenuItem.Name = "ユーザ登録ToolStripMenuItem";
-            this.ユーザ登録ToolStripMenuItem.Size = new System.Drawing.Size(80, 22);
-            this.ユーザ登録ToolStripMenuItem.Text = "ユーザ登録";
-            this.ユーザ登録ToolStripMenuItem.Click += new System.EventHandler(this.ユーザ登録ToolStripMenuItem_Click);
             // 
             // 各種リストToolStripMenuItem
             // 
@@ -192,14 +154,14 @@
             // ユーザーToolStripMenuItem
             // 
             this.ユーザーToolStripMenuItem.Name = "ユーザーToolStripMenuItem";
-            this.ユーザーToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ユーザーToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.ユーザーToolStripMenuItem.Text = "ユーザー";
             this.ユーザーToolStripMenuItem.Click += new System.EventHandler(this.ユーザーToolStripMenuItem_Click);
             // 
             // 商品ToolStripMenuItem
             // 
             this.商品ToolStripMenuItem.Name = "商品ToolStripMenuItem";
-            this.商品ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.商品ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.商品ToolStripMenuItem.Text = "商品";
             this.商品ToolStripMenuItem.Click += new System.EventHandler(this.商品ToolStripMenuItem_Click);
             // 
@@ -383,7 +345,6 @@
 
         private System.Windows.Forms.StatusStrip debug_display;
         private System.Windows.Forms.MenuStrip top_menu;
-        private System.Windows.Forms.ToolStripMenuItem Item_Regist;
         private System.Windows.Forms.ToolStripStatusLabel disp_now_time;
         private System.Windows.Forms.ToolStripStatusLabel disp_store_name;
         private System.Windows.Forms.Timer display_timer;
@@ -396,10 +357,6 @@
         private System.Windows.Forms.Button reg_clear;
         public System.Windows.Forms.ListView reg_goods_list;
         internal System.Windows.Forms.TextBox reg_goods_sum;
-        private System.Windows.Forms.ToolStripMenuItem モード切替ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem practice_mode;
-        private System.Windows.Forms.ToolStripMenuItem take_mode;
-        private System.Windows.Forms.ToolStripMenuItem ユーザ登録ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem システムバーコードToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 印刷ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 確認ToolStripMenuItem;

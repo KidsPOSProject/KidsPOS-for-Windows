@@ -9,8 +9,6 @@ namespace PosSystem_Master
 {
     public partial class Form1 : Form
     {
-        //マスターかクライアントか
-        public static string PROGRAM_KIND = "MASTER";
 
         #region 定数
 
@@ -30,7 +28,6 @@ namespace PosSystem_Master
 
         public static string shop_person = "";
 
-        public static bool isPractice = false;
 
         #endregion
         #region HashTableなど
@@ -56,9 +53,11 @@ namespace PosSystem_Master
             InitializeListView(reg_goods_list);
             this.KeyPreview = !this.KeyPreview;
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
-            take_mode.Enabled = false;
-            change_form_text(this, form_name, debug_Test);
+            this.WindowState = FormWindowState.Maximized;
 
+            //this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            //this.ControlBox = false;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -220,12 +219,6 @@ namespace PosSystem_Master
             return ret;
         }
 
-        public static void change_form_text(Form form ,string _form_name,ToolStripStatusLabel tssl = null)
-        {
-            form.Text = _form_name + " - " + Form1.store_name + "店 " + "現行モード: " + ((isPractice) ? "練習モード" : "本番モード");
-            if (tssl != null) tssl.Text = Form1.store_name + "店 " + "現行モード: " + ((isPractice) ? "練習モード" : "本番モード");
-        }
-
         #region Event
 
         //タイマー  ステータスバーの日付等更新
@@ -329,12 +322,6 @@ namespace PosSystem_Master
                             reg_user.Text = ret[0, 2];
                             shop_person = ret[0, 2];
                         }
-                        else
-                        {
-                            Staff_Regist unreg_str = new Staff_Regist(temp_barcode);
-                            unreg_str.ShowDialog(this);
-                            unreg_str.Dispose();
-                        }
                         break;
 
                     //商品リストを読み込んだ時
@@ -383,15 +370,6 @@ namespace PosSystem_Master
                         
                         break;
 
-                    //スタッフ登録を読み込んだ時
-                    case BarCode_Prefix.STAFF_REGIST:
-                        
-                        Staff_Regist str = new Staff_Regist();
-                        str.ShowDialog(this);
-                        str.Dispose();
-                        
-                        break;
-
                     //ツールバー表示を読み込んだ時
                     case BarCode_Prefix.SHOW_TOOLBAR:
                             top_menu.Visible = true;
@@ -425,21 +403,6 @@ namespace PosSystem_Master
                         ile.Dispose();
                         
                         break;
-
-                    case BarCode_Prefix.MODE_PRACTICE:
-                        isPractice = true;
-                        practice_mode.Enabled = false;
-                        take_mode.Enabled = true;
-                        change_form_text(this,form_name,debug_Test);
-                        break;
-
-                    case BarCode_Prefix.MODE_TAKE:
-                        isPractice = false;
-                        take_mode.Enabled = false;
-                        practice_mode.Enabled = true;
-                        change_form_text(this, form_name, debug_Test);
-                        break;
-
                     default:
                         break;
                 }
@@ -490,17 +453,6 @@ namespace PosSystem_Master
             pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(print_template.print_system_barcode);
             pd.Print();
         }
-        private void ユーザ登録ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Staff_Regist sr = new Staff_Regist();
-            sr.ShowDialog();
-            sr.Dispose();
-        }
-
-        private void ダミーデータ登録ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
 
         private void 商品リストToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -545,28 +497,6 @@ namespace PosSystem_Master
             }
         }
         #endregion
-
-        //練習モードとの切り替え
-        private void practice_mode_Click(object sender, EventArgs e)
-        {
-            isPractice = true;
-            practice_mode.Enabled = false;
-            take_mode.Enabled = true;
-            change_form_text(this,form_name,debug_Test);
-        }
-        //本番モードとの切り替え
-        private void take_mode_Click(object sender, EventArgs e)
-        {
-            isPractice = false;
-            take_mode.Enabled = false;
-            practice_mode.Enabled = true;
-            change_form_text(this, form_name, debug_Test);
-        }
-
-
-        /// <summary>
-        /// 設定ファイルへの書き込み
-        /// </summary>
 
     }
 }

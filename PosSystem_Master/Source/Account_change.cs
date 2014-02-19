@@ -28,21 +28,16 @@ namespace PosSystem_Master
             reg_goods_sum.Text = Form1.reg_item_price_sum.ToString();
             received_money.Text = _rec_money;
             change.Text =   (int.Parse(received_money.Text) - int.Parse(reg_goods_sum.Text)).ToString();
-            practice_status.Text = (Form1.isPractice) ? "練習モードなので売上は記録されません。" : "";
 
             item_list = _rec_points;
 
-            if (!Form1.isPractice)
-            {
-                Barcode bc = new Barcode(BarCode_Prefix.SALE,Form1.store_num,atsumi_pos.read_count_num(Form1.db_file_item, "sales_list").ToString("D5"));
-                barcode = bc.show();
-                Insert(new SalesTable(bc.show(),
-                    (Unix_Time.ToUnixTime(DateTime.Now)).ToString(),
-                    _rec_points.Items.Count.ToString(),
-                    Form1.reg_item_price_sum.ToString(),
-                    _rec_items));
-            }
-            Form1.change_form_text(this, form_name);
+            Barcode bc = new Barcode(BarCode_Prefix.SALE,Form1.store_num,atsumi_pos.read_count_num(Form1.db_file_item, "sales_list").ToString("D5"));
+            barcode = bc.show();
+            Insert(new SalesTable(bc.show(),
+                (Unix_Time.ToUnixTime(DateTime.Now)).ToString(),
+                _rec_points.Items.Count.ToString(),
+                Form1.reg_item_price_sum.ToString(),
+                _rec_items));
         }
 
         private void Account_change_Load(object sender, EventArgs e)

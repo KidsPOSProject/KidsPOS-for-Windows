@@ -47,7 +47,15 @@ namespace PosSystem_Client
                     {
                         isBarcode = res;
                         print_template.check_default_printer(true);
-                        this.printPreviewDialog1.ShowDialog();
+
+                        System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+                        pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+                        PrintDialog pdlg = new PrintDialog();
+                        pdlg.Document = pd;
+                        pd.Print();
+
+
                     }else{
                         MessageBox.Show("なんらかの原因で登録できませんでした。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
