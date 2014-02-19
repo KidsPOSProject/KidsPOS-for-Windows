@@ -55,12 +55,8 @@ namespace PosSystem
 
         private void print_Click(object sender, EventArgs e)
         {
-            print_template.check_default_printer(false);
-            this.printPreviewDialog1.ShowDialog();
-
-            /*
-            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+            PrintDocument pd = new PrintDocument();
+            pd.PrintPage += new PrintPageEventHandler(printDocument1_PrintPage);
 
             PrintDialog pdlg = new PrintDialog();
             pdlg.Document = pd;
@@ -68,23 +64,11 @@ namespace PosSystem
             {
                 pd.Print();
             }
-            */
         }
 
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
         {
             print_template.print_temple(reg_barcode, ireg_ok_name.Text, e);
-        }
-
-
-
-        private void Item_Regist_OK_FormClosed(object sender, FormClosedEventArgs e)
-        {
-        }
-
-        private void image_barcode_Click(object sender, EventArgs e)
-        {
-
         }
 
     }

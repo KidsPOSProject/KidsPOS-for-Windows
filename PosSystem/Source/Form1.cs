@@ -3,11 +3,15 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Data.SQLite;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace PosSystem
 {
     public partial class Form1 : Form
     {
+        //マスターかクライアントか
+        public static string PROGRAM_KIND = "MASTER";
+
         #region 定数
 
         //フォームの名前
@@ -54,6 +58,8 @@ namespace PosSystem
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
             take_mode.Enabled = false;
             change_form_text(this, form_name, debug_Test);
+            save_XML();
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -492,19 +498,13 @@ namespace PosSystem
             win.ShowDialog(this);
             win.Dispose();
         }
-        private void Sales_List_Click(object sender, EventArgs e)
+        private void 印刷ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Sales_List sl = new Sales_List();
-            sl.ShowDialog();
-            sl.Dispose();
+            System.Drawing.Printing.PrintDocument pd =
+                new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(print_template.print_system_barcode);
+            pd.Print();
         }
-        private void Items_List_Click(object sender, EventArgs e)
-        {
-            Item_List il = new Item_List();
-            il.ShowDialog();
-            il.Dispose();
-        }
-
         private void ユーザ登録ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Staff_Regist sr = new Staff_Regist();
@@ -514,6 +514,44 @@ namespace PosSystem
 
         private void ダミーデータ登録ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+        }
+
+
+        private void 商品リストToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Item_List il = new Item_List();
+            il.ShowDialog();
+            il.Dispose();
+        }
+
+        private void 売上リストToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Sales_List sl = new Sales_List();
+            sl.ShowDialog();
+            sl.Dispose();
+        }
+
+        private void 商品リストEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Item_List il = new Item_List(true);
+            il.ShowDialog();
+            il.Dispose();
+        }
+
+        private void ユーザリストToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Staff_List sl = new Staff_List();
+            sl.ShowDialog(this);
+            sl.Dispose();
+        }
+
+        private void ユーザーToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            atsumi_pos.regist_user("千葉 商太郎");
+        }
+
+        private void 商品ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             Barcode bc = new Barcode(BarCode_Prefix.ITEM, Form1.store_num, "00000");
             string[] data = read_items(bc.show());
             if (data[0] == "")
@@ -521,7 +559,6 @@ namespace PosSystem
                 atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
             }
         }
-
         #endregion
 
         //練習モードとの切り替え
@@ -545,29 +582,29 @@ namespace PosSystem
         /// <summary>
         /// 設定ファイルへの書き込み
         /// </summary>
-        public void write_ini()
-        {
-            //TODO
-        }
 
-        private void ユーザリストToolStripMenuItem_Click(object sender, EventArgs e)
+        public class SampleClass
         {
-            Staff_List sl = new Staff_List();
-            sl.ShowDialog(this);
-            sl.Dispose();
+            public int Number;
+            public string Message;
+            public SampleClass sp;
         }
-
-        private void 印刷ToolStripMenuItem_Click(object sender, EventArgs e)
+        public void save_XML()
         {
-            System.Drawing.Printing.PrintDocument pd =
-                new System.Drawing.Printing.PrintDocument();
-            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(print_template.print_system_barcode);
-            pd.Print();
-        }
+            string fileName = @"config.xml";
 
-        private void reg_user_Click(object sender, EventArgs e)
-        {
-            shop_person = reg_user.Text;
+            SampleClass obj = new SampleClass();
+            SampleClass obj2 = new SampleClass();
+            obj.Message = "テストです。";
+            obj.Number = 123;
+            obj2.Message = "二段階構造!";
+            obj2.Number = 4141;
+            obj.sp = obj2;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(SampleClass));
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            serializer.Serialize(fs, obj);
+            fs.Close();
         }
 
     }

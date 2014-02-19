@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PosSystem", "PosSystem\PosSystem.csproj", "{FD8FCB86-4B78-4A03-82DF-4776F56EC6D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PosSystem_Client", "PosSystem_Client\PosSystem_Client.csproj", "{37FA7F40-0F35-402B-89F9-53AC41C04388}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -15,10 +13,6 @@ Global
 		{FD8FCB86-4B78-4A03-82DF-4776F56EC6D9}.Debug|x86.Build.0 = Debug|x86
 		{FD8FCB86-4B78-4A03-82DF-4776F56EC6D9}.Release|x86.ActiveCfg = Release|x86
 		{FD8FCB86-4B78-4A03-82DF-4776F56EC6D9}.Release|x86.Build.0 = Release|x86
-		{37FA7F40-0F35-402B-89F9-53AC41C04388}.Debug|x86.ActiveCfg = Debug|x86
-		{37FA7F40-0F35-402B-89F9-53AC41C04388}.Debug|x86.Build.0 = Debug|x86
-		{37FA7F40-0F35-402B-89F9-53AC41C04388}.Release|x86.ActiveCfg = Release|x86
-		{37FA7F40-0F35-402B-89F9-53AC41C04388}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

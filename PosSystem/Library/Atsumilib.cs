@@ -429,9 +429,6 @@ namespace PosSystem
             if (printer_name == "PRP-250")
             {
                 if (receipt)return true;
-                //レシート印刷じゃないのに、ぷりんたがPRP-250の場合
-                MessageBox.Show("プリンターがPRP-250になっています。" + Environment.NewLine +
-                    "設定を変更してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -444,8 +441,7 @@ namespace PosSystem
                 }
                 catch
                 {
-                    MessageBox.Show(
-                        "プリンタをPRP-250に設定できませんでした。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
                 }
             }
             return false;

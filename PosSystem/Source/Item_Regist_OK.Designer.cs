@@ -159,7 +159,6 @@
             this.Controls.Add(this.regist_status_text);
             this.Name = "Item_Regist_OK";
             this.Text = "Item_Regist_OK";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Item_Regist_OK_FormClosed);
             this.Load += new System.EventHandler(this.Item_Regist_OK_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

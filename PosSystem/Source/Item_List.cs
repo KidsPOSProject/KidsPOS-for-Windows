@@ -188,7 +188,22 @@ namespace PosSystem
         private void button2_Click(object sender, EventArgs e)
         {
 
-            this.printPreviewDialog1.ShowDialog();
+            for (int index = 0; index < printDocument1.PrinterSettings.PaperSizes.Count; index++)
+            {
+                if (printDocument1.PrinterSettings.PaperSizes[index].PaperName.Contains("A4") == true)
+                {
+                    printDocument1.DefaultPageSettings.PaperSize = printDocument1.PrinterSettings.PaperSizes[index];
+                    break;
+                }
+            }
+
+            PrintDialog pdlg = new PrintDialog();
+            printDocument1.DocumentName = selected_item_barcode;
+            pdlg.Document = printDocument1;
+            if (pdlg.ShowDialog() == DialogResult.OK)
+            {
+                printDocument1.Print();
+            }
         }
 
         private void Item_List_KeyDown(object sender, KeyEventArgs e)

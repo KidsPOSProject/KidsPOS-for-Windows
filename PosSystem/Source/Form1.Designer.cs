@@ -34,15 +34,19 @@
             this.disp_store_name = new System.Windows.Forms.ToolStripStatusLabel();
             this.debug_Test = new System.Windows.Forms.ToolStripStatusLabel();
             this.top_menu = new System.Windows.Forms.MenuStrip();
-            this.Item_Regist = new System.Windows.Forms.ToolStripMenuItem();
-            this.Items_List = new System.Windows.Forms.ToolStripMenuItem();
-            this.Sales_List = new System.Windows.Forms.ToolStripMenuItem();
             this.モード切替ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.practice_mode = new System.Windows.Forms.ToolStripMenuItem();
             this.take_mode = new System.Windows.Forms.ToolStripMenuItem();
-            this.ユーザリストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Item_Regist = new System.Windows.Forms.ToolStripMenuItem();
             this.ユーザ登録ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ダミーデータ登録ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.各種リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.商品リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.商品リストEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.売上リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ユーザリストToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.ダミーデータ挿入ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ユーザーToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.商品ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.システムバーコードToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.印刷ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.確認ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -95,40 +99,17 @@
             // top_menu
             // 
             this.top_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Item_Regist,
-            this.Items_List,
-            this.Sales_List,
             this.モード切替ToolStripMenuItem,
-            this.ユーザリストToolStripMenuItem,
+            this.Item_Regist,
             this.ユーザ登録ToolStripMenuItem,
-            this.ダミーデータ登録ToolStripMenuItem,
+            this.各種リストToolStripMenuItem,
+            this.ダミーデータ挿入ToolStripMenuItem,
             this.システムバーコードToolStripMenuItem});
             this.top_menu.Location = new System.Drawing.Point(0, 0);
             this.top_menu.Name = "top_menu";
             this.top_menu.Size = new System.Drawing.Size(897, 26);
             this.top_menu.TabIndex = 1;
             this.top_menu.Text = "menuStrip1";
-            // 
-            // Item_Regist
-            // 
-            this.Item_Regist.Name = "Item_Regist";
-            this.Item_Regist.Size = new System.Drawing.Size(68, 22);
-            this.Item_Regist.Text = "商品登録";
-            this.Item_Regist.Click += new System.EventHandler(this.Item_Regist_Click);
-            // 
-            // Items_List
-            // 
-            this.Items_List.Name = "Items_List";
-            this.Items_List.Size = new System.Drawing.Size(80, 22);
-            this.Items_List.Text = "商品リスト";
-            this.Items_List.Click += new System.EventHandler(this.Items_List_Click);
-            // 
-            // Sales_List
-            // 
-            this.Sales_List.Name = "Sales_List";
-            this.Sales_List.Size = new System.Drawing.Size(80, 22);
-            this.Sales_List.Text = "売上リスト";
-            this.Sales_List.Click += new System.EventHandler(this.Sales_List_Click);
             // 
             // モード切替ToolStripMenuItem
             // 
@@ -153,12 +134,12 @@
             this.take_mode.Text = "本番モード";
             this.take_mode.Click += new System.EventHandler(this.take_mode_Click);
             // 
-            // ユーザリストToolStripMenuItem
+            // Item_Regist
             // 
-            this.ユーザリストToolStripMenuItem.Name = "ユーザリストToolStripMenuItem";
-            this.ユーザリストToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
-            this.ユーザリストToolStripMenuItem.Text = "ユーザリスト";
-            this.ユーザリストToolStripMenuItem.Click += new System.EventHandler(this.ユーザリストToolStripMenuItem_Click);
+            this.Item_Regist.Name = "Item_Regist";
+            this.Item_Regist.Size = new System.Drawing.Size(68, 22);
+            this.Item_Regist.Text = "商品登録";
+            this.Item_Regist.Click += new System.EventHandler(this.Item_Regist_Click);
             // 
             // ユーザ登録ToolStripMenuItem
             // 
@@ -167,12 +148,67 @@
             this.ユーザ登録ToolStripMenuItem.Text = "ユーザ登録";
             this.ユーザ登録ToolStripMenuItem.Click += new System.EventHandler(this.ユーザ登録ToolStripMenuItem_Click);
             // 
-            // ダミーデータ登録ToolStripMenuItem
+            // 各種リストToolStripMenuItem
             // 
-            this.ダミーデータ登録ToolStripMenuItem.Name = "ダミーデータ登録ToolStripMenuItem";
-            this.ダミーデータ登録ToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.ダミーデータ登録ToolStripMenuItem.Text = "ダミーデータ登録";
-            this.ダミーデータ登録ToolStripMenuItem.Click += new System.EventHandler(this.ダミーデータ登録ToolStripMenuItem_Click);
+            this.各種リストToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.商品リストToolStripMenuItem,
+            this.商品リストEditToolStripMenuItem,
+            this.売上リストToolStripMenuItem,
+            this.ユーザリストToolStripMenuItem1});
+            this.各種リストToolStripMenuItem.Name = "各種リストToolStripMenuItem";
+            this.各種リストToolStripMenuItem.Size = new System.Drawing.Size(68, 22);
+            this.各種リストToolStripMenuItem.Text = "各リスト";
+            // 
+            // 商品リストToolStripMenuItem
+            // 
+            this.商品リストToolStripMenuItem.Name = "商品リストToolStripMenuItem";
+            this.商品リストToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.商品リストToolStripMenuItem.Text = "商品リスト";
+            this.商品リストToolStripMenuItem.Click += new System.EventHandler(this.商品リストToolStripMenuItem_Click);
+            // 
+            // 商品リストEditToolStripMenuItem
+            // 
+            this.商品リストEditToolStripMenuItem.Name = "商品リストEditToolStripMenuItem";
+            this.商品リストEditToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.商品リストEditToolStripMenuItem.Text = "商品リスト(Edit)";
+            this.商品リストEditToolStripMenuItem.Click += new System.EventHandler(this.商品リストEditToolStripMenuItem_Click);
+            // 
+            // 売上リストToolStripMenuItem
+            // 
+            this.売上リストToolStripMenuItem.Name = "売上リストToolStripMenuItem";
+            this.売上リストToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.売上リストToolStripMenuItem.Text = "売上リスト";
+            this.売上リストToolStripMenuItem.Click += new System.EventHandler(this.売上リストToolStripMenuItem_Click);
+            // 
+            // ユーザリストToolStripMenuItem1
+            // 
+            this.ユーザリストToolStripMenuItem1.Name = "ユーザリストToolStripMenuItem1";
+            this.ユーザリストToolStripMenuItem1.Size = new System.Drawing.Size(168, 22);
+            this.ユーザリストToolStripMenuItem1.Text = "ユーザリスト";
+            this.ユーザリストToolStripMenuItem1.Click += new System.EventHandler(this.ユーザリストToolStripMenuItem1_Click);
+            // 
+            // ダミーデータ挿入ToolStripMenuItem
+            // 
+            this.ダミーデータ挿入ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ユーザーToolStripMenuItem,
+            this.商品ToolStripMenuItem});
+            this.ダミーデータ挿入ToolStripMenuItem.Name = "ダミーデータ挿入ToolStripMenuItem";
+            this.ダミーデータ挿入ToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.ダミーデータ挿入ToolStripMenuItem.Text = "ダミーデータ挿入";
+            // 
+            // ユーザーToolStripMenuItem
+            // 
+            this.ユーザーToolStripMenuItem.Name = "ユーザーToolStripMenuItem";
+            this.ユーザーToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ユーザーToolStripMenuItem.Text = "ユーザー";
+            this.ユーザーToolStripMenuItem.Click += new System.EventHandler(this.ユーザーToolStripMenuItem_Click);
+            // 
+            // 商品ToolStripMenuItem
+            // 
+            this.商品ToolStripMenuItem.Name = "商品ToolStripMenuItem";
+            this.商品ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.商品ToolStripMenuItem.Text = "商品";
+            this.商品ToolStripMenuItem.Click += new System.EventHandler(this.商品ToolStripMenuItem_Click);
             // 
             // システムバーコードToolStripMenuItem
             // 
@@ -299,6 +335,7 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label3.Location = new System.Drawing.Point(19, 489);
@@ -309,6 +346,7 @@
             // 
             // reg_user
             // 
+            this.reg_user.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.reg_user.AutoSize = true;
             this.reg_user.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.reg_user.Location = new System.Drawing.Point(302, 489);
@@ -316,7 +354,6 @@
             this.reg_user.Size = new System.Drawing.Size(26, 35);
             this.reg_user.TabIndex = 9;
             this.reg_user.Text = " ";
-            this.reg_user.Click += new System.EventHandler(this.reg_user_Click);
             // 
             // Form1
             // 
@@ -354,8 +391,6 @@
         private System.Windows.Forms.StatusStrip debug_display;
         private System.Windows.Forms.MenuStrip top_menu;
         private System.Windows.Forms.ToolStripMenuItem Item_Regist;
-        private System.Windows.Forms.ToolStripMenuItem Items_List;
-        private System.Windows.Forms.ToolStripMenuItem Sales_List;
         private System.Windows.Forms.ToolStripStatusLabel disp_now_time;
         private System.Windows.Forms.ToolStripStatusLabel disp_store_name;
         private System.Windows.Forms.Timer display_timer;
@@ -371,14 +406,20 @@
         private System.Windows.Forms.ToolStripMenuItem モード切替ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem practice_mode;
         private System.Windows.Forms.ToolStripMenuItem take_mode;
-        private System.Windows.Forms.ToolStripMenuItem ダミーデータ登録ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ユーザ登録ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ユーザリストToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem システムバーコードToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 印刷ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 確認ToolStripMenuItem;
         private System.Windows.Forms.Label label3;
         public System.Windows.Forms.Label reg_user;
+        private System.Windows.Forms.ToolStripMenuItem 各種リストToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 商品リストToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 売上リストToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 商品リストEditToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ユーザリストToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem ダミーデータ挿入ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ユーザーToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
     }
 }
 
