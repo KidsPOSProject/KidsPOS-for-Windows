@@ -1,0 +1,17 @@
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\bin\Debug\PosSystem.exe
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\bin\Debug\PosSystem.pdb
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\bin\Debug\System.Data.SQLite.dll
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\bin\Debug\zxing.dll
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.csprojResolveAssemblyReference.cache
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Account.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Account_change.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Form1.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Item_List.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Item_Regist.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Item_Regist_OK.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Properties.Resources.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Sales.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.Sales_List.resources
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.csproj.GenerateResource.Cache
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.exe
+C:\Users\TELNEKO\Dropbox\Kids\PosSystem_for_KidsBusinessTownIchikawa\PosSystem\obj\x86\Debug\PosSystem.pdb
