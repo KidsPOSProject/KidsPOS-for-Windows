@@ -111,7 +111,7 @@ namespace PosSystem_Client
                     string read_items_name = data[1];
                     string read_items_price = data[2];
 
-                    string[] item1 = { read_items_id, read_items_name, "1", read_items_price, "×" };
+                    string[] item1 = { (int.Parse(read_items_id).ToString("000")), read_items_name, "1", read_items_price, "×" };
                     sales_list.Items.Add(new ListViewItem(item1));
                 }
                 else

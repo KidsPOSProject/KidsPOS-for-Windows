@@ -33,6 +33,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.turn_over = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -91,11 +92,22 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "リバー";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label4.Location = new System.Drawing.Point(376, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(404, 35);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "エンターキーを押すと戻ります";
+            // 
             // Sales_List
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(792, 361);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.turn_over);
             this.Controls.Add(this.label2);
@@ -118,5 +130,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox turn_over;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }

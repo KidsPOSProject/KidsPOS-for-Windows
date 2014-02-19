@@ -13,7 +13,7 @@ namespace PosSystem_Client
         #region 定数
 
         //フォームの名前
-        public string form_name = "POS";
+        public string form_name = "POSシステム 練習用クライアント";
 
         //後々サーバーと通信する
         public static string store_num = "001";
@@ -54,6 +54,7 @@ namespace PosSystem_Client
             this.KeyPreview = !this.KeyPreview;
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
             take_mode.Enabled = false;
+            this.Text = form_name;
 
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -174,7 +175,7 @@ namespace PosSystem_Client
                 scan_goods_name.Text = read_items_name;
                 scan_goods_price.Text = read_items_price;
 
-                string[] item1 = {read_items_id, scan_goods_name.Text, "1", scan_goods_price.Text, "×" };
+                string[] item1 = { (int.Parse(read_items_id).ToString("000")), scan_goods_name.Text, "1", scan_goods_price.Text, "×" };
                 reg_goods_list.Items.Add(new ListViewItem(item1));
 
                 reg_item_price_sum += int.Parse(scan_goods_price.Text);
@@ -414,15 +415,6 @@ namespace PosSystem_Client
                     case BarCode_Prefix.DUMMY_USER:
                         atsumi_pos.regist_user("千葉 商太郎");
                         break;
-                    
-                    //商品リストEditを読み込んだとき
-                    case BarCode_Prefix.ITEM_LIST_EDIT:
-                         
-                        Item_List ile = new Item_List(true);
-                        ile.ShowDialog(this);
-                        ile.Dispose();
-                        
-                        break;
 
                     default:
                         break;
@@ -504,13 +496,6 @@ namespace PosSystem_Client
             Sales_List sl = new Sales_List();
             sl.ShowDialog();
             sl.Dispose();
-        }
-
-        private void 商品リストEditToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Item_List il = new Item_List(true);
-            il.ShowDialog();
-            il.Dispose();
         }
 
         private void ユーザリストToolStripMenuItem1_Click(object sender, EventArgs e)

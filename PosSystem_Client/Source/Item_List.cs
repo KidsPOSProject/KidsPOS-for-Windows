@@ -13,10 +13,9 @@ namespace PosSystem_Client
 {
     public partial class Item_List : Form
     {
-        int selected_item_id = -1;
         string selected_item_barcode = "";
 
-        public Item_List(bool _isEdit = false)
+        public Item_List()
         {
             InitializeComponent();
             InitializeListView(reg_goods_list);
@@ -26,7 +25,6 @@ namespace PosSystem_Client
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
 
-            if (_isEdit) edit_panel.Visible = true;
         }
 
         private void Item_List_Load(object sender, EventArgs e)
@@ -63,7 +61,7 @@ namespace PosSystem_Client
             goods_price.Tag = 2;
             goods_price.TextAlign = HorizontalAlignment.Right;
 
-            ColumnHeader[] colHeaderRegValue = { goods_id, goods_order, goods_item, goods_price };
+            ColumnHeader[] colHeaderRegValue = { goods_id, goods_item,goods_order,  goods_price };
             listview.Columns.AddRange(colHeaderRegValue);
         }
 
@@ -73,7 +71,7 @@ namespace PosSystem_Client
             string[,] st = atsumi_pos.read_item_list(Form1.db_file_item);
             for (int i = 0; i < st.GetLength(0); i++)
             {
-                reg_goods_list.Items.Add(new ListViewItem(new string[] { st[i, 0], st[i, 1], st[i, 2], st[i, 3] }));
+                reg_goods_list.Items.Add(new ListViewItem(new string[] { (int.Parse(st[i, 0])).ToString("000"), st[i, 2], st[i, 1], st[i, 3] }));
             }
         }
 
@@ -110,19 +108,6 @@ namespace PosSystem_Client
 
             //reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
         }
-
-        private void reg_goods_list_MouseClick(object sender, MouseEventArgs e)
-        {
-            selected_item_id = int.Parse(reg_goods_list.SelectedItems[0].SubItems[0].Text);
-            selected_item_barcode = reg_goods_list.SelectedItems[0].SubItems[1].Text;
-            change_item_name.Text = reg_goods_list.SelectedItems[0].SubItems[2].Text;
-            change_item_price.Text = reg_goods_list.SelectedItems[0].SubItems[3].Text;
-            change_item_name.Enabled = true;
-            change_item_price.Enabled = true;
-            button1.Enabled = true;
-            button2.Enabled = true;
-        }
-
         private class ItemTable
         {
             public string id = null;
@@ -166,25 +151,6 @@ namespace PosSystem_Client
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (change_item_name.Text != "" && change_item_price.Text != "")
-            {
-                Update(new ItemTable(selected_item_id.ToString(), change_item_name.Text, change_item_price.Text));
-                InsertListView();
-                change_item_name.Text = "";
-                change_item_price.Text = "";
-                change_item_name.Enabled = false;
-                change_item_price.Enabled = false;
-                button1.Enabled = false;
-                button2.Enabled = false;
-            }
-        }
-
-        private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
-        {
-            print_template.print_temple(selected_item_barcode, change_item_name.Text, e);
-        }
         private void button2_Click(object sender, EventArgs e)
         {
 

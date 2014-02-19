@@ -154,13 +154,6 @@
             this.商品リストToolStripMenuItem.Text = "商品リスト";
             this.商品リストToolStripMenuItem.Click += new System.EventHandler(this.商品リストToolStripMenuItem_Click);
             // 
-            // 商品リストEditToolStripMenuItem
-            // 
-            this.商品リストEditToolStripMenuItem.Name = "商品リストEditToolStripMenuItem";
-            this.商品リストEditToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.商品リストEditToolStripMenuItem.Text = "商品リスト(Edit)";
-            this.商品リストEditToolStripMenuItem.Click += new System.EventHandler(this.商品リストEditToolStripMenuItem_Click);
-            // 
             // 売上リストToolStripMenuItem
             // 
             this.売上リストToolStripMenuItem.Name = "売上リストToolStripMenuItem";

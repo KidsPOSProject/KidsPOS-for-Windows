@@ -30,6 +30,7 @@
         {
             this.label2 = new System.Windows.Forms.Label();
             this.reg_staff_list = new System.Windows.Forms.ListView();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label2
@@ -48,19 +49,30 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.reg_staff_list.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.reg_staff_list.Location = new System.Drawing.Point(12, 11);
+            this.reg_staff_list.Location = new System.Drawing.Point(12, 64);
             this.reg_staff_list.MultiSelect = false;
             this.reg_staff_list.Name = "reg_staff_list";
-            this.reg_staff_list.Size = new System.Drawing.Size(727, 450);
+            this.reg_staff_list.Size = new System.Drawing.Size(727, 397);
             this.reg_staff_list.TabIndex = 10;
             this.reg_staff_list.UseCompatibleStateImageBehavior = false;
             this.reg_staff_list.SelectedIndexChanged += new System.EventHandler(this.reg_staff_list_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label4.Location = new System.Drawing.Point(335, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(404, 35);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "エンターキーを押すと戻ります";
             // 
             // Staff_List
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(751, 473);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.reg_staff_list);
             this.KeyPreview = true;
@@ -77,5 +89,6 @@
 
         private System.Windows.Forms.Label label2;
         public System.Windows.Forms.ListView reg_staff_list;
+        private System.Windows.Forms.Label label4;
     }
 }
