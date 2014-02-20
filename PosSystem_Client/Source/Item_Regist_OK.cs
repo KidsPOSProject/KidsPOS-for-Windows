@@ -35,7 +35,8 @@ namespace PosSystem_Client
 
         private void Item_Regist_OK_Load(object sender, EventArgs e)
         {
-            if (atsumi_pos.Insert(new atsumi_pos.ItemTable(reg_barcode,reg_item_name,reg_item_price.ToString(),Form1.store_num.ToString())))
+            string categ = "";
+            if (atsumi_pos.Insert(new atsumi_pos.ItemTable(reg_barcode,reg_item_name,reg_item_price.ToString(),Form1.store_num.ToString(),"00000")))
             {
                 regist_status_text.Text = "商品の登録に成功しました。";
             }

@@ -16,8 +16,8 @@ namespace PosSystem_Master
         public string form_name = "POSシステム 練習用クライアント";
 
         //後々サーバーと通信する
-        public static string store_num = "001";
-        public static string store_name = "デパート";
+        public static string store_num = "";
+        public static string store_name = "";
         //public static string store_kind = "食品";
 
         //変数

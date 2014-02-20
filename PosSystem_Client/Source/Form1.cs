@@ -18,11 +18,12 @@ namespace PosSystem_Client
         //後々サーバーと通信する
         public static string store_num = "001";
         public static string store_name = "デパート";
-        public static string store_kind = "食品";
+        //public static string store_kind = "食品";
 
         //変数
         public static string db_file_item = "KidsDB-ITEM.db";
         public static string db_file_staff = "KidsDB-STAFF.db";
+        public static string db_file_master = "KidsDB-STORE.db";
         public static string item_sum = "";
         public static string item_list = "";
 
@@ -411,7 +412,7 @@ namespace PosSystem_Client
                         string[] data = read_items(bc.show());
                         if (data[0] == "")
                         {
-                            atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
+                            atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート", "00000"));
                         }
                         break;
 
@@ -520,7 +521,7 @@ namespace PosSystem_Client
             string[] data = read_items(bc.show());
             if (data[0] == "")
             {
-                atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート"));
+                atsumi_pos.Insert(new atsumi_pos.ItemTable(bc.show(), "十文字のダミーデータ", "100", "デパート", "00000"));
             }
         }
         #endregion

@@ -42,15 +42,14 @@ namespace PosSystem_Master
 
         private void Account_change_Load(object sender, EventArgs e)
         {
-            if (print_template.check_default_printer())
-            {
-                System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-                pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+            //レシートの印刷
 
-                PrintDialog pdlg = new PrintDialog();
-                pdlg.Document = pd;
-                pd.Print();
-            }
+            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+            PrintDialog pdlg = new PrintDialog();
+            pdlg.Document = pd;
+            pd.Print();
         }
 
         //売上のテーブル
@@ -113,7 +112,6 @@ namespace PosSystem_Master
 
         private void button1_Click(object sender, EventArgs e)
         {
-            print_template.check_default_printer();
             //ひだり みぎ うえ した
             printDocument1.DefaultPageSettings.Margins = new Margins(0, 300, 0, 0);
             printDocument1.OriginAtMargins = true;

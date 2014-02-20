@@ -26,7 +26,6 @@ namespace PosSystem_Client
         {
             ireg_genre.SelectedIndex = 0;
             ireg_store.Text = Form1.store_name;
-            ireg_kind.Text = Form1.store_kind;
 
             this.ActiveControl = this.ireg_name;
         }
@@ -111,7 +110,7 @@ namespace PosSystem_Client
                     BarCode_Prefix.ITEM,
                     Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_item, "item_list").ToString("D5"));
 
-                if (atsumi_pos.Insert(new atsumi_pos.ItemTable(bar.show(), csv[i].ToString(), csv[i + 2].ToString(), Form1.store_num.ToString())))
+                if (atsumi_pos.Insert(new atsumi_pos.ItemTable(bar.show(), csv[i].ToString(), csv[i + 2].ToString(), Form1.store_num.ToString(),"00000")))
                 {
                     MessageBox.Show("アイテムの登録が出来田っぽい");
                 }

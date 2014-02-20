@@ -8,7 +8,7 @@ using ZXing;
 using Microsoft.VisualBasic.FileIO;
 
 
-namespace PosSystem_Master
+namespace ItemRegister
 {
 
     class BarCode_Prefix
@@ -185,12 +185,13 @@ namespace PosSystem_Master
             }
             return id_count;
         }
+
         public static string[,] read_item_list(string db_file_path)
         {
             int c_num = read_count_num(db_file_path, "item_list");
             string[,] ret = new string[c_num, 4];
-            
-            using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
+
+            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
             {
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
@@ -218,7 +219,7 @@ namespace PosSystem_Master
             int c_num = read_count_num(db_file_path, "sales_list");
             string[,] ret = new string[c_num, 4];
 
-            using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
+            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
             {
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
@@ -314,76 +315,19 @@ namespace PosSystem_Master
             }
             return ret;
         }
-        
-
-        public static string[,] find_user(string db_file_path, string _barcode)
-        {
-            string[,] ret = new string[1, 3];
-
-            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM staff_list WHERE barcode ='" + _barcode + "'";
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        ret[0, 0] = reader.GetInt32(0).ToString();
-                        ret[0, 1] = reader.GetString(1);
-                        ret[0, 2] = reader.GetString(2);
-                    }
-                }
-                conn.Close();
-            }
-            return ret;
-        }
-        
         //データベースにインサート
-        public static bool Insert(ItemTable it)
+        public static bool Insert(string _db_file, string _query)
         {
             try
             {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
+                using (var conn = new SQLiteConnection("Data Source=" + _db_file))
                 {
                     conn.Open();
                     using (SQLiteTransaction sqlt = conn.BeginTransaction())
                     {
                         using (SQLiteCommand command = conn.CreateCommand())
                         {
-                            string query = "insert into item_list (barcode, name, price, shop, genre) values('" + it.barcode + "', '" + it.name + "', '" + it.price + "', '" + it.shop + "', '" + it.genre + "')";
-                            command.CommandText = query;
-                            command.ExecuteNonQuery();
-                        }
-                        sqlt.Commit();
-                    }
-                    conn.Close();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                System_log.ShowDialog(e.ToString());
-                return false;
-            }
-        }
-
-        //データベースにインサート
-        public static bool Insert(StoreNameTable snt)
-        {
-            try
-            {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_master))
-                {
-                    conn.Open();
-                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
-                    {
-                        using (SQLiteCommand command = conn.CreateCommand())
-                        {
-                            string query = "insert into store_kind (name) values('"+ snt.name + "')";
-                            command.CommandText = query;
+                            command.CommandText = _query;
                             command.ExecuteNonQuery();
                         }
                         sqlt.Commit();
@@ -399,11 +343,11 @@ namespace PosSystem_Master
             }
         }
         //データベースにインサート
-        public static bool Insert(ItemGenreTable igt)
+        public static bool Insert(ItemGenreTable igt, string _db_item)
         {
             try
             {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
+                using (var conn = new SQLiteConnection("Data Source=" + _db_item))
                 {
                     conn.Open();
                     using (SQLiteTransaction sqlt = conn.BeginTransaction())
@@ -411,35 +355,6 @@ namespace PosSystem_Master
                         using (SQLiteCommand command = conn.CreateCommand())
                         {
                             string query = "insert into item_genre (name,store) values('" + igt.name + "','" + igt.store + "')";
-                            command.CommandText = query;
-                            command.ExecuteNonQuery();
-                        }
-                        sqlt.Commit();
-                    }
-                    conn.Close();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                System_log.ShowDialog(e.ToString());
-                return false;
-            }
-        }
-        
-        //データベースにインサート
-        public static bool Insert(StaffTable it)
-        {
-            try
-            {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_staff))
-                {
-                    conn.Open();
-                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
-                    {
-                        using (SQLiteCommand command = conn.CreateCommand())
-                        {
-                            string query = "insert into staff_list (barcode, name) values('" + it.barcode + "', '" + it.name + "')";
                             command.CommandText = query;
                             command.ExecuteNonQuery();
                         }
@@ -470,29 +385,6 @@ namespace PosSystem_Master
             int check_digit = 10 - (even * 3 + odd) % 10; if (check_digit == 10) check_digit = 0;
 
             return check_digit.ToString();
-        }
-        public static string regist_user(string _name, string _barcode = "")
-        {
-            string ret = "";
-            try
-            {
-                if (_barcode == "")
-                {
-                    Barcode bc = new Barcode(BarCode_Prefix.STAFF, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_staff, "staff_list").ToString("D5"));
-                    atsumi_pos.Insert(new atsumi_pos.StaffTable(bc.show(), _name));
-                    ret = bc.show();
-                }
-                else
-                {
-                    atsumi_pos.Insert(new atsumi_pos.StaffTable(_barcode, _name));
-                    ret = _barcode;
-                }
-            }
-            catch
-            {
-                ret = "";
-            }
-            return ret;
         }
         public static ArrayList file_load()
         {
@@ -591,221 +483,6 @@ namespace PosSystem_Master
         private static void drawString(Graphics g, Font f, string s, int x, int y)
         {
             g.DrawString(s, f, Brushes.Black, new PointF(x, y));
-        }
-
-        public static void print_receipt(ListView _item_list, string _deposit, PrintPageEventArgs e, string ACCOUNT_CODE)
-        {
-            int margin_min = 3;
-            int margin_max = 70;
-            int align_center = 27;
-            int line_height = 7;
-
-            int draw_height_position = 0;
-
-            Graphics g = e.Graphics;
-            g.PageUnit = GraphicsUnit.Millimeter;
-            Font f = new Font("MS UI Gothic", 10);
-            Font f_big = new Font("MS UI Gothic", 13);
-
-            g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
-
-            draw_height_position += line_height + 22;
-
-            drawString(g, f_big, "<レシート>", align_center, draw_height_position);
-
-            draw_height_position += line_height + 3;
-
-            DateTime dt = DateTime.Now;
-            drawString(g, f, dt.ToString("yyyy年MM月dd日 HH時mm分ss秒"),
-                margin_min,
-                draw_height_position);
-
-            draw_height_position += line_height;
-
-            g.DrawLine(new Pen(Brushes.Black),
-                new Point(margin_min, draw_height_position),
-                new Point(margin_max, draw_height_position));
-
-            draw_height_position += line_height;
-
-            for (int i = 0; i < _item_list.Items.Count; i++)
-            {
-                ListViewItem lvi = _item_list.Items[i];
-                drawString(g, f_big, lvi.SubItems[0].Text + "  " + lvi.SubItems[1].Text, margin_min,draw_height_position);
-                drawString(g, f_big, "\t\t\\" + lvi.SubItems[3].Text, margin_min + 15, draw_height_position);
-                draw_height_position += line_height;
-            }
-            g.DrawLine(new Pen(Brushes.Black),
-                new Point(margin_min, draw_height_position),
-                new Point(margin_max, draw_height_position));
-            draw_height_position += line_height;
-            
-            int sum = 0;
-            foreach (ListViewItem v in _item_list.Items)
-                sum += int.Parse(v.SubItems[3].Text);
-
-            drawString(g, f_big, "ごうけい", margin_min, draw_height_position);
-            drawString(g, f_big, "\t\t\\" + sum.ToString(), margin_min + 15, draw_height_position);
-            draw_height_position += line_height;
-
-            drawString(g, f_big, "おあずかり", margin_min, draw_height_position);
-            drawString(g, f_big, "\t\t\\" + _deposit, margin_min + 15, draw_height_position);
-            draw_height_position += line_height;
-
-            drawString(g, f_big, "おつり", margin_min, draw_height_position);
-            drawString(g, f_big, "\t\t\\" + (int.Parse(_deposit) - sum).ToString(), margin_min + 15, draw_height_position);
-            draw_height_position += line_height;
-            draw_height_position += line_height;
-
-            drawString(g, f_big, "おみせ：　" + Form1.store_name, margin_min, draw_height_position);
-            draw_height_position += line_height;
-
-            drawString(g, f_big, "れじのたんとう：　" + Form1.shop_person, margin_min, draw_height_position);
-            draw_height_position += line_height + 5;
-
-
-            drawString(g, f_big, 
-                "印字保護のためこちらの面を"+Environment.NewLine+
-                "内側に折って保管してください", margin_min + 3, draw_height_position);
-            draw_height_position += line_height;
-            draw_height_position += line_height;
-            
-            BarcodeWriter bw = new BarcodeWriter();
-            bw.Format = BarcodeFormat.EAN_13;
-            Bitmap barcode = bw.Write(ACCOUNT_CODE);
-
-            g.DrawImage(barcode, new Point(align_center - 5, draw_height_position));
-            draw_height_position += line_height + 30;
-
-            g.DrawLine(new Pen(Brushes.Black),
-                new Point(margin_min, draw_height_position),
-                new Point(margin_max, draw_height_position));
-
-            e.HasMorePages = false;
-        }
-
-        public static void print_system_barcode(object sender, System.Drawing.Printing.PrintPageEventArgs e)
-        {
-            int margin_min = 3;
-            int margin_max = 70;
-            int align_center = 27;
-            int line_height = 7;
-            int draw_height_position = 0;
-
-            Graphics g = e.Graphics;
-            g.PageUnit = GraphicsUnit.Millimeter;
-            Font f = new Font("MS UI Gothic", 10);
-            Font f_big = new Font("MS UI Gothic", 13);
-
-            g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
-
-            draw_height_position += line_height + 22;
-
-            drawString(g, f_big, "<システムバーコード>", align_center - 20, draw_height_position);
-
-            draw_height_position += line_height + 3;
-
-            g.DrawLine(new Pen(Brushes.Black),
-                new Point(margin_min, draw_height_position),
-                new Point(margin_max, draw_height_position));
-
-            draw_height_position += line_height + 2;
-
-            int margin_str_barcode = 1;
-            int margin_barcode = 40;
-
-            /* ---  バーコード生成  --- */
-            /* 2つずつ書いています。もうなんか読みづらくてすみませ・・・・、、 */
-
-            hoge("商品登録", BarCode_Prefix.ITEM_REGIST, "商品リスト", BarCode_Prefix.ITEM_LIST, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
-            
-            hoge("売上リスト", BarCode_Prefix.SALE_LIST, "会計", BarCode_Prefix.ACCOUNT, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
-            
-            hoge("スタッフリスト", BarCode_Prefix.STAFF_LIST, "スタッフ登録", BarCode_Prefix.STAFF_REGIST, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
-
-            hoge("ツールバー表示", BarCode_Prefix.SHOW_TOOLBAR, "ツールバー非表示", BarCode_Prefix.HIDE_TOOLBAR, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
-
-            hoge("ダミーアイテム", BarCode_Prefix.DUMMY_ITEM, "ダミーユーザー", BarCode_Prefix.DUMMY_USER, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
-
-            hoge("商品リストEdit", BarCode_Prefix.ITEM_LIST_EDIT, "意味無", BarCode_Prefix.M100, g, f, margin_min, margin_barcode, line_height, margin_str_barcode, ref draw_height_position);
-
-
-            g.DrawLine(new Pen(Brushes.Black),
-                new Point(margin_min, draw_height_position),
-                new Point(margin_max, draw_height_position));
-
-            e.HasMorePages = false;
-        }
-
-        public static void hoge(
-            string fir, string fir_p,
-            string sec, string sec_p,
-            Graphics g, Font f,
-            int margin_min, 
-            int margin_barcode,
-            int line_height,
-            int margin_str_barcode,
-            ref int height)
-        {
-            drawString(g, f, fir, margin_min, height);
-            drawString(g, f, sec, margin_min + margin_barcode, height);
-            height += line_height + margin_str_barcode;
-            create(g, fir_p, margin_min, height);
-            create(g, sec_p, margin_min + margin_barcode, height);
-            height += line_height + 25;
-        }
-
-        public static void create(Graphics g, string _barcode_prefix, int weight, int height)
-        {
-            Barcode bc = new Barcode(_barcode_prefix, "000", "00000");
-            BarcodeWriter bw = new BarcodeWriter();
-            bw.Format = BarcodeFormat.EAN_13;
-            Bitmap barcode = bw.Write(bc.show());
-            g.DrawImage(barcode, new Point(weight, height));
-        }
-        public static void print_user(string _barcode, string _name, PrintPageEventArgs e)
-        {
-            int margin_min = 3;
-            int margin_max = 70;
-            int align_center = 27;
-            int line_height = 7;
-            int draw_height_position = 0;
-            Font f = new Font("MS UI Gothic", 10);
-            Font f_big = new Font("MS UI Gothic", 13);
-            Graphics g = e.Graphics;
-            g.PageUnit = GraphicsUnit.Millimeter;
-            BarcodeWriter bw = new BarcodeWriter();
-            bw.Format = BarcodeFormat.EAN_13;
-            Bitmap barcode = bw.Write(_barcode);
-
-
-            g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
-
-            draw_height_position += line_height + 22;
-
-            drawString(g, f_big, "< " + _name + " さん >", align_center - 20, draw_height_position);
-
-            draw_height_position += line_height + 3;
-
-            g.DrawLine(new Pen(Brushes.Black),
-                new Point(margin_min, draw_height_position),
-                new Point(margin_max, draw_height_position));
-
-            draw_height_position += line_height + 2;
-
-            drawString(g, f, "担当するお店 : " + Form1.store_name, margin_min, draw_height_position);
-
-            draw_height_position += line_height;
-
-            g.DrawImage(barcode, new Point(align_center, draw_height_position));
-            
-
-            g.DrawLine(new Pen(Brushes.Black),
-                new Point(margin_min, draw_height_position + 30 ),
-                new Point(margin_max, draw_height_position + 30)
-                );
-
-            e.HasMorePages = false;
         }
     }
     class System_log{
