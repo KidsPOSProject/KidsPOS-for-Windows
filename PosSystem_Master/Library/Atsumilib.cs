@@ -960,7 +960,6 @@ namespace PosSystem_Master
                         // "create table staff_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, name TEXT)";
                         //list bardode name
 
-                        MessageBox.Show(strGetText);
 
                         string[] rec = strGetText.Split(',');
                         if (rec.Length == 3 && rec[0] == "staff_list")

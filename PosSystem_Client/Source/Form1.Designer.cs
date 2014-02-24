@@ -62,8 +62,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.reg_user = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.接続するToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.工房へ接続するToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.接続先ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
@@ -357,27 +356,18 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.接続するToolStripMenuItem,
-            this.工房へ接続するToolStripMenuItem});
+            this.接続先ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(897, 26);
             this.menuStrip1.TabIndex = 10;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // 接続するToolStripMenuItem
+            // 接続先ToolStripMenuItem
             // 
-            this.接続するToolStripMenuItem.Name = "接続するToolStripMenuItem";
-            this.接続するToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
-            this.接続するToolStripMenuItem.Text = "デパートへ接続する";
-            this.接続するToolStripMenuItem.Click += new System.EventHandler(this.接続するToolStripMenuItem_Click);
-            // 
-            // 工房へ接続するToolStripMenuItem
-            // 
-            this.工房へ接続するToolStripMenuItem.Name = "工房へ接続するToolStripMenuItem";
-            this.工房へ接続するToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
-            this.工房へ接続するToolStripMenuItem.Text = "工房へ接続する";
-            this.工房へ接続するToolStripMenuItem.Click += new System.EventHandler(this.工房へ接続するToolStripMenuItem_Click);
+            this.接続先ToolStripMenuItem.Name = "接続先ToolStripMenuItem";
+            this.接続先ToolStripMenuItem.Size = new System.Drawing.Size(72, 22);
+            this.接続先ToolStripMenuItem.Text = "接続先 ▼";
             // 
             // Form1
             // 
@@ -448,8 +438,7 @@
         private System.Windows.Forms.ToolStripMenuItem ユーザーToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem 接続するToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 工房へ接続するToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 接続先ToolStripMenuItem;
     }
 }
 

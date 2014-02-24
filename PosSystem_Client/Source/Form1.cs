@@ -18,7 +18,6 @@ namespace PosSystem_Client
         //後々サーバーと通信する
         public static string store_num = "001";
         public static string store_name = "デパート";
-        //public static string store_kind = "食品";
 
         //変数
         public static string db_file_item = "KidsDB-ITEM.db";
@@ -95,7 +94,12 @@ namespace PosSystem_Client
             {
                 for (int i = 2; i < al.Count; i+=2)
                 {
+                    接続先ToolStripMenuItem.DropDownItems.Add(al[i].ToString());
                     ip_list.Add(al[i], al[i + 1]);
+                }
+                for (int i = 0; i < 接続先ToolStripMenuItem.DropDownItems.Count; i++)
+                {
+                    接続先ToolStripMenuItem.DropDownItems[i].Click += new System.EventHandler(this.接続する);
                 }
             }
             catch
@@ -547,33 +551,26 @@ namespace PosSystem_Client
             }
         }
         #endregion
-
-        private void 接続するToolStripMenuItem_Click(object sender, EventArgs e)
+        private void 接続する(object sender, EventArgs e)
         {
-            Connect _cn = new Connect(false, ip_list["デパート"].ToString());
-            if (!_cn.StartSock()) MessageBox.Show("接続に失敗しました");
-            else
+            if (sender.GetType() == this.接続先ToolStripMenuItem.GetType())
             {
-                this.Text += "デパートへ接続中";
-                接続するToolStripMenuItem.Enabled = false;
-                工房へ接続するToolStripMenuItem.Enabled = false;
-                cn = _cn;
+                ToolStripItem tsi = (ToolStripItem)sender;
+
+                Connect _cn = new Connect(false, ip_list[tsi.Text].ToString());
+                if (!_cn.StartSock()) MessageBox.Show("接続に失敗しました");
+                else
+                {
+                    this.Text += tsi.Text + " へ接続中";
+                    for (int i = 0; i < 接続先ToolStripMenuItem.DropDownItems.Count; i++)
+                    {
+                        接続先ToolStripMenuItem.DropDownItems[i].Enabled = false;
+                    }
+                    cn = _cn;
+                }
+
             }
         }
-
-        private void 工房へ接続するToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Connect _cn = new Connect(false, ip_list["工房"].ToString());
-            if (!_cn.StartSock()) MessageBox.Show("接続に失敗しました");
-            else
-            {
-                this.Text += "工房へ接続中";
-                接続するToolStripMenuItem.Enabled = false;
-                工房へ接続するToolStripMenuItem.Enabled = false;
-                cn = _cn;
-            }
-        }
-
 
     }
 }

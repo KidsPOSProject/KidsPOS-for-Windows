@@ -1030,7 +1030,6 @@ namespace PosSystem_Client
         {
             try
             {
-                client.ReceiveTimeout = 2000;
                 client = new TcpClient(ip_address, port_num);
                 threadClient = new Thread(new ThreadStart(this.ClientListen));
                 threadClient.Start();
