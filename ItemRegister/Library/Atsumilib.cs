@@ -107,6 +107,7 @@ namespace ItemRegister
     class atsumi_pos
     {
 
+
         //商品のテーブル
         public class ItemTable
         {

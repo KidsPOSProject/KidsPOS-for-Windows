@@ -89,7 +89,7 @@ namespace PosSystem_Master
             }
             atsumi_pos.Insert(new atsumi_pos.StoreNameTable(csv[store_position + 1].ToString()));
             Form1.store_name = csv[store_position + 1].ToString();
-            string[,] str = atsumi_pos.find_store(Form1.db_file_master, Form1.store_name);
+            string[,] str = atsumi_pos.find_store(Form1.db_file_item, Form1.store_name);
             string store_num = int.Parse(str[0, 0]).ToString("000");
             Form1.store_num = store_num;
 

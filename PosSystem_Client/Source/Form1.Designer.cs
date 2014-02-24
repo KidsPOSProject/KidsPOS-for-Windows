@@ -61,9 +61,13 @@
             this.reg_clear = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.reg_user = new System.Windows.Forms.Label();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.接続するToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.工房へ接続するToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // debug_display
@@ -120,7 +124,16 @@
             this.モード切替ToolStripMenuItem.Name = "モード切替ToolStripMenuItem";
             this.モード切替ToolStripMenuItem.Size = new System.Drawing.Size(80, 22);
             this.モード切替ToolStripMenuItem.Text = "モード切替";
-
+            // 
+            // practice_mode
+            // 
+            this.practice_mode.Name = "practice_mode";
+            this.practice_mode.Size = new System.Drawing.Size(68, 22);
+            // 
+            // take_mode
+            // 
+            this.take_mode.Name = "take_mode";
+            this.take_mode.Size = new System.Drawing.Size(68, 22);
             // 
             // Item_Regist
             // 
@@ -150,21 +163,26 @@
             // 商品リストToolStripMenuItem
             // 
             this.商品リストToolStripMenuItem.Name = "商品リストToolStripMenuItem";
-            this.商品リストToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.商品リストToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.商品リストToolStripMenuItem.Text = "商品リスト";
             this.商品リストToolStripMenuItem.Click += new System.EventHandler(this.商品リストToolStripMenuItem_Click);
+            // 
+            // 商品リストEditToolStripMenuItem
+            // 
+            this.商品リストEditToolStripMenuItem.Name = "商品リストEditToolStripMenuItem";
+            this.商品リストEditToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             // 
             // 売上リストToolStripMenuItem
             // 
             this.売上リストToolStripMenuItem.Name = "売上リストToolStripMenuItem";
-            this.売上リストToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.売上リストToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.売上リストToolStripMenuItem.Text = "売上リスト";
             this.売上リストToolStripMenuItem.Click += new System.EventHandler(this.売上リストToolStripMenuItem_Click);
             // 
             // ユーザリストToolStripMenuItem1
             // 
             this.ユーザリストToolStripMenuItem1.Name = "ユーザリストToolStripMenuItem1";
-            this.ユーザリストToolStripMenuItem1.Size = new System.Drawing.Size(168, 22);
+            this.ユーザリストToolStripMenuItem1.Size = new System.Drawing.Size(148, 22);
             this.ユーザリストToolStripMenuItem1.Text = "ユーザリスト";
             this.ユーザリストToolStripMenuItem1.Click += new System.EventHandler(this.ユーザリストToolStripMenuItem1_Click);
             // 
@@ -336,6 +354,31 @@
             this.reg_user.TabIndex = 9;
             this.reg_user.Text = " ";
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.接続するToolStripMenuItem,
+            this.工房へ接続するToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(897, 26);
+            this.menuStrip1.TabIndex = 10;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // 接続するToolStripMenuItem
+            // 
+            this.接続するToolStripMenuItem.Name = "接続するToolStripMenuItem";
+            this.接続するToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.接続するToolStripMenuItem.Text = "デパートへ接続する";
+            this.接続するToolStripMenuItem.Click += new System.EventHandler(this.接続するToolStripMenuItem_Click);
+            // 
+            // 工房へ接続するToolStripMenuItem
+            // 
+            this.工房へ接続するToolStripMenuItem.Name = "工房へ接続するToolStripMenuItem";
+            this.工房へ接続するToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+            this.工房へ接続するToolStripMenuItem.Text = "工房へ接続する";
+            this.工房へ接続するToolStripMenuItem.Click += new System.EventHandler(this.工房へ接続するToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -350,6 +393,7 @@
             this.Controls.Add(this.disp_scan_goods);
             this.Controls.Add(this.reg_goods_sum);
             this.Controls.Add(this.reg_goods_list);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.top_menu);
             this.MainMenuStrip = this.top_menu;
             this.Name = "Form1";
@@ -362,6 +406,8 @@
             this.top_menu.PerformLayout();
             this.disp_scan_goods.ResumeLayout(false);
             this.disp_scan_goods.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -401,6 +447,9 @@
         private System.Windows.Forms.ToolStripMenuItem ダミーデータ挿入ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ユーザーToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem 接続するToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 工房へ接続するToolStripMenuItem;
     }
 }
 

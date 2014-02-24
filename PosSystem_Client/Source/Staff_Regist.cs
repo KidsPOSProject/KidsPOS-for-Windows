@@ -12,13 +12,15 @@ namespace PosSystem_Client
     public partial class Staff_Regist : Form
     {
         string isBarcode = "";
-        public Staff_Regist(string _isBarcode = "")
+        Connect cn;
+        public Staff_Regist(Connect _cn,string _isBarcode = "")
         {
             InitializeComponent();
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             isBarcode = _isBarcode;
+            cn = _cn;
         }
 
         private void Staff_Regist_Load(object sender, EventArgs e)
@@ -40,8 +42,8 @@ namespace PosSystem_Client
                 {
                     string res = "";
 
-                    if (isBarcode != "") res = atsumi_pos.regist_user(textBox1.Text, textBox2.Text);
-                    else res = atsumi_pos.regist_user(textBox1.Text);
+                    if (isBarcode != "") res = atsumi_pos.regist_user(cn, textBox1.Text, textBox2.Text);
+                    else res = atsumi_pos.regist_user(cn, textBox1.Text, "");
                     
                     if (res != "")
                     {

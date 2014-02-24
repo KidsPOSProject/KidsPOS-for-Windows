@@ -23,12 +23,12 @@ namespace PosSystem_Master
         //変数
         public static string db_file_item = "KidsDB-ITEM.db";
         public static string db_file_staff = "KidsDB-STAFF.db";
-        public static string db_file_master = "KidsDB-STORE.db";
         public static string item_sum = "";
         public static string item_list = "";
 
         public static string shop_person = "";
 
+        Connect cn;
 
         #endregion
         #region HashTableなど
@@ -64,6 +64,8 @@ namespace PosSystem_Master
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+            cn = new Connect(true);
+            if (!cn.StartSock()) MessageBox.Show("サーバー立ち上げに失敗しました。");
             CreateTable();
             disp_store_name.Text = Form1.store_name;
         }
@@ -149,6 +151,10 @@ namespace PosSystem_Master
                         //売上リスト
                         command.CommandText = "create table sales_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, buycode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT)";
                         command.ExecuteNonQuery();
+
+                        //商品リスト 現在、お店の名前は完全ユニークだと考えています。
+                        command.CommandText = "create table store_kind(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
+                        command.ExecuteNonQuery();
                     }
                     conn.Close();
                 }
@@ -167,30 +173,13 @@ namespace PosSystem_Master
                     conn.Close();
                 }
             }
-            if (!File.Exists(db_file_master))
-            {
-                using (var conn = new SQLiteConnection("Data Source=" + db_file_master))
-                {
-                    conn.Open();
-                    using (SQLiteCommand command = conn.CreateCommand())
-                    {
-                        //商品リスト 現在、お店の名前は完全ユニークだと考えています。
-                        command.CommandText = "create table store_kind(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
-                        command.ExecuteNonQuery();
-                    }
-                    conn.Close();
-                }
-                Item_Regist ir = new Item_Regist();
-                ir.ShowDialog();
-                ir.Dispose();
-            }
 
         }
         #endregion
 
         public void empty_item_database()
         {
-            atsumi_pos.read_count_num(db_file_master, "store_kind");
+            atsumi_pos.read_count_num(db_file_item, "store_kind");
         }
 
         //スキャンしたときの処理
@@ -527,6 +516,11 @@ namespace PosSystem_Master
             }
         }
         #endregion
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            cn.StopSock();
+        }
 
 
     }

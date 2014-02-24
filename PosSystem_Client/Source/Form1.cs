@@ -23,18 +23,19 @@ namespace PosSystem_Client
         //変数
         public static string db_file_item = "KidsDB-ITEM.db";
         public static string db_file_staff = "KidsDB-STAFF.db";
-        public static string db_file_master = "KidsDB-STORE.db";
         public static string item_sum = "";
         public static string item_list = "";
 
         public static string shop_person = "";
 
+        Connect cn;
 
         #endregion
         #region HashTableなど
 
         Hashtable day_of_week = new Hashtable();
         public static Hashtable genre = new Hashtable();
+        public static Hashtable ip_list = new Hashtable();
 
         //バーコード関係の変数
 
@@ -68,7 +69,8 @@ namespace PosSystem_Client
         }
 
         #region Initialize
-        public void InitializeValues(){
+        public void InitializeValues()
+        {
             #region HashTable day_or_week
             day_of_week.Add(DayOfWeek.Sunday, "日");
             day_of_week.Add(DayOfWeek.Monday, "月");
@@ -81,6 +83,26 @@ namespace PosSystem_Client
 
             genre.Add("食品", 01);
             genre.Add("汎用", 02);
+
+
+            ArrayList al = atsumi_pos.loadSettings();
+            if (1 > al.Count)
+            {
+                MessageBox.Show("設定ファイルが見つかりませんでした。ソフトウェアを終了いたします。");
+                this.Close();
+            }
+            try
+            {
+                for (int i = 2; i < al.Count; i+=2)
+                {
+                    ip_list.Add(al[i], al[i + 1]);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("正しくIPアドレスが読み込まれませんでした。");
+                this.Close();
+            }
 
         }
         public static void InitializeListView(ListView listview)
@@ -327,7 +349,7 @@ namespace PosSystem_Client
                         }
                         else
                         {
-                            Staff_Regist unreg_str = new Staff_Regist(temp_barcode);
+                            Staff_Regist unreg_str = new Staff_Regist(cn,temp_barcode);
                             unreg_str.ShowDialog(this);
                             unreg_str.Dispose();
                         }
@@ -390,7 +412,7 @@ namespace PosSystem_Client
                     //スタッフ登録を読み込んだ時
                     case BarCode_Prefix.STAFF_REGIST:
                         
-                        Staff_Regist str = new Staff_Regist();
+                        Staff_Regist str = new Staff_Regist(cn);
                         str.ShowDialog(this);
                         str.Dispose();
                         
@@ -418,7 +440,7 @@ namespace PosSystem_Client
 
                     //ダミーユーザーを読み込んだ時
                     case BarCode_Prefix.DUMMY_USER:
-                        atsumi_pos.regist_user("千葉 商太郎");
+                        atsumi_pos.regist_user(cn, "千葉 商太郎");
                         break;
 
                     default:
@@ -479,7 +501,7 @@ namespace PosSystem_Client
         }
         private void ユーザ登録ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Staff_Regist sr = new Staff_Regist();
+            Staff_Regist sr = new Staff_Regist(cn);
             sr.ShowDialog();
             sr.Dispose();
         }
@@ -512,7 +534,7 @@ namespace PosSystem_Client
 
         private void ユーザーToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            atsumi_pos.regist_user("千葉 商太郎");
+            atsumi_pos.regist_user(cn, "千葉 商太郎");
         }
 
         private void 商品ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -525,6 +547,32 @@ namespace PosSystem_Client
             }
         }
         #endregion
+
+        private void 接続するToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Connect _cn = new Connect(false, ip_list["デパート"].ToString());
+            if (!_cn.StartSock()) MessageBox.Show("接続に失敗しました");
+            else
+            {
+                this.Text += "デパートへ接続中";
+                接続するToolStripMenuItem.Enabled = false;
+                工房へ接続するToolStripMenuItem.Enabled = false;
+                cn = _cn;
+            }
+        }
+
+        private void 工房へ接続するToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Connect _cn = new Connect(false, ip_list["工房"].ToString());
+            if (!_cn.StartSock()) MessageBox.Show("接続に失敗しました");
+            else
+            {
+                this.Text += "工房へ接続中";
+                接続するToolStripMenuItem.Enabled = false;
+                工房へ接続するToolStripMenuItem.Enabled = false;
+                cn = _cn;
+            }
+        }
 
 
     }

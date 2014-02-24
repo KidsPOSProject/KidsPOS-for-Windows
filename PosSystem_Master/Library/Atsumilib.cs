@@ -6,6 +6,10 @@ using System.Drawing;
 using System.Drawing.Printing;
 using ZXing;
 using Microsoft.VisualBasic.FileIO;
+using System.Text;
+using System.Net.Sockets;
+using System.Threading;
+using System.Net;
 
 
 namespace PosSystem_Master
@@ -375,7 +379,7 @@ namespace PosSystem_Master
         {
             try
             {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_master))
+                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
                 {
                     conn.Open();
                     using (SQLiteTransaction sqlt = conn.BeginTransaction())
@@ -550,6 +554,50 @@ namespace PosSystem_Master
     }
     class print_template
     {
+        /// <summary>
+        /// デフォルトのプリンタをチェックします。
+        /// </summary>
+        /// <param name="receipt">レシート印刷が目的かどうか</param>
+        public static bool check_default_printer(bool receipt = true)
+        {
+            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+            string printer_name = pd.PrinterSettings.PrinterName;
+            if (printer_name == "PRP-250")
+            {
+                if (receipt)return true;
+            }
+            else
+            {
+                if (!receipt) return true;
+                //レシート印刷なのに、ぷりんたがPRP-250じゃない場合
+                try
+                {
+                    SetDefaultPrinter("PRP-250");
+                    if (check_default_printer()) return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 「通常使うプリンタ」に設定する
+        /// </summary>
+        /// <param name="printerName">プリンタ名</param>
+        public static void SetDefaultPrinter(string printerName)
+        {
+            //WshNetworkオブジェクトを作成する
+            Type t = Type.GetTypeFromProgID("WScript.Network");
+            object wshNetwork = Activator.CreateInstance(t);
+            //SetDefaultPrinterメソッドを呼び出す
+            t.InvokeMember("SetDefaultPrinter",
+                System.Reflection.BindingFlags.InvokeMethod,
+                null, wshNetwork, new object[] { printerName });
+        }
+
         public static void print_temple(string _barcode, string item_name, PrintPageEventArgs e)
         {
             //TODO Apache fop とか使えたらいいかも・・・
@@ -812,6 +860,259 @@ namespace PosSystem_Master
         public static void ShowDialog(string msg)
         {
             MessageBox.Show(msg, "例外発生", MessageBoxButtons.OK, MessageBoxIcon.Question);
+        }
+    }
+
+    class Connect
+    {
+        bool isServert;
+        int port_num = 10800;
+        string ip_address;
+        public Connect(bool _server = false, string _ip_address = "")
+        {
+            this.isServert = _server;
+            this.ip_address = _ip_address;
+            if (_server)
+            {
+                ServerStart();
+            }
+            else
+            {
+                ClientStart();
+            }
+        }
+        Encoding ecUni = Encoding.GetEncoding("utf-16");
+        Encoding ecSjis = Encoding.GetEncoding("shift-jis");
+
+        TcpClient server = null;
+        TcpListener listener = null;
+        Thread threadServer = null;
+
+        TcpClient client = null;
+        Thread threadClient = null;
+        delegate void dlgMydelegate();
+
+        //ソケット通信開始
+        public bool StartSock()
+        {
+            bool openflg = false;
+            //チェックボックスを見て sub
+            //サーバー又はクライアントスタート
+            if (isServert)
+            {
+                openflg = ServerStart();
+            }
+            else
+            {
+                openflg = ClientStart();
+            }
+            return openflg;
+        }
+        private bool ServerStart()
+        {
+            try
+            {
+                if (listener == null)
+                    listener = new TcpListener(IPAddress.Any, port_num);
+
+                listener.Start();
+
+                threadServer = new Thread(new ThreadStart(ServerListen));
+                threadServer.Start();
+                return (true);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                listener.Stop();
+                return (false);
+            }
+        }
+        private void ServerListen()
+        {
+            server = listener.AcceptTcpClient();
+            
+            NetworkStream stream = server.GetStream();
+
+            Byte[] bytes = new Byte[1000];
+
+            while (true)
+            {
+                try
+                {
+                    int intCount = stream.Read(bytes, 0, bytes.Length);
+
+                    if (intCount != 0)
+                    {
+                        Byte[] getByte = new byte[intCount];
+                        for (int i = 0; i < intCount; i++)
+                            getByte[i] = bytes[i];
+
+                        byte[] uniBytes;
+                        uniBytes = Encoding.Convert(ecSjis, ecUni, getByte);
+
+                        string strGetText = ecUni.GetString(uniBytes);
+
+                        //if (strGetText.StartsWith("ins")) InsertTable();
+
+                        //TODO strGetText に文字列が入っているので処理
+                        // "create table staff_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, name TEXT)";
+                        //list bardode name
+
+                        MessageBox.Show(strGetText);
+
+                        string[] rec = strGetText.Split(',');
+                        if (rec.Length == 3 && rec[0] == "staff_list")
+                        {
+                            atsumi_pos.Insert(new atsumi_pos.StaffTable(rec[1],rec[2]));
+                        }
+
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                }
+                catch (System.Threading.ThreadAbortException)
+                {
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    return;
+                }
+            }
+        }
+
+        //***********************************************************
+        //セカンドスレッドの作成とクライアントのスタート
+        //***********************************************************    
+        private bool ClientStart()
+        {
+            try
+            {
+                client = new TcpClient(ip_address, port_num);
+                threadClient = new Thread(new ThreadStart(this.ClientListen));
+                threadClient.Start();
+
+                return (true);
+            }
+            catch (Exception ex)
+            {
+                return (false);
+            }
+        }
+        //***********************************************************
+        //別スレッドで実行されるクライアント側の処理
+        //ここの処理はServerと同じなのでそちらを参照のこと
+        //***********************************************************
+        private void ClientListen()
+        {
+            NetworkStream stream = client.GetStream();
+            Byte[] bytes = new Byte[100];
+            while (true)
+            {
+                try
+                {
+                    int intCount = stream.Read(bytes, 0, bytes.Length);
+                    if (intCount != 0)
+                    {
+                        Byte[] getByte = new byte[intCount];
+                        for (int i = 0; i < intCount; i++)
+                            getByte[i] = bytes[i];
+
+                        byte[] uniBytes;
+                        uniBytes = Encoding.Convert(ecSjis, ecUni, bytes);
+                        string strGetText = ecUni.GetString(uniBytes);
+                        strGetText = strGetText.Substring(0, strGetText.IndexOf((char)0));
+
+                        //TODO strGetText サーバーから受信した
+
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                catch (System.Threading.ThreadAbortException)
+                {
+                    //何もしません;
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+        //サーバーのクローズ
+        private void CloseServer()
+        {
+            //サーバーのインスタンスが有って、接続されていたら
+            if (server != null && server.Connected)
+                server.Close();
+
+            //スレッドは必ず終了させること
+            if (threadServer != null)
+                threadServer.Abort();
+        }
+
+        public void StopSock()
+        {
+            //チェックボックスを見て
+            //サーバー又はクライアントストップ
+            if (isServert)
+                CloseServer();
+            else
+                CloseClient();
+        }
+        //クライアントのクローズ
+        private void CloseClient()
+        {
+            //クライアントのインスタンスが有って、接続されていたら
+            if (client != null && client.Connected)
+                client.Close();
+
+            //スレッドは必ず終了させること
+            if (threadClient != null)
+                threadClient.Abort();
+        }
+        //***********************************************************
+        //別スレッドから抜けて、メインスレッドからStop　Startを実行
+        //***********************************************************
+        //文字データーの送信
+        public void SendStringData(string _send_text)
+        {
+            //sift-jisに変換して送る
+            Byte[] data = ecSjis.GetBytes(_send_text);
+            //送信streamを作成
+            NetworkStream stream = null;
+            try
+            {
+                //サーバーとクライアントを分けて送信
+                if (isServert)
+                    stream = client.GetStream();
+                else
+                    stream = server.GetStream();
+
+                //Streamを使って送信
+                stream.Write(data, 0, data.Length);
+            }
+            catch
+            {
+                MessageBox.Show("送信できませんでした。", "送信エラー");
+            }
+        }
+        //***********************************************************
+        //別スレッドから抜けて、メインスレッドからStop　Startを実行
+        //***********************************************************
+        private void RestartServer()
+        {
+            StopSock();
+            //サーバーを再スタートします
+            StartSock();
         }
     }
 }
