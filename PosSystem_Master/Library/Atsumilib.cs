@@ -17,7 +17,7 @@ namespace PosSystem_Master
 
     class BarCode_Prefix
     {
-        public const int BARCODE_NUM = 14;
+        public const int BARCODE_NUM = 13;
 
         public const string PREFIX = "49";
 
@@ -65,6 +65,9 @@ namespace PosSystem_Master
         private string item_num = "";
         private string barcode = "";
 
+        // クライアントから送られてきたときの対応
+        private string receive = "";
+
         Barcode(string _prefix)
         {
             this.prefix = _prefix;
@@ -90,7 +93,7 @@ namespace PosSystem_Master
             {
                 string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
                 temp += atsumi_pos.create_check_digit(temp);
-                if (temp.Length == BarCode_Prefix.BARCODE_NUM -1)
+                if (temp.Length == BarCode_Prefix.BARCODE_NUM)
                 {
                     this.barcode = temp;
                     this.isCreated = true;
@@ -953,18 +956,48 @@ namespace PosSystem_Master
                         uniBytes = Encoding.Convert(ecSjis, ecUni, getByte);
 
                         string strGetText = ecUni.GetString(uniBytes);
-
-                        //if (strGetText.StartsWith("ins")) InsertTable();
-
-                        //TODO strGetText に文字列が入っているので処理
-                        // "create table staff_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, name TEXT)";
-                        //list bardode name
-
-
+                        
                         string[] rec = strGetText.Split(',');
-                        if (rec.Length == 3 && rec[0] == "staff_list")
+                        if (rec.Length == 4 && rec[0] == "staff_list")
                         {
-                            atsumi_pos.Insert(new atsumi_pos.StaffTable(rec[1],rec[2]));
+                            string barcode = "";
+                            string name = "";
+                            //if (cn.isConnected) cn.SendStringData("staff_list," + Form1.store_num + "," + _name + "," + _barcode);
+                            try
+                            {
+                                Barcode bc = new Barcode(
+                                    BarCode_Prefix.STAFF,
+                                    rec[1],
+                                    atsumi_pos.read_count_num(Form1.db_file_staff, "staff_list").ToString("D5")
+                                    );
+                                Byte[] data = ecSjis.GetBytes("receive,barcode," + bc.show()+","+rec[2]);
+
+                                if (rec[3] == "")
+                                {
+                                    NetworkStream ns = new NetworkStream(server.Client);
+                                    ns.Write(data, 0, data.Length);
+
+                                    barcode = bc.show();
+                                }
+                                else
+                                {
+                                    barcode = rec[3];
+                                }
+                                name = rec[2];
+                            }
+                            catch (Exception e)
+                            {
+                                e.ToString();
+                            }
+                            finally
+                            {
+                                atsumi_pos.Insert(new atsumi_pos.StaffTable(barcode,name));
+                            }
+                            //atsumi_pos.Insert(new atsumi_pos.StaffTable(rec[1],rec[2]));
+                        }
+                        else
+                        {
+                            MessageBox.Show("");
                         }
 
                     }
@@ -984,7 +1017,10 @@ namespace PosSystem_Master
                 }
             }
         }
+        public void callback_func()
+        {
 
+        }
         //***********************************************************
         //セカンドスレッドの作成とクライアントのスタート
         //***********************************************************    

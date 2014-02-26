@@ -40,11 +40,9 @@ namespace PosSystem_Client
                 DialogResult result = MessageBox.Show("このなまえでとうろくしますか？"+Environment.NewLine+textBox1.Text, "かくにん", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    string res = "";
-
-                    if (isBarcode != "") res = atsumi_pos.regist_user(cn, textBox1.Text, textBox2.Text);
-                    else res = atsumi_pos.regist_user(cn, textBox1.Text, "");
-                    
+                    if (isBarcode != "") atsumi_pos.regist_user(cn, textBox1.Text, textBox2.Text);
+                    else atsumi_pos.regist_user(cn, textBox1.Text, "");
+                    /*
                     if (res != "")
                     {
                         isBarcode = res;
@@ -61,6 +59,7 @@ namespace PosSystem_Client
                     }else{
                         MessageBox.Show("なんらかの原因で登録できませんでした。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
+                    */
                     this.Close();
                 }
             }

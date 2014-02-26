@@ -86,7 +86,7 @@ namespace ItemRegister
             {
                 string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
                 temp += atsumi_pos.create_check_digit(temp);
-                if (temp.Length == BarCode_Prefix.BARCODE_NUM -1)
+                if (temp.Length == BarCode_Prefix.BARCODE_NUM)
                 {
                     this.barcode = temp;
                     this.isCreated = true;

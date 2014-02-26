@@ -17,7 +17,7 @@ namespace PosSystem_Client
 
     class BarCode_Prefix
     {
-        public const int BARCODE_NUM = 14;
+        public const int BARCODE_NUM = 13;
 
         public const string PREFIX = "49";
 
@@ -90,7 +90,7 @@ namespace PosSystem_Client
             {
                 string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
                 temp += atsumi_pos.create_check_digit(temp);
-                if (temp.Length == BarCode_Prefix.BARCODE_NUM -1)
+                if (temp.Length == BarCode_Prefix.BARCODE_NUM)
                 {
                     this.barcode = temp;
                     this.isCreated = true;
@@ -508,31 +508,9 @@ namespace PosSystem_Client
 
             return check_digit.ToString();
         }
-        public static string regist_user(Connect cn,string _name, string _barcode = "")
+        public static void regist_user(Connect cn,string _name, string _barcode = "")
         {
-            string ret = "";
-            try
-            {
-                if (_barcode == "")
-                {
-                    Barcode bc = new Barcode(BarCode_Prefix.STAFF, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_staff, "staff_list").ToString("D5"));
-                    ret = bc.show();
-                }
-                else
-                {
-                    ret = _barcode;
-                }
-            }
-            catch
-            {
-                ret = "";
-            }
-            finally
-            {
-                atsumi_pos.Insert(new atsumi_pos.StaffTable(ret, _name));
-                if(cn.isConnected) cn.SendStringData("staff_list,"+ret+","+_name);
-            }
-            return ret;
+            if(cn.isConnected) cn.SendStringData("staff_list,"+Form1.store_num+","+_name+","+_barcode);
         }
         public static ArrayList file_load()
         {
@@ -1036,7 +1014,7 @@ namespace PosSystem_Client
 
                 return (true);
             }
-            catch (Exception ex)
+            catch
             {
                 return (false);
             }
@@ -1045,6 +1023,9 @@ namespace PosSystem_Client
         //別スレッドで実行されるクライアント側の処理
         //ここの処理はServerと同じなのでそちらを参照のこと
         //***********************************************************
+
+        string barcode = "";
+        string name = "";
         public void ClientListen()
         {
             NetworkStream stream = client.GetStream();
@@ -1065,8 +1046,31 @@ namespace PosSystem_Client
                         string strGetText = ecUni.GetString(uniBytes);
                         strGetText = strGetText.Substring(0, strGetText.IndexOf((char)0));
 
-                        //TODO strGetText サーバーから受信した
+                        MessageBox.Show(strGetText);
 
+                        string[] rec = strGetText.Split(',');
+                        if (rec[0] == "receive")
+                        {
+                            if (rec[1] == "barcode")
+                            {
+                                MessageBox.Show("バーコードが発行されました"+Environment.NewLine+rec[2]);
+                                atsumi_pos.Insert(new atsumi_pos.StaffTable(rec[2],rec[3]));
+                                this.barcode = rec[2];
+                                this.name = rec[3];
+                                print_template.check_default_printer(true);
+
+                                System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+                                pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+                                PrintDialog pdlg = new PrintDialog();
+                                pdlg.Document = pd;
+                                pd.Print();
+
+                            }
+                        }
+
+
+                        
                     }
                     else
                     {
@@ -1083,6 +1087,11 @@ namespace PosSystem_Client
                     return;
                 }
             }
+        }
+
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            print_template.print_user(this.barcode, this.name , e);
         }
         //サーバーのクローズ
         public void CloseServer()

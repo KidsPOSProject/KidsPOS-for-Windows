@@ -454,7 +454,7 @@ namespace PosSystem_Master
         public string comb_input_barcode()
         {
             string ret = "";
-            for (int i = 0; i < BarCode_Prefix.BARCODE_NUM - 1; i++)
+            for (int i = 0; i < BarCode_Prefix.BARCODE_NUM; i++)
             {
                 ret += input[i][1];
             }
