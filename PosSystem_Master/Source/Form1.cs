@@ -4,6 +4,7 @@ using System.Collections;
 using System.Data.SQLite;
 using System.IO;
 using System.Xml.Serialization;
+using Microsoft.VisualBasic.FileIO;
 
 namespace PosSystem_Master
 {
@@ -20,9 +21,13 @@ namespace PosSystem_Master
         public static string store_name = "";
         //public static string store_kind = "食品";
 
+        //定数
+        public const string db_file_item = "KidsDB-ITEM.db";
+        public const string db_file_staff = "KidsDB-STAFF.db";
+
+        public const string config_file = "config.csv";
+
         //変数
-        public static string db_file_item = "KidsDB-ITEM.db";
-        public static string db_file_staff = "KidsDB-STAFF.db";
         public static string item_sum = "";
         public static string item_list = "";
 
@@ -64,9 +69,12 @@ namespace PosSystem_Master
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            cn = new Connect(true);
-            if (!cn.StartSock()) MessageBox.Show("サーバー立ち上げに失敗しました。");
-            CreateTable();
+            if (!load_settings())
+            {
+                MessageBox.Show("設定ファイルが間違っています。","エラー",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                this.Close();
+            }
+
             disp_store_name.Text = Form1.store_name;
         }
 
@@ -519,9 +527,69 @@ namespace PosSystem_Master
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            cn.StopSock();
+            if(cn != null)cn.StopSock();
         }
 
+        private void サーバーを建てるToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            cn = new Connect(true);
+            if (!cn.StartSock()) MessageBox.Show("サーバー立ち上げに失敗しました。");
+            else this.Text += " サーバー起動中";
+            CreateTable();
 
+        }
+
+        public bool load_settings()
+        {
+
+            if (File.Exists(config_file))
+            {
+                ArrayList al = new ArrayList();
+
+                TextFieldParser parser = new TextFieldParser(config_file, System.Text.Encoding.GetEncoding("Shift_JIS"));
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                while (!parser.EndOfData)
+                {
+                    string[] row = parser.ReadFields();
+                    foreach (string field in row)
+                    {
+                        string f = field;
+                        f = f.Replace("\r\n", "n");
+                        f = f.Replace(" ", "");
+                        if (!(f == "")) al.Add(f);
+                    }
+                }
+                if (al.Count > 0)
+                {
+                    for (int i = 0; i < al.Count; i++)
+                    {
+                        if (al[i].ToString().StartsWith("#store_number"))
+                        {
+                            Form1.store_num = int.Parse(al[i + 1].ToString()).ToString("D5");
+                            string[,] data = atsumi_pos.find_store(Form1.db_file_item, int.Parse(al[i + 1].ToString()));
+                            if (data[0, 1] == null)return false;
+                            Form1.store_name = data[0, 1];
+                            return true;
+                        }
+                        /*
+                        if (al[i].ToString().StartsWith("#○○"))
+                        {
+                        }
+                        */
+                    }
+                }
+            }
+            else
+            {
+                using (var sw = new System.IO.StreamWriter(config_file, false, System.Text.Encoding.GetEncoding("Shift_JIS")))
+                {
+                    sw.WriteLine("#store_number,0");
+                }
+                MessageBox.Show("設定ファイルが見つかりませんでした。"+Environment.NewLine+"新しくファイルを作成しました。");
+                this.Close();
+            }
+            return false;
+        }
     }
 }

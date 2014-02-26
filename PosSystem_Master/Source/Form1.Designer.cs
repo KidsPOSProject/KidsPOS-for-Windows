@@ -45,6 +45,7 @@
             this.システムバーコードToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.印刷ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.確認ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.サーバーを建てるToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.display_timer = new System.Windows.Forms.Timer(this.components);
             this.reg_goods_list = new System.Windows.Forms.ListView();
             this.disp_scan_goods = new System.Windows.Forms.Panel();
@@ -96,7 +97,8 @@
             this.top_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.各種リストToolStripMenuItem,
             this.ダミーデータ挿入ToolStripMenuItem,
-            this.システムバーコードToolStripMenuItem});
+            this.システムバーコードToolStripMenuItem,
+            this.サーバーを建てるToolStripMenuItem});
             this.top_menu.Location = new System.Drawing.Point(0, 0);
             this.top_menu.Name = "top_menu";
             this.top_menu.Size = new System.Drawing.Size(897, 26);
@@ -186,6 +188,13 @@
             this.確認ToolStripMenuItem.Name = "確認ToolStripMenuItem";
             this.確認ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.確認ToolStripMenuItem.Text = "確認";
+            // 
+            // サーバーを建てるToolStripMenuItem
+            // 
+            this.サーバーを建てるToolStripMenuItem.Name = "サーバーを建てるToolStripMenuItem";
+            this.サーバーを建てるToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.サーバーを建てるToolStripMenuItem.Text = "サーバーを建てる";
+            this.サーバーを建てるToolStripMenuItem.Click += new System.EventHandler(this.サーバーを建てるToolStripMenuItem_Click);
             // 
             // display_timer
             // 
@@ -371,6 +380,7 @@
         private System.Windows.Forms.ToolStripMenuItem ダミーデータ挿入ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ユーザーToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem サーバーを建てるToolStripMenuItem;
     }
 }
 

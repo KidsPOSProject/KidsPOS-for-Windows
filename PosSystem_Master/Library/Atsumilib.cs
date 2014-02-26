@@ -299,7 +299,29 @@ namespace PosSystem_Master
             }
             return ret;
         }
+        public static string[,] find_store(string db_file_path, int _store_num)
+        {
+            string[,] ret = new string[1, 3];
 
+            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
+            {
+                conn.Open();
+                using (SQLiteCommand command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM store_kind WHERE id ='" + _store_num + "'";
+
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ret[0, 0] = reader.GetInt32(0).ToString();
+                        ret[0, 1] = reader.GetString(1);
+                    }
+                }
+                conn.Close();
+            }
+            return ret;
+        }
         public static string find_genre(string db_file_path, string _genre_name)
         {
             string ret = "";
