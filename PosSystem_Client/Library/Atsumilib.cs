@@ -110,6 +110,8 @@ namespace PosSystem_Client
 
     class atsumi_pos
     {
+        string barcode = "";
+        string name = "";
         public static ArrayList loadSettings()
         {
             ArrayList al = new ArrayList();
@@ -467,6 +469,8 @@ namespace PosSystem_Client
         //データベースにインサート
         public static bool Insert(StaffTable it)
         {
+            //重複チェック
+            string[,] fu = find_user(Form1.db_file_staff, it.barcode);
             try
             {
                 using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_staff))
@@ -476,7 +480,17 @@ namespace PosSystem_Client
                     {
                         using (SQLiteCommand command = conn.CreateCommand())
                         {
-                            string query = "insert into staff_list (barcode, name) values('" + it.barcode + "', '" + it.name + "')";
+                            string query;
+                            if (fu[0, 2] == null)
+                            {
+                                query = "insert into staff_list (barcode, name) values('" + it.barcode + "', '" + it.name + "')";
+                            }
+                            else
+                            {
+                                MessageBox.Show("バーコードが重複しました。練習用PCのデータを上書きします。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                query = "update into staff_list set name = '"+it.name+"' WHERE barcode = '"+it.barcode+"'";
+                            }
+
                             command.CommandText = query;
                             command.ExecuteNonQuery();
                         }
@@ -510,8 +524,39 @@ namespace PosSystem_Client
         }
         public static void regist_user(Connect cn,string _name, string _barcode = "")
         {
-            if(cn.isConnected) cn.SendStringData("staff_list,"+Form1.store_num+","+_name+","+_barcode);
+            atsumi_pos ap = new atsumi_pos();
+
+            if (cn != null) cn.SendStringData("staff_list," + Form1.store_num + "," + _name + "," + _barcode);
+            else
+            {
+                //元々あるバーコードを登録する機能は多分実装出来てない。
+                //Function for registering input the barcode isn't been able to implement.
+
+                Barcode bc = new Barcode(BarCode_Prefix.STAFF, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_staff, "staff_list").ToString("D5"));
+                string temp_barcode = bc.show();
+
+                MessageBox.Show("ネットワークに接続されておりません。仮のバーコードを生成しました。");
+                atsumi_pos.Insert(new atsumi_pos.StaffTable(temp_barcode,_name));
+                ap.barcode = temp_barcode;
+                ap.name = _name;
+                ap.print();
+            }
         }
+
+        public void print()
+        {
+            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+            PrintDialog pdlg = new PrintDialog();
+            pdlg.Document = pd;
+            pd.Print();
+        }
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            print_template.print_user(this.barcode, this.name, e);
+        }
+
         public static ArrayList file_load()
         {
             ArrayList al = new ArrayList();
@@ -572,7 +617,7 @@ namespace PosSystem_Client
         /// デフォルトのプリンタをチェックします。
         /// </summary>
         /// <param name="receipt">レシート印刷が目的かどうか</param>
-        public static bool check_default_printer(bool receipt = true)
+        /*public static bool check_default_printer(bool receipt = true)
         {
             System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
             string printer_name = pd.PrinterSettings.PrinterName;
@@ -596,6 +641,7 @@ namespace PosSystem_Client
             }
             return false;
         }
+         * */
 
         /// <summary>
         /// 「通常使うプリンタ」に設定する
@@ -1046,8 +1092,6 @@ namespace PosSystem_Client
                         string strGetText = ecUni.GetString(uniBytes);
                         strGetText = strGetText.Substring(0, strGetText.IndexOf((char)0));
 
-                        MessageBox.Show(strGetText);
-
                         string[] rec = strGetText.Split(',');
                         if (rec[0] == "receive")
                         {
@@ -1057,14 +1101,11 @@ namespace PosSystem_Client
                                 atsumi_pos.Insert(new atsumi_pos.StaffTable(rec[2],rec[3]));
                                 this.barcode = rec[2];
                                 this.name = rec[3];
-                                print_template.check_default_printer(true);
+                                
+                                //プリンタの種類を強制で変えたいときはここをコメントアウト
+                                //print_template.check_default_printer(true);
 
-                                System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-                                pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
-
-                                PrintDialog pdlg = new PrintDialog();
-                                pdlg.Document = pd;
-                                pd.Print();
+                                this.print();
 
                             }
                         }
@@ -1089,6 +1130,15 @@ namespace PosSystem_Client
             }
         }
 
+        public void print()
+        {
+            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+            PrintDialog pdlg = new PrintDialog();
+            pdlg.Document = pd;
+            pd.Print();
+        }
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             print_template.print_user(this.barcode, this.name , e);
@@ -1119,8 +1169,11 @@ namespace PosSystem_Client
         {
             isConnected = false;
 
+            NetworkStream ns = client.GetStream();
+
             //クライアントのインスタンスが有って、接続されていたら
             if (client != null && client.Connected)
+                ns.Close();
                 client.Close();
 
             //スレッドは必ず終了させること

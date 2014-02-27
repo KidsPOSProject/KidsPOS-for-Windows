@@ -13,7 +13,7 @@ namespace ItemRegister
 
     class BarCode_Prefix
     {
-        public const int BARCODE_NUM = 14;
+        public const int BARCODE_NUM = 13;
 
         public const string PREFIX = "49";
 

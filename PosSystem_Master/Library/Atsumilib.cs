@@ -1107,11 +1107,15 @@ namespace PosSystem_Master
         //サーバーのクローズ
         private void CloseServer()
         {
-            //サーバーのインスタンスが有って、接続されていたら
-            if (server != null && server.Connected)
-                server.Close();
 
-            //スレッドは必ず終了させること
+            NetworkStream ns = null;
+            if (this.server != null && this.server.Connected)
+            {
+                ns = this.server.GetStream();
+                ns.Close();
+                server.Close();
+            }
+
             if (threadServer != null)
                 threadServer.Abort();
         }

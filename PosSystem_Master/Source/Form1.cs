@@ -527,14 +527,20 @@ namespace PosSystem_Master
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            display_timer.Stop();
             if(cn != null)cn.StopSock();
+            cn = null;
         }
 
         private void サーバーを建てるToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cn = new Connect(true);
             if (!cn.StartSock()) MessageBox.Show("サーバー立ち上げに失敗しました。");
-            else this.Text += " サーバー起動中";
+            else
+            {
+                this.Text += " サーバー起動中";
+                サーバーを建てるToolStripMenuItem.Enabled = false;
+            }
             CreateTable();
 
         }
@@ -566,7 +572,7 @@ namespace PosSystem_Master
                     {
                         if (al[i].ToString().StartsWith("#store_number"))
                         {
-                            Form1.store_num = int.Parse(al[i + 1].ToString()).ToString("D5");
+                            Form1.store_num = int.Parse(al[i + 1].ToString()).ToString("D3");
                             string[,] data = atsumi_pos.find_store(Form1.db_file_item, int.Parse(al[i + 1].ToString()));
                             if (data[0, 1] == null)return false;
                             Form1.store_name = data[0, 1];

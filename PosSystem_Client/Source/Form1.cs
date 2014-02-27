@@ -572,5 +572,12 @@ namespace PosSystem_Client
             }
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            display_timer.Enabled = false;
+            if (cn != null) cn.StopSock();
+            cn = null;
+        }
+
     }
 }
