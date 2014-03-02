@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using ZXing;
 using Microsoft.VisualBasic.FileIO;
+using System.Drawing.Drawing2D;
 
 
 namespace ItemRegister
@@ -294,6 +295,29 @@ namespace ItemRegister
             }
             return ret;
         }
+        public static string[,] find_store(string db_file_path, int _store_id)
+        {
+            string[,] ret = new string[1, 3];
+
+            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
+            {
+                conn.Open();
+                using (SQLiteCommand command = conn.CreateCommand())
+                {
+                    command.CommandText = "SELECT * FROM store_kind WHERE id ='" + _store_id + "'";
+
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ret[0, 0] = reader.GetInt32(0).ToString();
+                        ret[0, 1] = reader.GetString(1);
+                    }
+                }
+                conn.Close();
+            }
+            return ret;
+        }
 
         public static string find_genre(string db_file_path, string _genre_name)
         {
@@ -443,7 +467,7 @@ namespace ItemRegister
     }
     class print_template
     {
-        public static void print_temple(string _barcode, string item_name, PrintPageEventArgs e)
+        public static void print_temple(string _barcode, string item_name, string store_name, CheckBox cb, PrintPageEventArgs e)
         {
             //TODO Apache fop とか使えたらいいかも・・・
 
@@ -451,34 +475,86 @@ namespace ItemRegister
             bw.Format = BarcodeFormat.EAN_13;
             Bitmap barcode = bw.Write(_barcode);
 
-            int print_row_num = 4;
-            int print_col_num = 3;
 
-            int margin_weight = 70;
-            int margin_height = 50;
-            int barcode_margin_weight = 5;
-            int barcode_margin_height = 100;
+            int print_row_num = 4;
+            int print_col_num = 11;
+
+            //ミリメートルで指定
+            
+            //全体の余白
+            float MARGIN_PAGE_TOP = 8.8f;
+            float MARGIN_PAGE_LEFT = 8.4f;
+
+            //一つ一つのサイズ
+            float MARGIN_PRINT_HEIGHT = 25.4f;
+            float MARGIN_PRINT_WEIGHT = 48.3f;
+
 
             Graphics g = e.Graphics;
             g.PageUnit = GraphicsUnit.Millimeter;
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            if (cb.Checked)
+            {
+                //線引いてみる
+                for (int j = 0; j < print_row_num + 1; j++)
+                {
+                    for (int i = 0; i < print_col_num + 1; i++)
+                    {
+                        float hei = i * MARGIN_PRINT_HEIGHT;
+                        float wei = j * MARGIN_PRINT_WEIGHT;
+
+                        float pen_size = 0.1f;
+
+                        //横の線
+                        g.DrawLine(new Pen(Brushes.Black, pen_size),
+                            new Point((int)MARGIN_PAGE_LEFT, (int)(MARGIN_PAGE_TOP + (MARGIN_PRINT_HEIGHT * i))),
+                            new Point((int)(MARGIN_PAGE_LEFT + (MARGIN_PRINT_WEIGHT * print_row_num)), (int)(MARGIN_PAGE_TOP + (MARGIN_PRINT_HEIGHT * i))));
+
+                        //縦の線
+                        g.DrawLine(new Pen(Brushes.Black, pen_size),
+                            new Point((int)(MARGIN_PAGE_LEFT + (MARGIN_PRINT_WEIGHT * j)), (int)(MARGIN_PAGE_TOP)),
+                            new Point((int)(MARGIN_PAGE_LEFT + (MARGIN_PRINT_WEIGHT * j)), (int)(MARGIN_PAGE_TOP + (MARGIN_PRINT_HEIGHT * print_col_num))));
+                    }
+                }
+            }
+
+
+            //バーコード
             for (int j = 0; j < print_row_num; j++)
             {
                 for (int i = 0; i < print_col_num; i++)
                 {
+                    float hei = i * MARGIN_PRINT_HEIGHT;
+                    float wei = j * MARGIN_PRINT_WEIGHT;
+
                     g.DrawImage(
                         barcode,
-                        barcode_margin_weight + i * margin_weight,
-                        barcode_margin_height + j * margin_height
+                        MARGIN_PAGE_LEFT + wei + 3.2f,
+                        MARGIN_PAGE_TOP + hei + 9.5f,
+                        barcode.Width * 0.4f, barcode.Height * 0.14f
                         );
+
                     g.DrawString(
                         item_name,
-                        new Font("MS UI Gothic", 60),
+                        new Font("MS UI Gothic", 9),
                         Brushes.Black,
-                        new PointF(20, 40)
+                        new PointF(
+                            MARGIN_PAGE_LEFT + wei + 1f,
+                            MARGIN_PAGE_TOP + hei + 1f
+                            )
+                        );
+
+                    g.DrawString(
+                        "おみせ: " + store_name,
+                        new Font("MS UI Gothic", 8),
+                        Brushes.Black,
+                        new PointF(
+                            MARGIN_PAGE_LEFT + wei + 1f,
+                            MARGIN_PAGE_TOP + hei + 5f
+                            )
                         );
                 }
             }
-            e.HasMorePages = false;
         }
 
         private static void drawString(Graphics g, Font f, string s, int x, int y)

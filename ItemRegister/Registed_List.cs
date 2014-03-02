@@ -12,9 +12,12 @@ namespace ItemRegister
 {
     public partial class Registed_List : Form
     {
-        bool isFirst_item = true;
-        bool isFirst_store = true;
-        bool isFirst_genre = true;
+
+        int count = 0;
+        int print_page_num;
+
+        string[,] selected_barcode;
+
         public Registed_List()
         {
             InitializeComponent();
@@ -58,5 +61,124 @@ namespace ItemRegister
                     }
                 }
         }
+
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+        }
+
+
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            if (print_page_num == count -1)
+            {
+                print_template.print_temple(
+                    selected_barcode[print_page_num, 0],
+                    selected_barcode[print_page_num, 1],
+                    selected_barcode[print_page_num, 2],
+                    print_grid,
+                    e);
+
+                // 印刷終了を指定
+                e.HasMorePages = false;
+
+            }else{
+
+                print_template.print_temple(
+                    selected_barcode[print_page_num, 0],
+                    selected_barcode[print_page_num, 1],
+                    selected_barcode[print_page_num, 2],
+                    print_grid,
+                    e);
+                // 印刷継続を指定
+                e.HasMorePages = true;
+
+            }
+            print_page_num++;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            count = 0;
+            print_page_num = 0;
+
+            selected_barcode = new string[dataGridView2.SelectedCells.Count, 3];
+            foreach (DataGridViewCell r in dataGridView2.SelectedCells)
+            {
+                int index = r.RowIndex;
+                string[,] store_data = atsumi_pos.find_store(Form1.db_file_pos, int.Parse(dataGridView2.Rows[index].Cells[4].Value.ToString()));
+
+                selected_barcode[count, 0] = dataGridView2.Rows[index].Cells[1].Value.ToString();
+                selected_barcode[count, 1] = dataGridView2.Rows[index].Cells[2].Value.ToString();
+                selected_barcode[count, 2] = store_data[0,1];
+
+                count++;
+            }
+            if (count > 0)
+            {
+
+                //PrintDocumentオブジェクトの作成
+                System.Drawing.Printing.PrintDocument pd =
+                    new System.Drawing.Printing.PrintDocument();
+                //PrintPageイベントハンドラの追加
+                pd.PrintPage +=
+                    new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+                //PrintDialogクラスの作成
+                PrintDialog pdlg = new PrintDialog();
+                //PrintDocumentを指定
+                pdlg.Document = pd;
+                //印刷の選択ダイアログを表示する
+                if (pdlg.ShowDialog() == DialogResult.OK)
+                {
+                    //OKがクリックされた時は印刷する
+                    pd.Print();
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            count = 0;
+            print_page_num = 0;
+
+           
+                selected_barcode = new string[dataGridView2.Rows.Count, 3];
+
+                foreach (DataGridViewRow r in dataGridView2.Rows)
+                {
+                    if (r.Cells[1].Value == null) break;
+                    string[,] store_data = atsumi_pos.find_store(Form1.db_file_pos, int.Parse(r.Cells[4].Value.ToString()));
+
+                    selected_barcode[count, 0] = r.Cells[1].Value.ToString();
+                    selected_barcode[count, 1] = r.Cells[2].Value.ToString();
+                    selected_barcode[count, 2] = store_data[0, 1];
+
+                    count++;
+                }
+            if (count > 0)
+            {
+
+                //PrintDocumentオブジェクトの作成
+                System.Drawing.Printing.PrintDocument pd =
+                    new System.Drawing.Printing.PrintDocument();
+                //PrintPageイベントハンドラの追加
+                pd.PrintPage +=
+                    new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
+
+                //PrintDialogクラスの作成
+                PrintDialog pdlg = new PrintDialog();
+                //PrintDocumentを指定
+                pdlg.Document = pd;
+                //印刷の選択ダイアログを表示する
+                if (pdlg.ShowDialog() == DialogResult.OK)
+                {
+                    //OKがクリックされた時は印刷する
+                    pd.Print();
+                }
+            }
+        }
+
+
     }
 }
