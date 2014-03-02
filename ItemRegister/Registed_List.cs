@@ -103,16 +103,27 @@ namespace ItemRegister
             print_page_num = 0;
 
             selected_barcode = new string[dataGridView2.SelectedCells.Count, 3];
+
+            //重複して印刷しないようにする。
+            List<int> li = new List<int>();
+
             foreach (DataGridViewCell r in dataGridView2.SelectedCells)
             {
-                int index = r.RowIndex;
-                string[,] store_data = atsumi_pos.find_store(Form1.db_file_pos, int.Parse(dataGridView2.Rows[index].Cells[4].Value.ToString()));
+                if(0 > li.BinarySearch(r.RowIndex)){
+                    int index = r.RowIndex;
 
-                selected_barcode[count, 0] = dataGridView2.Rows[index].Cells[1].Value.ToString();
-                selected_barcode[count, 1] = dataGridView2.Rows[index].Cells[2].Value.ToString();
-                selected_barcode[count, 2] = store_data[0,1];
+                    li.Add(r.RowIndex);
+                    //バイナリサーチ用にソート
+                    li.Sort();
 
-                count++;
+                    string[,] store_data = atsumi_pos.find_store(Form1.db_file_pos, int.Parse(dataGridView2.Rows[index].Cells[4].Value.ToString()));
+
+                    selected_barcode[count, 0] = dataGridView2.Rows[index].Cells[1].Value.ToString();
+                    selected_barcode[count, 1] = dataGridView2.Rows[index].Cells[2].Value.ToString();
+                    selected_barcode[count, 2] = store_data[0,1];
+
+                    count++;
+                }
             }
             if (count > 0)
             {
