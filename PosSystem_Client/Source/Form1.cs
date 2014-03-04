@@ -65,6 +65,7 @@ namespace PosSystem_Client
         private void Form1_Load(object sender, EventArgs e)
         {
             CreateTable();
+            connectcheck.Interval = 1000;
         }
 
         #region Initialize
@@ -567,6 +568,7 @@ namespace PosSystem_Client
                         接続先ToolStripMenuItem.DropDownItems[i].Enabled = false;
                     }
                     cn = _cn;
+                    connectcheck.Enabled = true;
                 }
 
             }
@@ -575,8 +577,14 @@ namespace PosSystem_Client
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             display_timer.Enabled = false;
+            connectcheck.Enabled = false;
             if (cn != null) cn.StopSock();
             cn = null;
+        }
+
+        private void connectcheck_Tick(object sender, EventArgs e)
+        {
+            cn.SendStringData("check,connect");
         }
 
     }

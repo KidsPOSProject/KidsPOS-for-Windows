@@ -63,6 +63,7 @@
             this.reg_user = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.接続先ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.connectcheck = new System.Windows.Forms.Timer(this.components);
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
@@ -369,6 +370,10 @@
             this.接続先ToolStripMenuItem.Size = new System.Drawing.Size(72, 22);
             this.接続先ToolStripMenuItem.Text = "接続先 ▼";
             // 
+            // connectcheck
+            // 
+            this.connectcheck.Tick += new System.EventHandler(this.connectcheck_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -440,6 +445,7 @@
         private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 接続先ToolStripMenuItem;
+        private System.Windows.Forms.Timer connectcheck;
     }
 }
 

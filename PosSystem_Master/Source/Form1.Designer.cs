@@ -57,6 +57,7 @@
             this.reg_clear = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.reg_user = new System.Windows.Forms.Label();
+            this.checkconnect = new System.Windows.Forms.Timer(this.components);
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
@@ -381,6 +382,7 @@
         private System.Windows.Forms.ToolStripMenuItem ユーザーToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem サーバーを建てるToolStripMenuItem;
+        private System.Windows.Forms.Timer checkconnect;
     }
 }
 

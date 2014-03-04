@@ -980,6 +980,9 @@ namespace PosSystem_Master
                         string strGetText = ecUni.GetString(uniBytes);
                         
                         string[] rec = strGetText.Split(',');
+
+                        MessageBox.Show(server.Client.RemoteEndPoint + Environment.NewLine + strGetText);
+
                         if (rec.Length == 4 && rec[0] == "staff_list")
                         {
                             string barcode = "";
@@ -1009,7 +1012,7 @@ namespace PosSystem_Master
                             }
                             catch (Exception e)
                             {
-                                e.ToString();
+                                MessageBox.Show(e.ToString());
                             }
                             finally
                             {
@@ -1035,6 +1038,7 @@ namespace PosSystem_Master
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show(ex.ToString(),"全体的なやつ");
                     return;
                 }
             }

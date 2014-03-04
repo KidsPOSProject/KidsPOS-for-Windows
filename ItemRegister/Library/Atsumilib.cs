@@ -482,7 +482,7 @@ namespace ItemRegister
             //ミリメートルで指定
             
             //全体の余白
-            float MARGIN_PAGE_TOP = 8.8f;
+            float MARGIN_PAGE_TOP = 8f;
             float MARGIN_PAGE_LEFT = 8.4f;
 
             //一つ一つのサイズ
@@ -530,7 +530,7 @@ namespace ItemRegister
                     g.DrawImage(
                         barcode,
                         MARGIN_PAGE_LEFT + wei + 3.2f,
-                        MARGIN_PAGE_TOP + hei + 9.5f,
+                        MARGIN_PAGE_TOP + hei + 7f,
                         barcode.Width * 0.4f, barcode.Height * 0.14f
                         );
 
@@ -540,7 +540,7 @@ namespace ItemRegister
                         Brushes.Black,
                         new PointF(
                             MARGIN_PAGE_LEFT + wei + 1f,
-                            MARGIN_PAGE_TOP + hei + 1f
+                            MARGIN_PAGE_TOP + hei + 0.2f
                             )
                         );
 
@@ -550,7 +550,7 @@ namespace ItemRegister
                         Brushes.Black,
                         new PointF(
                             MARGIN_PAGE_LEFT + wei + 1f,
-                            MARGIN_PAGE_TOP + hei + 5f
+                            MARGIN_PAGE_TOP + hei + 3.5f
                             )
                         );
                 }
