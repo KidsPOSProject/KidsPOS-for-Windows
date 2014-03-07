@@ -52,20 +52,19 @@ namespace PosSystem_Client
             InitializeComponent();
             InitializeValues();
             InitializeListView(reg_goods_list);
+
+
             this.KeyPreview = !this.KeyPreview;
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
             take_mode.Enabled = false;
             this.Text = form_name;
 
             this.WindowState = FormWindowState.Maximized;
-            //this.MaximizeBox = false;
             this.MinimizeBox = false;
-            //this.ControlBox = false;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             CreateTable();
-            connectcheck.Interval = 1000;
         }
 
         #region Initialize
@@ -193,6 +192,7 @@ namespace PosSystem_Client
         }
         #endregion
 
+        #region DB_SHORI
         //スキャンしたときの処理
         public void scan_goods(string item_num)
         {
@@ -552,13 +552,16 @@ namespace PosSystem_Client
             }
         }
         #endregion
+
+        #endregion
+
         private void 接続する(object sender, EventArgs e)
         {
             if (sender.GetType() == this.接続先ToolStripMenuItem.GetType())
             {
                 ToolStripItem tsi = (ToolStripItem)sender;
 
-                Connect _cn = new Connect(false, ip_list[tsi.Text].ToString());
+                Connect _cn = new Connect(ip_list[tsi.Text].ToString(), this);
                 if (!_cn.StartSock()) MessageBox.Show("接続に失敗しました");
                 else
                 {
@@ -568,23 +571,24 @@ namespace PosSystem_Client
                         接続先ToolStripMenuItem.DropDownItems[i].Enabled = false;
                     }
                     cn = _cn;
-                    connectcheck.Enabled = true;
                 }
 
+            }
+        }
+
+        public void change()
+        {
+            this.Text = form_name + " 接続が解除されました。";
+            for (int i = 0; i < 接続先ToolStripMenuItem.DropDownItems.Count; i++)
+            {
+                接続先ToolStripMenuItem.DropDownItems[i].Enabled = true;
             }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             display_timer.Enabled = false;
-            connectcheck.Enabled = false;
             if (cn != null) cn.StopSock();
-            cn = null;
-        }
-
-        private void connectcheck_Tick(object sender, EventArgs e)
-        {
-            cn.SendStringData("check,connect");
         }
 
     }

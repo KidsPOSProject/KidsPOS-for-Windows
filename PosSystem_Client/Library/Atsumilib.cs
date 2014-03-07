@@ -925,29 +925,22 @@ namespace PosSystem_Client
 
     public class Connect
     {
-        public bool isConnected = false;
-        bool isServert;
+
+        //別スレッドからログを書き込むデリゲート
+        public delegate void dlgExeFuntion();
+
         int port_num = 10800;
         string ip_address;
-        public Connect(bool _server = false, string _ip_address = "")
+        Form1 fom;
+        public Connect(string _ip_address, Form1 _fom)
         {
-            this.isServert = _server;
             this.ip_address = _ip_address;
-            if (_server)
-            {
-                ServerStart();
-            }
-            else
-            {
-                ClientStart();
-            }
+            this.fom = _fom;
         }
         Encoding ecUni = Encoding.GetEncoding("utf-16");
         Encoding ecSjis = Encoding.GetEncoding("shift-jis");
 
-        TcpClient server = null;
-        TcpListener listener = null;
-        Thread threadServer = null;
+        //TcpClient server = null;
 
         TcpClient client = null;
         Thread threadClient = null;
@@ -958,93 +951,9 @@ namespace PosSystem_Client
         public bool StartSock()
         {
             bool openflg = false;
-            //チェックボックスを見て sub
-            //サーバー又はクライアントスタート
-            if (isServert)
-            {
-                openflg = ServerStart();
-            }
-            else
-            {
-                openflg = ClientStart();
-            }
-            if (openflg) isConnected = true;
-            return openflg;
-        }
-        //***********************************************************
-        //セカンドスレッドの作成とサーバーのスタート
-        //***********************************************************
-        public bool ServerStart()
-        {
-            //TcpListenerを使用してサーバーの接続の確立
-            try
-            {
-                if (listener == null)
-                    listener = new TcpListener(IPAddress.Any, port_num);
-
-                listener.Start();
-
-                threadServer = new Thread(new ThreadStart(ServerListen));
-                threadServer.Start();
-                return (true);
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                listener.Stop();
-                return (false);
-            }
-        }
-
-        //***********************************************************
-        //別スレッドで実行されるサーバ側の処理
-        //***********************************************************
-        public void ServerListen()
-        {
-            server = listener.AcceptTcpClient();
+            openflg = ClientStart();
             
-            NetworkStream stream = server.GetStream();
-
-            Byte[] bytes = new Byte[1000];
-
-            while (true)
-            {
-                try
-                {
-                    int intCount = stream.Read(bytes, 0, bytes.Length);
-
-                    if (intCount != 0)
-                    {
-                        Byte[] getByte = new byte[intCount];
-                        for (int i = 0; i < intCount; i++)
-                            getByte[i] = bytes[i];
-
-                        byte[] uniBytes;
-                        uniBytes = Encoding.Convert(ecSjis, ecUni, getByte);
-
-                        string strGetText = ecUni.GetString(uniBytes);
-
-                        //if (strGetText.StartsWith("ins")) InsertTable();
-
-                        //TODO strGetText に文字列が入っているので処理
-
-                    }
-                    else
-                    {
-                        return;
-                    }
-
-                }
-                catch (System.Threading.ThreadAbortException)
-                {
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    return;
-                }
-            }
+            return openflg;
         }
 
         //***********************************************************
@@ -1081,7 +990,7 @@ namespace PosSystem_Client
                 try
                 {
                     int intCount = stream.Read(bytes, 0, bytes.Length);
-                    if (intCount != 0)
+                    if (intCount>0)
                     {
                         Byte[] getByte = new byte[intCount];
                         for (int i = 0; i < intCount; i++)
@@ -1097,31 +1006,24 @@ namespace PosSystem_Client
                         {
                             if (rec[1] == "barcode")
                             {
-                                MessageBox.Show("バーコードが発行されました"+Environment.NewLine+rec[2]);
+                                //MessageBox.Show("バーコードが発行されました"+Environment.NewLine+rec[2]);
                                 atsumi_pos.Insert(new atsumi_pos.StaffTable(rec[2],rec[3]));
                                 this.barcode = rec[2];
                                 this.name = rec[3];
-                                
-                                //プリンタの種類を強制で変えたいときはここをコメントアウト
-                                //print_template.check_default_printer(true);
-
                                 this.print();
-
                             }
                         }
-
-
-                        
                     }
                     else
                     {
-                        return;
+                        stream.Close();
+                        stream = null;
+                        Thread.Sleep(20);//これを入れないとNullReferenceExceptionが起きる
+
+                        MessageBox.Show("サーバーから切断されました");
+                        StopSock();
+                        fom.change();
                     }
-                }
-                catch (System.Threading.ThreadAbortException)
-                {
-                    //何もしません;
-                    return;
                 }
                 catch
                 {
@@ -1132,51 +1034,34 @@ namespace PosSystem_Client
 
         public void print()
         {
-            System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-            pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
-
+            System.Drawing.Printing.PrintDocument pd =
+                new System.Drawing.Printing.PrintDocument();
+            pd.PrintPage +=
+                new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
             PrintDialog pdlg = new PrintDialog();
             pdlg.Document = pd;
-            pd.Print();
+            if (pdlg.ShowDialog() == DialogResult.OK)
+            {
+                pd.Print();
+            }
         }
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             print_template.print_user(this.barcode, this.name , e);
         }
-        //サーバーのクローズ
-        public void CloseServer()
-        {
-            //サーバーのインスタンスが有って、接続されていたら
-            if (server != null && server.Connected)
-                server.Close();
-
-            //スレッドは必ず終了させること
-            if (threadServer != null)
-                threadServer.Abort();
-        }
-
         public void StopSock()
         {
-            //チェックボックスを見て
-            //サーバー又はクライアントストップ
-            if (isServert)
-                CloseServer();
-            else
-                CloseClient();
+            CloseClient();
         }
         //クライアントのクローズ
         public void CloseClient()
         {
-            isConnected = false;
-
             NetworkStream ns = client.GetStream();
 
-            //クライアントのインスタンスが有って、接続されていたら
             if (client != null && client.Connected)
                 ns.Close();
                 client.Close();
 
-            //スレッドは必ず終了させること
             if (threadClient != null)
                 threadClient.Abort();
         }
@@ -1186,19 +1071,12 @@ namespace PosSystem_Client
         //文字データーの送信
         public void SendStringData(string _send_text)
         {
-            //sift-jisに変換して送る
             Byte[] data = ecSjis.GetBytes(_send_text);
-            //送信streamを作成
             NetworkStream stream = null;
             try
             {
-                //サーバーとクライアントを分けて送信
-                if (!isServert)
-                    stream = client.GetStream();
-                else
-                    stream = server.GetStream();
+                stream = client.GetStream();
 
-                //Streamを使って送信
                 stream.Write(data, 0, data.Length);
             }
             catch(Exception e)
@@ -1212,7 +1090,6 @@ namespace PosSystem_Client
         public void RestartServer()
         {
             StopSock();
-            //サーバーを再スタートします
             StartSock();
         }
     }

@@ -13,8 +13,6 @@ namespace PosSystem_Master
 {
     public partial class Account_change : Form
     {
-        string form_name = "おつり";
-
         ListView item_list = null;
         string barcode = "";
 

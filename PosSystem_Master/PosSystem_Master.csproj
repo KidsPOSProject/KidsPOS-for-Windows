@@ -56,9 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\Atsumilib.cs">
-      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
-    </Compile>
+    <Compile Include="Library\Atsumilib.cs" />
     <Compile Include="Source\Account.cs">
       <SubType>Form</SubType>
     </Compile>

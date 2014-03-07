@@ -1,4 +1,4 @@
-/bin/*/*.db
+/bin/*/KidsDB-STAFF.db
 /bin/*/*.pdb
 /bin/*/*.vshost.exe
 /bin/*/*.vshost.exe.manifest

@@ -5,11 +5,36 @@ using System.Data.SQLite;
 using System.IO;
 using System.Xml.Serialization;
 using Microsoft.VisualBasic.FileIO;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Collections.Generic;
+using System.Net;
 
 namespace PosSystem_Master
 {
     public partial class Form1 : Form
     {
+        const bool DEBUG = false;
+
+        //別スレッドからClientHandlerを持つList<T>の操作
+        public delegate void dlgsetList(ClientHandler ch);
+        //別スレッドからメインスレッドのテキストボックスに書き込むデリゲート
+        public delegate void dlgWriteText(ClientHandler ch, string text);
+        //別スレッドからログを書き込むデリゲート
+        public delegate void dlgWriteLog(string text);
+
+        //サーバーのリスナー設定
+        TcpListener Listener = null;
+
+        //サーバーのセカンドスレッドの設定
+        Thread threadServer = null;
+
+        //クライアントの参照を保持するListクラス
+        private List<ClientHandler> lstClientHandler = new List<ClientHandler>();
+
+        Encoding ecUni = Encoding.GetEncoding("utf-16");
+        Encoding ecSjis = Encoding.GetEncoding("shift-jis");
 
         #region 定数
 
@@ -32,8 +57,6 @@ namespace PosSystem_Master
         public static string item_list = "";
 
         public static string shop_person = "";
-
-        Connect cn;
 
         #endregion
         #region HashTableなど
@@ -310,12 +333,11 @@ namespace PosSystem_Master
 
         #region キー入力の処理
 
-        //bool F_key_check = false;
+        string[] aaa = new string[15];
 
         //バーコードが入力されたとき
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (key_check(e) || input_count == BarCode_Prefix.BARCODE_NUM) init_input();
 
             input[input_count] = e.KeyCode.ToString();
@@ -324,7 +346,7 @@ namespace PosSystem_Master
             if (input_count == BarCode_Prefix.BARCODE_NUM)
             {
                 string temp_barcode = comb_input_barcode();
-                
+
                 switch (temp_barcode[BarCode_Prefix.PREFIX.Length].ToString()+
                     temp_barcode[BarCode_Prefix.PREFIX.Length+1].ToString())
                 {
@@ -527,22 +549,13 @@ namespace PosSystem_Master
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            display_timer.Stop();
-            if(cn != null)cn.StopSock();
-            cn = null;
+            StopSock();
         }
 
         private void サーバーを建てるToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cn = new Connect(true);
-            if (!cn.StartSock()) MessageBox.Show("サーバー立ち上げに失敗しました。");
-            else
-            {
-                this.Text += " サーバー起動中";
-                サーバーを建てるToolStripMenuItem.Enabled = false;
-            }
+            StartSock();
             CreateTable();
-
         }
 
         public bool load_settings()
@@ -578,11 +591,6 @@ namespace PosSystem_Master
                             Form1.store_name = data[0, 1];
                             return true;
                         }
-                        /*
-                        if (al[i].ToString().StartsWith("#○○"))
-                        {
-                        }
-                        */
                     }
                 }
             }
@@ -596,6 +604,325 @@ namespace PosSystem_Master
                 this.Close();
             }
             return false;
+        }
+
+        private void StartSock()
+        {
+            if (ServerStart())
+            {
+                this.Text += " サーバー起動中";
+                サーバーを建てるToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                MessageBox.Show("サーバー立ち上げに失敗しました。");
+            }
+        }
+
+        private bool ServerStart()
+        {
+            try
+            {
+                threadServer = new Thread(new ThreadStart(ServerListen));
+                threadServer.Start();
+                return (true);
+
+            }
+            catch
+            {
+                Listener.Stop();
+                return (false);
+            }
+        }
+
+        private void ServerListen()
+        {
+            Listener = new TcpListener(IPAddress.Any, 10800);
+            Listener.Start();
+            try
+            {
+                do
+                {
+                    Socket socketForClient = Listener.AcceptSocket();
+                    ClientHandler handler = new ClientHandler(socketForClient, this);           
+                    this.BeginInvoke(new dlgsetList(this.addNewClient)
+                                                       , new object[] { handler });
+                    handler.StartRead();
+
+                    if (DEBUG)
+                    {
+                        MessageBox.Show("クライアントが接続してきました");
+                    }
+
+                } while (true);
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        //** ClientHandleクラスのListクラスへの登録 **
+        //新しい接続が有った時Delegateから呼ばれて、
+        //新しいClientHandlerクラスのインスタンスをListクラスに登録します。
+        private void addNewClient(ClientHandler cl)
+        {
+            lstClientHandler.Add(cl);
+        }
+
+        //** 切断が生じた時のClientHandleクラスのListクラスからの削除 **
+        //切断があった時にDelegateから呼ばれて
+        //切断されたクライアントのClientHandleクラスのインスタンスをを
+        //Listクラスから削除します。
+        public void deleteClient(ClientHandler cl)
+        {
+            //Listクラスを総なめ
+            for (int i = 0; i < lstClientHandler.Count; i++)
+            {
+                if (lstClientHandler[i] == cl)
+                {
+                    lstClientHandler.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+
+        private void StopSock()
+        {
+            CloseServer();
+        }
+
+        private void CloseServer()
+        {
+            if (Listener != null)
+            {
+                Listener.Stop();
+                Thread.Sleep(20);
+                Listener = null;
+            }
+            if (threadServer != null)
+            {
+                threadServer.Abort();
+                threadServer = null;
+            }
+        }
+        public void WriteReadText(ClientHandler cl, string text)
+        {
+
+            ClientHandler clientHandler = null;
+
+            //Listクラスが保持しているClientHandlerの中のSocketクラスの
+            //Handleを比較し、クライアントを識別します。
+            int no = 0;
+            for (int i = 0; i < lstClientHandler.Count; i++)
+            {
+                if (lstClientHandler[i] == cl)
+                {
+                    //クライアントのハンドルが一致した
+                    no = (int)lstClientHandler[i].ClientHandle;
+                    break;
+                }
+            }
+
+
+            if (DEBUG)
+            {
+                MessageBox.Show(text);
+            }
+
+            string[] rec = text.Split(',');
+
+            if (rec.Length == 4 && rec[0] == "staff_list")
+            {
+                string barcode = "";
+                string name = "";
+                try
+                {
+                    Barcode bc = new Barcode(
+                        BarCode_Prefix.STAFF,
+                        rec[1],
+                        atsumi_pos.read_count_num(Form1.db_file_staff, "staff_list").ToString("D5")
+                        );
+                    Byte[] data = ecSjis.GetBytes("receive,barcode," + bc.show() + "," + rec[2]);
+
+                    if (rec[3] == "")
+                    {
+                        //List<T>からハンドルをキーにに該当のclientHandlerを取得する
+                        clientHandler = lstClientHandler.Find(delegate(ClientHandler clitem)
+                        { return ((int)clitem.ClientHandle == no); });
+
+                        try
+                        {
+                            clientHandler.WriteString(data);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString(), "送信エラー");
+                        }
+
+                        barcode = bc.show();
+                    }
+                    else
+                    {
+                        barcode = rec[3];
+                    }
+                    name = rec[2];
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+                finally
+                {
+                    atsumi_pos.Insert(new atsumi_pos.StaffTable(barcode, name));
+                }
+            }
+            else
+            {
+                MessageBox.Show("");
+            }
+
+        }
+
+        private void 接続者確認ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string st = "";
+            for (int i = 0; i < lstClientHandler.Count; i++)
+            {
+                st += lstClientHandler[i].ClientHandle.ToString() + Environment.NewLine;
+            }
+            MessageBox.Show(st);
+        }
+
+    }
+        //*********************************************
+    //    複数コネクション、非同期I/O クラス
+    //*********************************************
+    public class ClientHandler
+    {
+        private byte[] buffer;    //受信データ
+        private Socket socket;
+        private NetworkStream networkStream;
+        private AsyncCallback callbackRead;
+        private AsyncCallback callbackWrite;
+        
+        //FomServerの参照を保持する 
+        private Form1 fomServer = null  ;
+
+        //受送信は必ずshift-jisと仮定している
+        //他の文字の場合はここを変える事
+        private Encoding ecUni = Encoding.GetEncoding("utf-16");
+        private Encoding ecSjis = Encoding.GetEncoding("shift-jis");
+        
+        //クラスのコンストラクタ
+        public ClientHandler(Socket socketForClient, Form1 _FomServer)
+        {
+            //呼び出し側のSocketを保持
+            socket = socketForClient;
+
+            //clientHandle = socket.Handle;
+
+            //呼び出し側のフォームのインスタンスを保持
+            fomServer = _FomServer;
+
+            //読み込み用のバッファ
+            buffer = new byte[256];
+            
+            //socketの読み書き用のstreamを作成します
+            networkStream = new NetworkStream(socketForClient);
+            
+            //読み込み完了時にCLRから呼ばれるメソド
+            callbackRead = new AsyncCallback(this.OnReadComplete);
+            
+            //書き込み完了時にCLRから呼ばれるメソド
+            callbackWrite = new AsyncCallback(this.OnWriteComplete);
+        }
+
+      
+        //Socketクラスのハンドルを返します
+        //これはインスタンスの識別に使用します
+        public IntPtr ClientHandle
+        {
+            get { return socket.Handle; }
+        }
+
+        // クライアントからの文字列読み出し開始
+        //別スレッドで行われ、読み込み終了時にcallbackReadがCLRによって
+        //呼び出されます。
+        public void StartRead()
+        {
+            networkStream.BeginRead(buffer , 0 , buffer.Length , callbackRead, null);
+        }
+
+
+        //networkStream.BeginReadの別スレッドから、読み込み完了時
+        //又はクライアント切断時にコールバックされます。
+        private void OnReadComplete(IAsyncResult ar)
+        {
+           try
+           {
+               //受信文字をStreamから読み込みます
+               if (networkStream == null)
+                    return;
+                
+               //受信バイト数が返る        
+               int bytesRead = networkStream.EndRead(ar);
+               
+               
+               if (bytesRead > 0)　　 //受信文字が有った
+                {
+                    Byte[] getByte = new byte[bytesRead];
+                    for (int i = 0; i < bytesRead; i++)
+                        getByte[i] = buffer[i];
+
+                    byte[] uniBytes;
+                    uniBytes = Encoding.Convert(ecSjis, ecUni, getByte);
+
+                    string strGetText = ecUni.GetString(uniBytes);
+                    //受信文字を切り出す
+
+
+                    //メインスレッドのテキストボックスに書き込む
+                    fomServer.Invoke(new PosSystem_Master.Form1.dlgWriteText(fomServer.WriteReadText)
+                                       , new object[] { this, strGetText });
+
+                    //次の受信を待つ
+                    networkStream.BeginRead(buffer, 0, buffer.Length, callbackRead, null);
+
+                }
+                else
+                {
+                    //終了ボタンが押され場合はここに落ちる
+                    //クライアントのList<T>からの削除
+                    fomServer.Invoke(new PosSystem_Master.Form1.dlgsetList(fomServer.deleteClient)
+                                            , new object[] { this });
+                   
+                    networkStream.Close();
+                    socket.Close();
+                    networkStream = null;
+                    Thread.Sleep(20);//これを入れないとNullReferenceExceptionが起きる
+                    socket = null;
+                }
+            
+            }
+            catch
+            {
+                return;
+            }
+        }
+        
+        // 送信
+        //別スレッドで送信し、送信が終了すると
+        //OnWriteCompleteがコールバックされます。
+        public void WriteString(byte[] buffer)
+        {
+            networkStream.BeginWrite(buffer, 0, buffer.Length  , callbackWrite, null);    
+        }
+        
+        // 文字列の書き込みが完了したときにメッセージを出力して読み取りを続けます
+        private void OnWriteComplete(IAsyncResult ar)
+        {
+           networkStream.EndWrite(ar);
         }
     }
 }

@@ -46,6 +46,7 @@
             this.印刷ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.確認ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.サーバーを建てるToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.接続者確認ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.display_timer = new System.Windows.Forms.Timer(this.components);
             this.reg_goods_list = new System.Windows.Forms.ListView();
             this.disp_scan_goods = new System.Windows.Forms.Panel();
@@ -57,7 +58,6 @@
             this.reg_clear = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.reg_user = new System.Windows.Forms.Label();
-            this.checkconnect = new System.Windows.Forms.Timer(this.components);
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
@@ -99,7 +99,8 @@
             this.各種リストToolStripMenuItem,
             this.ダミーデータ挿入ToolStripMenuItem,
             this.システムバーコードToolStripMenuItem,
-            this.サーバーを建てるToolStripMenuItem});
+            this.サーバーを建てるToolStripMenuItem,
+            this.接続者確認ToolStripMenuItem});
             this.top_menu.Location = new System.Drawing.Point(0, 0);
             this.top_menu.Name = "top_menu";
             this.top_menu.Size = new System.Drawing.Size(897, 26);
@@ -196,6 +197,13 @@
             this.サーバーを建てるToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.サーバーを建てるToolStripMenuItem.Text = "サーバーを建てる";
             this.サーバーを建てるToolStripMenuItem.Click += new System.EventHandler(this.サーバーを建てるToolStripMenuItem_Click);
+            // 
+            // 接続者確認ToolStripMenuItem
+            // 
+            this.接続者確認ToolStripMenuItem.Name = "接続者確認ToolStripMenuItem";
+            this.接続者確認ToolStripMenuItem.Size = new System.Drawing.Size(80, 22);
+            this.接続者確認ToolStripMenuItem.Text = "接続者確認";
+            this.接続者確認ToolStripMenuItem.Click += new System.EventHandler(this.接続者確認ToolStripMenuItem_Click);
             // 
             // display_timer
             // 
@@ -382,7 +390,7 @@
         private System.Windows.Forms.ToolStripMenuItem ユーザーToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem サーバーを建てるToolStripMenuItem;
-        private System.Windows.Forms.Timer checkconnect;
+        private System.Windows.Forms.ToolStripMenuItem 接続者確認ToolStripMenuItem;
     }
 }
 
