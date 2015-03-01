@@ -11,27 +11,22 @@ namespace PosSystem_Client
 {
     public partial class Staff_Regist : Form
     {
-        string isBarcode = "";
+        string barcode;
         Connect cn;
-        public Staff_Regist(Connect _cn,string _isBarcode = "")
+        public Staff_Regist(Connect _cn, string barcode)
         {
             InitializeComponent();
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            isBarcode = _isBarcode;
+            this.barcode = barcode;
             cn = _cn;
         }
 
         private void Staff_Regist_Load(object sender, EventArgs e)
         {
-            label2.Text = "スタッフを追加します。"+ Environment.NewLine +"入力が終わったらEnterキー。";
-            if (isBarcode != "")
-            {
-                textBox2.Visible = true;
-                textBox2.Text = isBarcode;
-                label3.Visible = true;
-            }
+            label2.Text = "スタッフ名を追加します。"+ Environment.NewLine +"入力が終わったらEnterキー。";
+            textBox2.Text = barcode;
         }
         private void Staff_Regist_KeyDown(object sender, KeyEventArgs e)
         {
@@ -40,26 +35,7 @@ namespace PosSystem_Client
                 DialogResult result = MessageBox.Show("このなまえでとうろくしますか？"+Environment.NewLine+textBox1.Text, "かくにん", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    if (isBarcode != "") atsumi_pos.regist_user(cn, textBox1.Text, textBox2.Text);
-                    else atsumi_pos.regist_user(cn, textBox1.Text, "");
-                    /*
-                    if (res != "")
-                    {
-                        isBarcode = res;
-                        print_template.check_default_printer(true);
-
-                        System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-                        pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(printDocument1_PrintPage);
-
-                        PrintDialog pdlg = new PrintDialog();
-                        pdlg.Document = pd;
-                        pd.Print();
-
-
-                    }else{
-                        MessageBox.Show("なんらかの原因で登録できませんでした。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
-                    */
+                    atsumi_pos.regist_user(cn, textBox1.Text, barcode);
                     this.Close();
                 }
             }
@@ -71,7 +47,7 @@ namespace PosSystem_Client
 
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
-            print_template.print_user(isBarcode, textBox1.Text, e);
+            print_template.print_user(barcode, textBox1.Text, e);
         }
 
 

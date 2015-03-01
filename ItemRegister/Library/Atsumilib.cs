@@ -14,94 +14,42 @@ namespace ItemRegister
 
     class BarCode_Prefix
     {
-        public const int BARCODE_NUM = 13;
-
-        public const string PREFIX = "49";
-
-        public const string ITEM        = "00";
+        public const int BARCODE_NUM = 10;
+        public const string PREFIX = "10";
         public const string SALE = "01";
-        public const string STAFF       = "02";
-
-        //画面遷移
-        public const string ITEM_REGIST = "10";
-        public const string ITEM_LIST   = "11";
-        public const string SALE_LIST   = "12";
-        public const string ACCOUNT     = "13";
-        public const string STAFF_REGIST = "14";
-        public const string STAFF_LIST  ="15";
-        public const string ITEM_LIST_EDIT = "16";
-        
-        //操作
-        public const string ENTER       = "20";
-        public const string BACK        = "21";
-        public const string SHOW_TOOLBAR = "22";
-        public const string HIDE_TOOLBAR = "23";
-
-        //動作モード変更
-        public const string MODE_TAKE = "30";
-        public const string MODE_PRACTICE = "31";
-
-        //MONEY
-        public const string M100 = "80";
-        public const string M200 = "81";
-        public const string M300 = "82";
-        public const string M400 = "83";
-
-        //ダミーデータ登録
-        public const string DUMMY_ITEM = "90";
-        public const string DUMMY_USER = "91";
     }
 
     class Barcode
     {
-        public bool isSet = false;
-        public bool isCreated = false;
-
-        private string prefix = "";
-        private string store = "";
-        private string item_num = "";
-        private string barcode = "";
-
-        Barcode(string _prefix)
+        string store;
+        string itemNum;
+        string barcode;
+        public Barcode(string barcode)
         {
-            this.prefix = _prefix;
+            this.barcode = barcode;
         }
-        
-        /// <summary>
-        /// バーコードを作成します。
-        /// </summary>
-        /// <param name="_prefix">2桁 Barcode_Prefix</param>
-        /// <param name="_store_num">3桁 001 Form1.store_num</param>
-        /// <param name="_item_num">5桁 データベースとか見てね</param>
-        public Barcode(string _prefix, string _store_num, string _item_num)
+
+        public Barcode(string store, string itemNum)
         {
-            this.prefix = _prefix.ToString();
-            this.store = _store_num;
-            this.item_num = _item_num;
-            this.isSet = true;
+            this.store = store;
+            this.itemNum = itemNum;
             this.comb_barcode();
         }
         public void comb_barcode()
         {
-            if (this.isSet)
+            string barcode = BarCode_Prefix.PREFIX + BarCode_Prefix.SALE + store + itemNum;
+            if (barcode.Length == BarCode_Prefix.BARCODE_NUM)
             {
-                string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
-                temp += atsumi_pos.create_check_digit(temp);
-                if (temp.Length == BarCode_Prefix.BARCODE_NUM)
-                {
-                    this.barcode = temp;
-                    this.isCreated = true;
-                }
-                else
-                {
-                    throw new Exception("作られたバーコードの長さがおかしいなぁ・・"+Environment.NewLine+
-                    temp);
-                }
+                this.barcode = barcode;
+            }
+            else
+            {
+                throw new Exception("作られたバーコードの長さがおかしいなぁ・・" + Environment.NewLine + barcode);
             }
         }
-        public string show()
+        public string getBarcode()
         {
-            return (this.isCreated) ? this.barcode : "";
+            return this.barcode;
         }
     }
 
@@ -472,8 +420,8 @@ namespace ItemRegister
             //TODO Apache fop とか使えたらいいかも・・・
 
             BarcodeWriter bw = new BarcodeWriter();
-            bw.Format = BarcodeFormat.EAN_13;
-            Bitmap barcode = bw.Write(_barcode);
+            bw.Format = BarcodeFormat.CODABAR;
+            Bitmap barcode = bw.Write("A" + _barcode + "A");
 
 
             int print_row_num = 4;
@@ -531,7 +479,7 @@ namespace ItemRegister
                         barcode,
                         MARGIN_PAGE_LEFT + wei + 3.2f,
                         MARGIN_PAGE_TOP + hei + 7f,
-                        barcode.Width * 0.4f, barcode.Height * 0.14f
+                        barcode.Width * 0.3f, barcode.Height * 0.14f
                         );
 
                     g.DrawString(

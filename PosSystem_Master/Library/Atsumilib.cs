@@ -75,7 +75,7 @@ namespace PosSystem_Master
         /// </summary>
         /// <param name="_prefix">2桁 Barcode_Prefix</param>
         /// <param name="_store_num">3桁 001 Form1.store_num</param>
-        /// <param name="_item_num">5桁 データベースとか見てね</param>
+        /// <param name="_item_num">4桁 データベースとか見てね</param>
         public Barcode(string _prefix, string _store_num, string _item_num)
         {
             this.prefix = _prefix.ToString();
@@ -89,7 +89,6 @@ namespace PosSystem_Master
             if (this.isSet)
             {
                 string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
-                temp += atsumi_pos.create_check_digit(temp);
                 if (temp.Length == BarCode_Prefix.BARCODE_NUM)
                 {
                     this.barcode = temp;
@@ -480,22 +479,6 @@ namespace PosSystem_Master
                 System_log.ShowDialog(e.ToString());
                 return false;
             }
-        }
-
-        public static string create_check_digit(string barcode)
-        {
-            int even = 0;
-            int odd = 0;
-
-            for (int i = 0; i < barcode.Length; i++)
-            {
-                if (i == 0 || i % 2 == 0) odd += int.Parse(barcode[i].ToString());
-                else even += int.Parse(barcode[i].ToString());
-            }
-
-            int check_digit = 10 - (even * 3 + odd) % 10; if (check_digit == 10) check_digit = 0;
-
-            return check_digit.ToString();
         }
         public static string regist_user(string _name, string _barcode = "")
         {

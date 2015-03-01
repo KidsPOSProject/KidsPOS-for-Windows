@@ -295,7 +295,7 @@ namespace ItemRegister
                 }
                 for (int i = item_position + column_count + 1; i < csv.Count; i += column_count)
                 {
-                    int item_num = find_item(store_num.ToString("000"), csv[i].ToString(), res.ToString("000"), csv[i + 2].ToString());
+                    int item_num = find_item(store_num.ToString("00"), csv[i].ToString(), res.ToString("000"), csv[i + 2].ToString());
                     if (item_num == -1)
                     {
                         //atsumi_pos.Insert(db_file_item, "INSERT INTO item_genre (name,store) values('" + csv[i].ToString() + "','" + res.ToString("000") + "')");
@@ -313,15 +313,15 @@ namespace ItemRegister
                             }
                         }
 
+                        int itemNum = atsumi_pos.read_count_num(db_file_pos, "item_list")+1;
 
                         Barcode bar = new Barcode(
-                            BarCode_Prefix.ITEM,
-                            res.ToString("000"), atsumi_pos.read_count_num(db_file_pos, "item_list").ToString("D5"));
+                            res.ToString("00"), itemNum.ToString("D4"));
 
                         atsumi_pos.Insert(
                             db_file_pos,
                             "INSERT INTO item_list (barcode,name,price,shop,genre) VALUES ('" +
-                            bar.show() + "','" +
+                            bar.getBarcode() + "','" +
                             csv[i].ToString() + "','" +
                             csv[i + 2].ToString() + "','" +
                             res.ToString() + "','" +

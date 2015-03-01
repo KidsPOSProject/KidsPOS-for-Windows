@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Data.SQLite;
 using System.IO;
-using System.Xml.Serialization;
 using Microsoft.VisualBasic.FileIO;
 using System.Net.Sockets;
 using System.Text;
@@ -649,11 +648,6 @@ namespace PosSystem_Master
                                                        , new object[] { handler });
                     handler.StartRead();
 
-                    if (DEBUG)
-                    {
-                        MessageBox.Show("クライアントが接続してきました");
-                    }
-
                 } while (true);
             }
             catch
@@ -723,13 +717,6 @@ namespace PosSystem_Master
                     break;
                 }
             }
-
-
-            if (DEBUG)
-            {
-                MessageBox.Show(text);
-            }
-
             string[] rec = text.Split(',');
 
             if (rec.Length == 4 && rec[0] == "staff_list")

@@ -133,21 +133,6 @@
             // 
             this.take_mode.Name = "take_mode";
             this.take_mode.Size = new System.Drawing.Size(68, 22);
-            // 
-            // Item_Regist
-            // 
-            this.Item_Regist.Name = "Item_Regist";
-            this.Item_Regist.Size = new System.Drawing.Size(68, 22);
-            this.Item_Regist.Text = "商品登録";
-            this.Item_Regist.Click += new System.EventHandler(this.Item_Regist_Click);
-            // 
-            // ユーザ登録ToolStripMenuItem
-            // 
-            this.ユーザ登録ToolStripMenuItem.Name = "ユーザ登録ToolStripMenuItem";
-            this.ユーザ登録ToolStripMenuItem.Size = new System.Drawing.Size(80, 22);
-            this.ユーザ登録ToolStripMenuItem.Text = "ユーザ登録";
-            this.ユーザ登録ToolStripMenuItem.Click += new System.EventHandler(this.ユーザ登録ToolStripMenuItem_Click);
-            // 
             // 各種リストToolStripMenuItem
             // 
             this.各種リストToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {

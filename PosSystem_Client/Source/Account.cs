@@ -17,6 +17,7 @@ namespace PosSystem_Client
         ListView main_list;
         public Account(ListView _main_list)
         {
+            
             InitializeComponent();
             Form1.InitializeListView(reg_goods_list);
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());

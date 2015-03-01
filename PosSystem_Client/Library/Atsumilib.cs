@@ -17,26 +17,25 @@ namespace PosSystem_Client
 
     class BarCode_Prefix
     {
-        public const int BARCODE_NUM = 13;
+        public const int BARCODE_NUM = 10;
+        public const string PREFIX = "10";
 
-        public const string PREFIX = "49";
-
-        public const string ITEM        = "00";
-        public const string SALE = "01";
-        public const string STAFF       = "02";
+        public const string STAFF = "00";
+        public const string ITEM = "01";
+        public const string SALE = "02";
 
         //画面遷移
-        public const string ITEM_REGIST = "10";
-        public const string ITEM_LIST   = "11";
-        public const string SALE_LIST   = "12";
-        public const string ACCOUNT     = "13";
+        public const string ITEM_REGIST = "17";
+        public const string ITEM_LIST = "11";
+        public const string SALE_LIST = "12";
+        public const string ACCOUNT = "13";
         public const string STAFF_REGIST = "14";
-        public const string STAFF_LIST  ="15";
+        public const string STAFF_LIST = "15";
         public const string ITEM_LIST_EDIT = "16";
-        
+
         //操作
-        public const string ENTER       = "20";
-        public const string BACK        = "21";
+        public const string ENTER = "20";
+        public const string BACK = "21";
         public const string SHOW_TOOLBAR = "22";
         public const string HIDE_TOOLBAR = "23";
 
@@ -53,59 +52,6 @@ namespace PosSystem_Client
         //ダミーデータ登録
         public const string DUMMY_ITEM = "90";
         public const string DUMMY_USER = "91";
-    }
-
-    class Barcode
-    {
-        public bool isSet = false;
-        public bool isCreated = false;
-
-        private string prefix = "";
-        private string store = "";
-        private string item_num = "";
-        private string barcode = "";
-
-        Barcode(string _prefix)
-        {
-            this.prefix = _prefix;
-        }
-        
-        /// <summary>
-        /// バーコードを作成します。
-        /// </summary>
-        /// <param name="_prefix">2桁 Barcode_Prefix</param>
-        /// <param name="_store_num">3桁 001 Form1.store_num</param>
-        /// <param name="_item_num">5桁 データベースとか見てね</param>
-        public Barcode(string _prefix, string _store_num, string _item_num)
-        {
-            this.prefix = _prefix.ToString();
-            this.store = _store_num;
-            this.item_num = _item_num;
-            this.isSet = true;
-            this.comb_barcode();
-        }
-        public void comb_barcode()
-        {
-            if (this.isSet)
-            {
-                string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
-                temp += atsumi_pos.create_check_digit(temp);
-                if (temp.Length == BarCode_Prefix.BARCODE_NUM)
-                {
-                    this.barcode = temp;
-                    this.isCreated = true;
-                }
-                else
-                {
-                    throw new Exception("作られたバーコードの長さがおかしいなぁ・・"+Environment.NewLine+
-                    temp);
-                }
-            }
-        }
-        public string show()
-        {
-            return (this.isCreated) ? this.barcode : "";
-        }
     }
 
     class atsumi_pos
@@ -522,26 +468,13 @@ namespace PosSystem_Client
 
             return check_digit.ToString();
         }
-        public static void regist_user(Connect cn,string _name, string _barcode = "")
+        public static void regist_user(Connect cn, string _name, string _barcode = "")
         {
-            atsumi_pos ap = new atsumi_pos();
+            if (cn != null) cn.SendStringData("staff_list," + _barcode);
 
-            if (cn != null) cn.SendStringData("staff_list," + Form1.store_num + "," + _name + "," + _barcode);
-            else
-            {
-                //元々あるバーコードを登録する機能は多分実装出来てない。
-                //Function for registering input the barcode isn't been able to implement.
-
-                Barcode bc = new Barcode(BarCode_Prefix.STAFF, Form1.store_num, atsumi_pos.read_count_num(Form1.db_file_staff, "staff_list").ToString("D5"));
-                string temp_barcode = bc.show();
-
-                MessageBox.Show("ネットワークに接続されておりません。仮のバーコードを生成しました。");
-                atsumi_pos.Insert(new atsumi_pos.StaffTable(temp_barcode,_name));
-                ap.barcode = temp_barcode;
-                ap.name = _name;
-                ap.print();
-            }
+            atsumi_pos.Insert(new atsumi_pos.StaffTable(_barcode, _name));
         }
+
 
         public void print()
         {
@@ -1091,6 +1024,58 @@ namespace PosSystem_Client
         {
             StopSock();
             StartSock();
+        }
+    }
+    class Barcode
+    {
+        public bool isSet = false;
+        public bool isCreated = false;
+
+        private string prefix = "";
+        private string store = "";
+        private string item_num = "";
+        private string barcode = "";
+
+        Barcode(string _prefix)
+        {
+            this.prefix = _prefix;
+        }
+
+        /// <summary>
+        /// バーコードを作成します。
+        /// </summary>
+        /// <param name="_prefix">2桁 Barcode_Prefix</param>
+        /// <param name="_store_num">3桁 001 Form1.store_num</param>
+        /// <param name="_item_num">5桁 データベースとか見てね</param>
+        public Barcode(string _prefix, string _store_num, string _item_num)
+        {
+            this.prefix = _prefix.ToString();
+            this.store = _store_num;
+            this.item_num = _item_num;
+            this.isSet = true;
+            this.comb_barcode();
+        }
+        public void comb_barcode()
+        {
+            if (this.isSet)
+            {
+                string temp = BarCode_Prefix.PREFIX + this.prefix + this.store + this.item_num;
+                temp += atsumi_pos.create_check_digit(temp);
+                if (temp.Length == BarCode_Prefix.BARCODE_NUM)
+                {
+                    this.barcode = temp;
+                    this.isCreated = true;
+                }
+                else
+                {
+                    throw new Exception("作られたバーコードの長さがおかしいなぁ・・" + Environment.NewLine +
+                    temp);
+                }
+            }
+        }
+        public string show()
+        {
+            return (this.isCreated) ? this.barcode : "";
         }
     }
 }

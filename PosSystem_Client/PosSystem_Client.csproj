@@ -82,18 +82,6 @@
     <Compile Include="Source\Item_List.Designer.cs">
       <DependentUpon>Item_List.cs</DependentUpon>
     </Compile>
-    <Compile Include="Source\Item_Regist.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Source\Item_Regist.Designer.cs">
-      <DependentUpon>Item_Regist.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Source\Item_Regist_OK.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Source\Item_Regist_OK.Designer.cs">
-      <DependentUpon>Item_Regist_OK.cs</DependentUpon>
-    </Compile>
     <Compile Include="Source\Sales.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -140,12 +128,6 @@
     <EmbeddedResource Include="Source\Item_List.resx">
       <DependentUpon>Item_List.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Source\Item_Regist.resx">
-      <DependentUpon>Item_Regist.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Source\Item_Regist_OK.resx">
-      <DependentUpon>Item_Regist_OK.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Source\Sales.resx">
       <DependentUpon>Sales.cs</DependentUpon>
     </EmbeddedResource>
@@ -170,8 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Kids.jpg" />
-    <Content Include="Library\System.Data.SQLite.dll" />
-    <Content Include="Library\zxing.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

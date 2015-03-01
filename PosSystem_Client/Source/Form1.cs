@@ -207,7 +207,7 @@ namespace PosSystem_Client
                 scan_goods_name.Text = read_items_name;
                 scan_goods_price.Text = read_items_price;
 
-                string[] item1 = { (int.Parse(read_items_id).ToString("000")), scan_goods_name.Text, "1", scan_goods_price.Text, "×" };
+                string[] item1 = { (int.Parse(read_items_id).ToString("D4")), scan_goods_name.Text, "1", scan_goods_price.Text, "×" };
                 reg_goods_list.Items.Add(new ListViewItem(item1));
 
                 reg_item_price_sum += int.Parse(scan_goods_price.Text);
@@ -318,7 +318,6 @@ namespace PosSystem_Client
         //バーコードが入力されたとき
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (key_check(e) || input_count == BarCode_Prefix.BARCODE_NUM) init_input();
 
             input[input_count] = e.KeyCode.ToString();
@@ -347,7 +346,7 @@ namespace PosSystem_Client
                     //従業員のバーコードを読み込んだとき
                     case BarCode_Prefix.STAFF:
                         string[,] ret = atsumi_pos.find_user(Form1.db_file_staff, temp_barcode);
-                        if (ret[0, 0] != "")
+                        if (ret[0,0] != null && ret[0, 0] != "")
                         {
                             reg_user.Text = ret[0, 2];
                             shop_person = ret[0, 2];
@@ -358,14 +357,6 @@ namespace PosSystem_Client
                             unreg_str.ShowDialog(this);
                             unreg_str.Dispose();
                         }
-                        break;
-
-                    //商品登録を読み込んだ時
-                    case BarCode_Prefix.ITEM_REGIST:
-                        
-                        Item_Regist win = new Item_Regist();
-                        win.ShowDialog(this);
-                        win.Dispose();
                         break;
 
                     //商品リストを読み込んだ時
@@ -411,15 +402,6 @@ namespace PosSystem_Client
                         Staff_List stf = new Staff_List();
                         stf.ShowDialog(this);
                         stf.Dispose();
-                        
-                        break;
-
-                    //スタッフ登録を読み込んだ時
-                    case BarCode_Prefix.STAFF_REGIST:
-                        
-                        Staff_Regist str = new Staff_Regist(cn);
-                        str.ShowDialog(this);
-                        str.Dispose();
                         
                         break;
 
@@ -491,12 +473,6 @@ namespace PosSystem_Client
         #endregion
 
         #region ツールメニュー
-        private void Item_Regist_Click(object sender, EventArgs e)
-        {
-            Item_Regist win = new Item_Regist();
-            win.ShowDialog(this);
-            win.Dispose();
-        }
         private void 印刷ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             System.Drawing.Printing.PrintDocument pd =
@@ -504,17 +480,6 @@ namespace PosSystem_Client
             pd.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(print_template.print_system_barcode);
             pd.Print();
         }
-        private void ユーザ登録ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Staff_Regist sr = new Staff_Regist(cn);
-            sr.ShowDialog();
-            sr.Dispose();
-        }
-
-        private void ダミーデータ登録ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
 
         private void 商品リストToolStripMenuItem_Click(object sender, EventArgs e)
         {
