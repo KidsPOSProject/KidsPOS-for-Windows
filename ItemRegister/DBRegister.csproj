@@ -64,11 +64,17 @@
     <Compile Include="Library\Atsumilib.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Registed_List.cs">
+    <Compile Include="RegistedList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Registed_List.Designer.cs">
-      <DependentUpon>Registed_List.cs</DependentUpon>
+    <Compile Include="RegistedList.Designer.cs">
+      <DependentUpon>RegistedList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RegistedUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RegistedUser.Designer.cs">
+      <DependentUpon>RegistedUser.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -82,8 +88,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Registed_List.resx">
-      <DependentUpon>Registed_List.cs</DependentUpon>
+    <EmbeddedResource Include="RegistedList.resx">
+      <DependentUpon>RegistedList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RegistedUser.resx">
+      <DependentUpon>RegistedUser.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

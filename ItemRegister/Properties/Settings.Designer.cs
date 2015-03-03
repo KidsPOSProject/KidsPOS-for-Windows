@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ItemRegister.Properties
+namespace DBRegister.Properties
 {
 
 

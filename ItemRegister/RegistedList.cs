@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.SQLite;
 
-namespace ItemRegister
+namespace DBRegister
 {
     public partial class Registed_List : Form
     {
@@ -36,11 +36,14 @@ namespace ItemRegister
         }
         private void Registed_List_Load(object sender, EventArgs e)
         {
-            insert_view(dataTable, Form1.db_file_pos, "item_list", 
-                "SELECT il.id,il.barcode AS バーコード,sk.name AS お店, il.name AS 商品名,ig.name AS ジャンル,il.price AS 値段 FROM item_list AS il,item_genre AS ig,store_kind AS sk WHERE il.genre = ig.id AND il.shop = sk.id;");
-            insert_view(dataTable2, Form1.db_file_pos, "item_list");
-            insert_view(dataTable3, Form1.db_file_pos, "item_genre");
-            insert_view(dataTable4, Form1.db_file_pos, "store_kind");
+            DataBase db = DataBase.getInstance();
+            insert_view(dataTable, DataBase.DBPath.ITEM, DataBase.TableList.ITEM,
+                "SELECT il.id,il.barcode AS バーコード,sk.name AS お店, il.name AS 商品名,ig.name AS ジャンル,il.price AS 値段 FROM " 
+                + DataBase.TableList.ITEM + " AS il," 
+                + DataBase.TableList.ITEM_GENRE + " AS ig," + DataBase.TableList.STORE +" AS sk WHERE il.genre = ig.id AND il.shop = sk.id;");
+            insert_view(dataTable2, DataBase.DBPath.ITEM, DataBase.TableList.ITEM);
+            insert_view(dataTable3, DataBase.DBPath.ITEM_GENRE, DataBase.TableList.ITEM_GENRE);
+            insert_view(dataTable4, DataBase.DBPath.STORE, DataBase.TableList.STORE);
         }
         public void insert_view(DataTable dt,string _source,string _table,string _query ="")
         {
@@ -116,11 +119,11 @@ namespace ItemRegister
                     //バイナリサーチ用にソート
                     li.Sort();
 
-                    string[,] store_data = atsumi_pos.find_store(Form1.db_file_pos, int.Parse(dataGridView2.Rows[index].Cells[4].Value.ToString()));
+                    DataBase.Store store = DataBase.getInstance().find_store(int.Parse(dataGridView2.Rows[index].Cells[4].Value.ToString()));
 
                     selected_barcode[count, 0] = dataGridView2.Rows[index].Cells[1].Value.ToString();
                     selected_barcode[count, 1] = dataGridView2.Rows[index].Cells[2].Value.ToString();
-                    selected_barcode[count, 2] = store_data[0,1];
+                    selected_barcode[count, 2] = store.name;
 
                     count++;
                 }
@@ -159,11 +162,11 @@ namespace ItemRegister
                 foreach (DataGridViewRow r in dataGridView2.Rows)
                 {
                     if (r.Cells[1].Value == null) break;
-                    string[,] store_data = atsumi_pos.find_store(Form1.db_file_pos, int.Parse(r.Cells[4].Value.ToString()));
+                    DataBase.Store store = DataBase.getInstance().find_store(int.Parse(r.Cells[4].Value.ToString()));
 
                     selected_barcode[count, 0] = r.Cells[1].Value.ToString();
                     selected_barcode[count, 1] = r.Cells[2].Value.ToString();
-                    selected_barcode[count, 2] = store_data[0, 1];
+                    selected_barcode[count, 2] = store.name;
 
                     count++;
                 }
@@ -189,7 +192,5 @@ namespace ItemRegister
                 }
             }
         }
-
-
     }
 }

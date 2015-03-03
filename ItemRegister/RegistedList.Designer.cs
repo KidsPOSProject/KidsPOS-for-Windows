@@ -1,4 +1,4 @@
-﻿namespace ItemRegister
+﻿namespace DBRegister
 {
     partial class Registed_List
     {

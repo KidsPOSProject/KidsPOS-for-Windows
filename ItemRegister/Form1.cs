@@ -11,112 +11,47 @@ using System.Collections;
 using Microsoft.VisualBasic.FileIO;
 using System.IO;
 
-namespace ItemRegister
+namespace DBRegister
 {
     public partial class Form1 : Form
     {
-        public static string db_file_pos = "KidsDB-ITEM.db";
-
+        public enum LoadType
+        {
+            ITEM,
+            USER
+        }
 
         public Form1()
         {
             InitializeComponent();
-            CreateTable();
+            DataBase.getInstance().createTable();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            DateTime dt = DateTime.Now;
+            string stPrompt1 = dt.ToString("yyyy");
+            lKidsDate.Text = stPrompt1 + " 年のキッズ用に登録されます" + Environment.NewLine;
+            lKidsDate.Text += "出力ユーザバーコード例: " + BarCode_Prefix.PREFIX + BarCode_Prefix.USER + stPrompt1.Substring(2) + "0001" + Environment.NewLine;
+            lKidsDate.Text += "出力商品バーコード例　: " + BarCode_Prefix.PREFIX + BarCode_Prefix.SALE + "010001";
         }
 
         private void load_csv_file_Click(object sender, EventArgs e)
         {
-            do_load(load_csv());
+            load_csv(LoadType.ITEM);
         }
-        
 
-        public static int find_store(string _store_name)
+        private void button2_Click(object sender, EventArgs e)
         {
-            int res = -1;
-            using (var conn = new SQLiteConnection("Data Source=" + db_file_pos))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT id FROM store_kind WHERE name = '" + _store_name + "'";
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        res = reader.GetInt32(0);
-                    }
-                }
-                conn.Close();
-            }
-            return res;
-        }
-        public static int find_ganre(string _store_name, string _genre)
-        {
-            int res = -1;
-            using (var conn = new SQLiteConnection("Data Source=" + db_file_pos))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT id FROM item_genre WHERE name = '" + _genre + "' AND store = '"+ _store_name +"'";
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        res = reader.GetInt32(0);
-                    }
-                }
-                conn.Close();
-            }
-            return res;
+            load_csv(LoadType.USER);
         }
 
-        public static int find_item(string _store_num, string _item_name, string _genre, string _price)
-        {
-            int res = -1;
-            using (var conn = new SQLiteConnection("Data Source=" + db_file_pos))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT id FROM item_list WHERE name = '" + _item_name + "' AND price = '" + _price + "' AND shop = '" + _store_num + "'";
 
-                    var reader = command.ExecuteReader();
 
-                    while (reader.Read())
-                    {
-                        res = reader.GetInt32(0);
-                    }
-                }
-                conn.Close();
-            }
-            return res;
-        }
+        int cntSuccess = 0;
+        int cntMissing = 0;
 
-        public static int read_count_num(string db_file_path, string table, string _where ="")
-        {
-            int id_count = -1;
-            using (var conn = new SQLiteConnection("Data Source=" + db_file_path))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT COUNT(*) FROM " + table +" "+ _where;
-                    id_count = int.Parse(command.ExecuteScalar().ToString());
-                }
-                conn.Close();
-            }
-            return id_count;
-        }
-
-        public ArrayList load_csv()
+        public void load_csv(LoadType type)
         {
             ArrayList al = new ArrayList();
 
@@ -126,34 +61,76 @@ namespace ItemRegister
                 TextFieldParser parser = new TextFieldParser(ofd.FileName, System.Text.Encoding.GetEncoding("Shift_JIS"));
                 parser.TextFieldType = FieldType.Delimited;
                 // 区切り文字はコンマ
-                parser.SetDelimiters(",");
+                parser.SetDelimiters(",", "\t");
 
-                
+                cntSuccess = 0;
+                cntMissing = 0;
+
                 while (!parser.EndOfData)
                 {
                     // 1行読み込み
                     string[] row = parser.ReadFields();
-                    foreach (string field in row)
+                    switch (type)
                     {
-                        string f = field;
-                        // 改行をnで表示
-                        f = f.Replace("\r\n", "n");
-                        // 空白を_で表示 
-                        f = f.Replace(" ", "");
-                        // TAB区切りで出力 
-                        if (!(f == "")) al.Add(f);
+                        case LoadType.ITEM:
+                            foreach (string field in row)
+                            {
+                                string f = field;
+                                // 改行をnで表示
+                                f = f.Replace("\r\n", "n");
+                                // 空白を_で表示 
+                                f = f.Replace(" ", "");
+                                // TAB区切りで出力 
+                                if (!(f == "")) al.Add(f);
+                            }
+                            break;
+                        case LoadType.USER:
+                            if (checkFormatUser(row))
+                            {
+                                cntSuccess++;
+                                StringBuilder builder = new StringBuilder();
+                                builder.Append(row[0]).Append(",").Append(row[1]);
+                                al.Add(builder.ToString());
+                            }
+                            else
+                            {
+                                cntMissing++;
+                            }
+                            break;
+                        default:
+                            break;
                     }
+                } 
+                switch (type)
+                {
+                    case LoadType.ITEM:
+                        registItem(al);
+                        break;
+                    case LoadType.USER:
+                        registUser(al);
+                        break;
+                    default:
+                        break;
                 }
             }
-            return al;
         }
-        public bool do_load(ArrayList csv)
+        private Boolean checkFormatUser(string[] row)
         {
+            if (row[0].Length == BarCode_Prefix.DATA_LENGTH && !row[1].Equals(""))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool registItem(ArrayList csv)
+        {
+            DataBase db = DataBase.getInstance();
             bool isFirst = false;
             try
             {
                 string store_name = "";
-                int store_num = 0;
+                int storeNum;
 
                 /* ---- ここから　店名の追加 ---- */
                 int store_position = -1;
@@ -167,44 +144,26 @@ namespace ItemRegister
                 }
                 if (store_position == -1)
                 {
-                    MessageBox.Show(
-                        "ファイルがおかしいよ" + Environment.NewLine +
-                        "・CSV形式であるか" + Environment.NewLine +
-                        "・しっかりフォーマットに沿っているか" + Environment.NewLine +
-                        "を確認してください", "読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
-                        );
-                    return false;
+                    throw new InvalidDataException();
                 }
                 store_name = csv[store_position + 1].ToString();
 
-                int res = find_store(store_name);
-                if (res > -1)
-                {
-                    //登録されていたら
-                    store_num = res;
-                }
-                else
+                storeNum = db.find_store(store_name);
+                if (storeNum == -1)
                 {
                     isFirst = true;
                     //登録されてなかったら
                     DialogResult dr = MessageBox.Show("新しく " + store_name + " を追加します。", "追加", MessageBoxButtons.OKCancel);
                     if (dr == DialogResult.OK)
-                        atsumi_pos.Insert(db_file_pos, "INSERT INTO store_kind (name) values('" + store_name + "')");
+                        db.insert<DataBase.Store>(new DataBase.Store(store_name));
 
                     //登録できていたら
-                    res = find_store(store_name);
-                    if (res > -1)
-                    {
-                        store_num = res;
-                    }
-                    else
-                    {
-                        MessageBox.Show("何らかの原因で登録できませんでした。");
-                    }
+                    storeNum = db.find_store(store_name);
+                    if (storeNum == -1) MessageBox.Show("何らかの原因で登録できませんでした。");
                 }
 
                 //データベースに登録されているgenreの数
-                int genre_count = read_count_num(db_file_pos, "item_genre", "WHERE store = " + res.ToString("000"));
+                int genre_count = db.count<DataBase.ItemGenre>(string.Format("WHERE store = '{0}'", storeNum));
 
                 /* ---- ここまで　店名の追加 ---- */
 
@@ -212,6 +171,7 @@ namespace ItemRegister
 
                 //商品ジャンルの行から、商品リストまでの行を読み取って、その間をデータベースに追加する。
                 int item_position = -1;
+
                 for (int i = store_position; i < csv.Count; i++)
                 {
                     if (csv[i].ToString().StartsWith("#商品ジャンル"))
@@ -232,27 +192,27 @@ namespace ItemRegister
 
                 if (item_position == item_list)
                 {
-                    MessageBox.Show(
-                        "ファイルがおかしいよ" + Environment.NewLine +
-                        "・CSV形式であるか" + Environment.NewLine +
-                        "・しっかりフォーマットに沿っているか" + Environment.NewLine +
-                        "を確認してください", "読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
-                        );
-                    return false;
+                    throw new InvalidDataException();
                 }
 
                 int add_genre_num = item_list - (item_position + 1);
 
-
-
+                List<DataBase.ItemGenre> _g = db.selectMulti<DataBase.ItemGenre>(string.Format("WHERE store = '{0}'", storeNum));
+                List<string> g = new List<string>();
+                foreach (DataBase.ItemGenre _ in _g)
+                {
+                    g.Add(_.name);
+                }
+                List<DataBase.ItemGenre> tempGenre = new List<DataBase.ItemGenre>();
                 for (int i = item_position + 1; i < item_list; i++)
                 {
-                    int search = find_ganre(res.ToString("000"), csv[i].ToString());
-                    if (search == -1)
+                    string genreName = csv[i].ToString();
+                    if (g.IndexOf(genreName) == -1)
                     {
-                        atsumi_pos.Insert(db_file_pos, "INSERT INTO item_genre (name,store) values('" + csv[i].ToString() + "','" + res.ToString("000") + "')");
+                        tempGenre.Add(new DataBase.ItemGenre(genreName, storeNum));
                     }
                 }
+                db.insert(tempGenre);
 
                 /* ---- ここまで　ジャンルの追加 ---- */
 
@@ -267,16 +227,8 @@ namespace ItemRegister
                         break;
                     }
                 }
-                if (item_position == -1)
-                {
-                    MessageBox.Show(
-                        "ファイルがおかしいよ" + Environment.NewLine +
-                        "・CSV形式であるか" + Environment.NewLine +
-                        "・しっかりフォーマットに沿っているか" + Environment.NewLine +
-                        "を確認してください", "読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
-                        );
-                    return false;
-                }
+                if (item_position == -1) throw new InvalidDataException();
+
                 int column_count = 0;
                 for (int i = item_position + 1; i < csv.Count; i++)
                 {
@@ -284,51 +236,52 @@ namespace ItemRegister
                     column_count++;
                 }
 
-                if (column_count == 0)
-                {
-                    MessageBox.Show(
-                        "ファイルがおかしいよ" + Environment.NewLine +
-                        "・しっかりフォーマットに沿っているか" + Environment.NewLine +
-                        "を確認してください", "読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
-                        );
-                    return false;
-                }
+                if (column_count == 0) throw new InvalidDataException();
+                List<DataBase.Item> list = new List<DataBase.Item>();
+                int count = db.count<DataBase.Item>();
                 for (int i = item_position + column_count + 1; i < csv.Count; i += column_count)
                 {
-                    int item_num = find_item(store_num.ToString("00"), csv[i].ToString(), res.ToString("000"), csv[i + 2].ToString());
+                    string name = csv[i].ToString();
+                    String genreName = csv[i + 1].ToString();
+                    int price = Convert.ToInt32(csv[i + 2].ToString());
+                    int item_num = db.find_item(name, price, storeNum);
                     if (item_num == -1)
                     {
-                        //atsumi_pos.Insert(db_file_item, "INSERT INTO item_genre (name,store) values('" + csv[i].ToString() + "','" + res.ToString("000") + "')");
-                        if (find_ganre(res.ToString("000"), csv[i + 1].ToString()) == -1)
+                        count++;
+                        if (db.find_ganre(genreName, storeNum) == -1)
                         {
                             //商品登録の時に、変なジャンルが混ざってたら・・・
-                            DialogResult dr = MessageBox.Show("未定義のジャンルがありました。追加しますか？" + Environment.NewLine + csv[i + 1].ToString(),"エラー",MessageBoxButtons.YesNo,MessageBoxIcon.Question);
+                            DialogResult dr = MessageBox.Show("未定義のジャンルがありました。追加しますか？" + Environment.NewLine + csv[i + 1].ToString(), "エラー", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                             if (dr == System.Windows.Forms.DialogResult.Yes)
                             {
-                                atsumi_pos.Insert(db_file_pos, "INSERT INTO item_genre (name,store) values('" + csv[i + 1].ToString() + "','" + res.ToString("000") + "')");
+                                db.insert<DataBase.ItemGenre>(new DataBase.ItemGenre(csv[i * 1].ToString(), storeNum));
                             }
                             else
                             {
                                 continue;
                             }
                         }
-
-                        int itemNum = atsumi_pos.read_count_num(db_file_pos, "item_list")+1;
-
-                        Barcode bar = new Barcode(
-                            res.ToString("00"), itemNum.ToString("D4"));
-
-                        atsumi_pos.Insert(
-                            db_file_pos,
-                            "INSERT INTO item_list (barcode,name,price,shop,genre) VALUES ('" +
-                            bar.getBarcode() + "','" +
-                            csv[i].ToString() + "','" +
-                            csv[i + 2].ToString() + "','" +
-                            res.ToString() + "','" +
-                            find_ganre(res.ToString("000"), csv[i + 1].ToString()) + "')");
+                        list.Add(new DataBase.Item(
+                            new Barcode(storeNum, count).getBarcode(), //barcode
+                                name, //name
+                                price, //price
+                                storeNum, //shop
+                                db.find_ganre(genreName, storeNum)) //genre
+                        );
                     }
                 }
+                db.insert<DataBase.Item>(list);
                 /* ---- ここまで　商品リストの追加 ---- */
+            }
+            catch (InvalidDataException)
+            {
+                MessageBox.Show(
+                    "ファイルがおかしいよ" + Environment.NewLine +
+                    "・CSV形式であるか" + Environment.NewLine +
+                    "・しっかりフォーマットに沿っているか" + Environment.NewLine +
+                    "を確認してください", "読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
+                    );
+                return false;
             }
             finally
             {
@@ -337,34 +290,16 @@ namespace ItemRegister
             }
             return true;
         }
-        public void CreateTable()
+        public void registUser(ArrayList csv)
         {
-            if (!File.Exists(db_file_pos))
+            List<DataBase.Staff> arr = new List<DataBase.Staff>();
+            foreach (string row in csv)
             {
-                using (var conn = new SQLiteConnection("Data Source=" + db_file_pos))
-                {
-                    conn.Open();
-                    using (SQLiteCommand command = conn.CreateCommand())
-                    {
-                        //商品ジャンルリスト
-                        command.CommandText = "create table item_genre(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
-                        command.ExecuteNonQuery();
-
-                        //商品リスト
-                        command.CommandText = "create table item_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
-                        command.ExecuteNonQuery();
-
-                        //売上リスト
-                        command.CommandText = "create table sales_list(id INTEGER  PRIMARY KEY AUTOINCREMENT, buycode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT)";
-                        command.ExecuteNonQuery();
-
-                        //お店リスト
-                        command.CommandText = "create table store_kind(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
-                        command.ExecuteNonQuery();
-                    }
-                    conn.Close();
-                }
+                string[] s = row.Split(',');
+                arr.Add(new DataBase.Staff(s[0], s[1]));
             }
+            DataBase.getInstance().insert(arr);
+            MessageBox.Show("完了しました");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -373,5 +308,13 @@ namespace ItemRegister
             rl.ShowDialog(this);
             rl.Dispose();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            RegistedUser rl = new RegistedUser();
+            rl.ShowDialog(this);
+            rl.Dispose();
+        }
+
     }
 }

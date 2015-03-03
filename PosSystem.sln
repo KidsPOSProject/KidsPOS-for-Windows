@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PosSystem_Client", "PosSyst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PosSystem_Master", "PosSystem_Master\PosSystem_Master.csproj", "{FD8FCB86-4B78-4A03-82DF-4776F56EC6D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemRegister", "ItemRegister\ItemRegister.csproj", "{A10E6D7A-8166-4792-8178-6899564E7ECB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBRegister", "ItemRegister\DBRegister.csproj", "{A10E6D7A-8166-4792-8178-6899564E7ECB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
