@@ -1,52 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Data.SQLite;
+using PosSystem.Util;
+using PosSystem.Object.Database;
 
 namespace DBRegister
 {
     public partial class RegistedUser : Form
     {
+        private DataTable table = new DataTable();
         public RegistedUser()
         {
             InitializeComponent();
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            mGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            this.MinimizeBox = false;
+            this.MaximizeBox = false;
         }
-        private DataTable dataTable = new DataTable();
 
         protected override void OnLoad(EventArgs e)
         {
-            dataGridView1.DataSource = dataTable;
+            mGridView.DataSource = table;
             base.OnLoad(e);
         }
         private void RegistedUser_Load(object sender, EventArgs e)
         {
-            DataBase db = DataBase.getInstance();
-            insert_view(dataTable, DataBase.DBPath.STAFF, DataBase.TableList.STAFF);
-        }
-        public void insert_view(DataTable dt, string _source, string _table, string _query = "")
-        {
-            using (SQLiteConnection con = new SQLiteConnection("Data Source=" + _source))
-
-                if (_query == "")
-                {
-                    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter("SELECT * FROM " + _table + " " + _query, con))
-                    {
-                        adapter.Fill(dt);
-                    }
-                }
-                else
-                {
-                    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(_query, con))
-                    {
-                        adapter.Fill(dt);
-                    }
-                }
+            new Database().insertView<StaffObject>(table);
         }
     }
 }
