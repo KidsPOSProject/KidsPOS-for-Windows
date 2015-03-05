@@ -35,6 +35,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.89.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
@@ -54,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Object\BarcodeObject.cs" />
+    <Compile Include="Object\Config.cs" />
     <Compile Include="Object\Database\ItemGenreObject.cs" />
     <Compile Include="Object\Database\ItemObject.cs" />
     <Compile Include="Object\Database\RecordObject.cs" />
@@ -63,9 +65,10 @@
     <Compile Include="Object\PrintItemObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\Database.cs" />
-    <Compile Include="Setting\Barcode.cs" />
+    <Compile Include="Setting\BarcodeConfig.cs" />
     <Compile Include="Setting\PosInformation.cs" />
     <Compile Include="Util\Barcode.cs" />
+    <Compile Include="Util\CSV.cs" />
     <Compile Include="Util\Database.cs" />
     <Compile Include="Util\Print.cs" />
     <Compile Include="Util\SocketBase.cs" />

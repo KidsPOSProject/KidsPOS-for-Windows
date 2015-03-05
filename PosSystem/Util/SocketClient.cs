@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Threading;
 using PosSystem.Setting;
 using PosSystem.Object.Database;
+using PosSystem.Object;
 
 namespace PosSystem.Util
 {
@@ -20,12 +21,13 @@ namespace PosSystem.Util
 
         TcpClient client = null;
         SocketClient() { }
-
-        public bool ClientStart()
+        string ip;
+        public bool ClientStart(string targetIP)
         {
             try
             {
-                client = new TcpClient(PosInformation.getInstance().targetIP, PosInformation.port);
+                this.ip = targetIP;
+                client = new TcpClient(targetIP, Config.getInstance().targetPort);
                 thread = new Thread(new ThreadStart(this.ClientListen));
                 thread.Start();
                 return true;
@@ -112,7 +114,7 @@ namespace PosSystem.Util
         public void RestartServer()
         {
             StopSock();
-            ClientStart();
+            ClientStart(this.ip);
         }
     }
 }

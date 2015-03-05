@@ -10,6 +10,7 @@ using PosSystem.Object.Database;
 using PosSystem.Util;
 using PosSystem.Setting;
 using PosSystem_Master.Source;
+using PosSystem.Object;
 
 namespace PosSystem_Master.Forms
 {
@@ -36,7 +37,7 @@ namespace PosSystem_Master.Forms
         {
             Database db = new Database();
             db.insertView<SaleObject>(table, " SELECT barcode, created_at, price, points FROM " + TableList.SALE);
-            list = db.selectMulti<SaleObject>(string.Format("WHERE store = '{0}'", PosInformation.getInstance().store.id));
+            list = db.selectMulti<SaleObject>(string.Format("WHERE store = '{0}'", Config.getInstance().store.id));
             turn_over.Text = calc_turnover();
         }
         public string calc_turnover()

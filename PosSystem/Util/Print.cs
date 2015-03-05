@@ -157,7 +157,7 @@ namespace PosSystem.Util
             drawHeightPosition += lineHeight;
             drawHeightPosition += lineHeight;
 
-            drawString(graphics, fontBig, "おみせ：　" + PosInformation.getInstance().store.name, marginMin, drawHeightPosition);
+            drawString(graphics, fontBig, "おみせ：　" + Config.getInstance().store.name, marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight;
 
             drawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.getInstance().getStaffName(), marginMin, drawHeightPosition);

@@ -37,7 +37,7 @@ namespace PosSystem_Client
                 _rec_points.Items.Count,
                 Form1.reg_item_price_sum,
                 _rec_items,
-                PosInformation.getInstance().store.id, 
+                Config.getInstance().store.id, 
                 PosInformation.getInstance().getStaffBarcode()));
         }
 

@@ -10,6 +10,7 @@ using PosSystem.Setting;
 using System.Drawing.Printing;
 using Microsoft.VisualBasic.FileIO;
 using System.Text;
+using PosSystem.Object;
 
 namespace PosSystem_Client
 {
@@ -49,10 +50,12 @@ namespace PosSystem_Client
         public Form1()
         {
             InitializeComponent();
+            new CSV().loadConfig();
+
             InitializeValues();
             InitializeListView(tItemList);
 
-            PosInformation.getInstance().init(this, new StoreObject("デパート"), "");
+            PosInformation.getInstance().init(this);
             SocketClient.getInstance().init(new StreamCallback(this));
 
             this.KeyPreview = !this.KeyPreview;
@@ -62,71 +65,19 @@ namespace PosSystem_Client
             this.WindowState = FormWindowState.Maximized;
             this.MinimizeBox = false;
         }
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
+        private void Form1_Load(object sender, EventArgs e) {}
 
         #region Initialize
         public void InitializeValues()
         {
-
-
-            ArrayList al = loadSettings();
-            if (1 > al.Count)
+            foreach (string key in Config.getInstance().targetIP.Keys)
             {
-                MessageBox.Show("設定ファイルが見つかりませんでした。ソフトウェアを終了いたします。");
-                this.Close();
+                接続先ToolStripMenuItem.DropDownItems.Add(key);
             }
-            try
+            foreach (ToolStripDropDownItem item in 接続先ToolStripMenuItem.DropDownItems)
             {
-                for (int i = 2; i < al.Count; i+=2)
-                {
-                    接続先ToolStripMenuItem.DropDownItems.Add(al[i].ToString());
-                    ip_list.Add(al[i], al[i + 1]);
-                }
-                for (int i = 0; i < 接続先ToolStripMenuItem.DropDownItems.Count; i++)
-                {
-                    接続先ToolStripMenuItem.DropDownItems[i].Click += new System.EventHandler(this.接続する);
-                }
+                item.Click += new EventHandler(this.接続する);
             }
-            catch
-            {
-                MessageBox.Show("正しくIPアドレスが読み込まれませんでした。");
-                this.Close();
-            }
-        }
-        public static ArrayList loadSettings()
-        {
-            ArrayList al = new ArrayList();
-            try
-            {
-                TextFieldParser parser = new TextFieldParser("ip.csv", System.Text.Encoding.GetEncoding("Shift_JIS"));
-                parser.TextFieldType = FieldType.Delimited;
-                // 区切り文字はコンマ
-                parser.SetDelimiters(",");
-
-                while (!parser.EndOfData)
-                {
-                    // 1行読み込み
-                    string[] row = parser.ReadFields();
-                    foreach (string field in row)
-                    {
-                        string f = field;
-                        // 改行をnで表示
-                        f = f.Replace("\r\n", "n");
-                        // 空白を_で表示 
-                        f = f.Replace(" ", "");
-                        // TAB区切りで出力 
-                        if (!(f == "")) al.Add(f);
-                    }
-                }
-            }
-            catch
-            {
-                MessageBox.Show("設定ファイルが正しく読み込まれませんでした。");
-            }
-            return al;
         }
         public static void InitializeListView(ListView listview)
         {
@@ -375,7 +326,8 @@ namespace PosSystem_Client
         {
             if (sender.GetType() == this.接続先ToolStripMenuItem.GetType())
             {
-                if (!SocketClient.getInstance().ClientStart()) MessageBox.Show("接続に失敗しました");
+                string targetIP = Config.getInstance().targetIP[((ToolStripItem)sender).Text].ToString();
+                if (!SocketClient.getInstance().ClientStart(targetIP)) MessageBox.Show("接続に失敗しました");
                 else
                 {
                     this.Text += ((ToolStripItem)sender).Text + " へ接続中";

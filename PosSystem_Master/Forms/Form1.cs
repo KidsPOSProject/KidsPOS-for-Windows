@@ -14,6 +14,7 @@ using PosSystem.Util;
 using PosSystem.Object.Database;
 using PosSystem_Master.Source;
 using PosSystem_Master.Forms;
+using PosSystem.Object;
 
 namespace PosSystem_Master
 {
@@ -24,8 +25,6 @@ namespace PosSystem_Master
 
         //フォームの名前
         public string form_name = "POSシステム 練習用クライアント";
-
-        public const string config_file = "config.csv";
 
         //変数
         public static string item_sum = "";
@@ -51,7 +50,8 @@ namespace PosSystem_Master
         {
             InitializeComponent();
             InitializeListView(readItemList);
-            PosInformation.getInstance().init(this, new StoreObject("デパート"));
+            PosInformation.getInstance().init(this);
+            new CSV().loadConfig();
             SocketServer.getInstance().init(new StreamCallback(this));
 
             this.KeyPreview = !this.KeyPreview;
@@ -66,11 +66,7 @@ namespace PosSystem_Master
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (!load_settings())
-            {
-                MessageBox.Show("設定ファイルが間違っています。","エラー",MessageBoxButtons.OK,MessageBoxIcon.Error);
-                this.Close();
-            }
+            disp_store_name.Text = Config.getInstance().store.name;
         }
 
         #region Initialize
@@ -384,54 +380,6 @@ namespace PosSystem_Master
                 MessageBox.Show("接続解除");
             }
         }
-        public bool load_settings()
-        {
-
-            if (File.Exists(config_file))
-            {
-                ArrayList al = new ArrayList();
-
-                TextFieldParser parser = new TextFieldParser(config_file, System.Text.Encoding.GetEncoding("Shift_JIS"));
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-                while (!parser.EndOfData)
-                {
-                    string[] row = parser.ReadFields();
-                    foreach (string field in row)
-                    {
-                        string f = field;
-                        f = f.Replace("\r\n", "n");
-                        f = f.Replace(" ", "");
-                        if (!(f == "")) al.Add(f);
-                    }
-                }
-                if (al.Count > 0)
-                {
-                    for (int i = 0; i < al.Count; i++)
-                    {
-                        if (al[i].ToString().StartsWith("#store_number"))
-                        {
-                            int storeNum = int.Parse(al[i + 1].ToString());
-                            StoreObject store = new Database().selectSingle<StoreObject>(string.Format("WHERE id = '{0}'", storeNum));
-                            if(store == null) return false;
-                            PosInformation.getInstance().setStore(store);
-                            disp_store_name.Text = store.name;
-                            return true;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                using (var sw = new StreamWriter(config_file, false, Encoding.GetEncoding("Shift_JIS")))
-                {
-                    sw.WriteLine("#store_number,0");
-                }
-                MessageBox.Show("設定ファイルが見つかりませんでした。"+Environment.NewLine+"新しくファイルを作成しました。");
-                this.Close();
-            }
-            return false;
-        }
 
         private void onReadStaff(string barcode)
         {
@@ -468,6 +416,22 @@ namespace PosSystem_Master
                 builder.Append(c.ClientHandle.ToString()).Append(Environment.NewLine);
             }
             MessageBox.Show(builder.ToString());
+        }
+
+        private void 商品ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            onReadItem("1001010001");
+        }
+
+        private void スタッフToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            onReadStaff("1000150050");
+        }
+
+        private void 未登録スタッフToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int count = new Database().count<StaffObject>() + 1;
+            onReadStaff("100015" + count.ToString("D4"));
         }
 
     }

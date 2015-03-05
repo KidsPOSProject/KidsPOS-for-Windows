@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Net;
 using PosSystem.Setting;
 using System.Windows.Forms;
+using PosSystem.Object;
 
 namespace PosSystem.Util
 {
@@ -37,7 +38,7 @@ namespace PosSystem.Util
         }
         private void ServerListen()
         {
-            tcpClient = new TcpListener(IPAddress.Any, PosInformation.port);
+            tcpClient = new TcpListener(IPAddress.Any, Config.getInstance().targetPort);
             tcpClient.Start();
             try
             {

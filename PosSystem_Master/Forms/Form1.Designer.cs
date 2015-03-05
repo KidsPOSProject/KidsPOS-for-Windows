@@ -51,6 +51,10 @@
             this.reg_clear = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.reg_user = new System.Windows.Forms.Label();
+            this.テストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.商品ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.スタッフToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.未登録スタッフToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debug_display.SuspendLayout();
             this.top_menu.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
@@ -91,7 +95,8 @@
             this.top_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.各種リストToolStripMenuItem,
             this.サーバーを建てるToolStripMenuItem,
-            this.接続者確認ToolStripMenuItem});
+            this.接続者確認ToolStripMenuItem,
+            this.テストToolStripMenuItem});
             this.top_menu.Location = new System.Drawing.Point(0, 0);
             this.top_menu.Name = "top_menu";
             this.top_menu.Size = new System.Drawing.Size(897, 26);
@@ -267,6 +272,37 @@
             this.reg_user.TabIndex = 9;
             this.reg_user.Text = " ";
             // 
+            // テストToolStripMenuItem
+            // 
+            this.テストToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.商品ToolStripMenuItem,
+            this.スタッフToolStripMenuItem,
+            this.未登録スタッフToolStripMenuItem});
+            this.テストToolStripMenuItem.Name = "テストToolStripMenuItem";
+            this.テストToolStripMenuItem.Size = new System.Drawing.Size(56, 22);
+            this.テストToolStripMenuItem.Text = "テスト";
+            // 
+            // 商品ToolStripMenuItem
+            // 
+            this.商品ToolStripMenuItem.Name = "商品ToolStripMenuItem";
+            this.商品ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.商品ToolStripMenuItem.Text = "商品";
+            this.商品ToolStripMenuItem.Click += new System.EventHandler(this.商品ToolStripMenuItem_Click);
+            // 
+            // スタッフToolStripMenuItem
+            // 
+            this.スタッフToolStripMenuItem.Name = "スタッフToolStripMenuItem";
+            this.スタッフToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.スタッフToolStripMenuItem.Text = "スタッフ";
+            this.スタッフToolStripMenuItem.Click += new System.EventHandler(this.スタッフToolStripMenuItem_Click);
+            // 
+            // 未登録スタッフToolStripMenuItem
+            // 
+            this.未登録スタッフToolStripMenuItem.Name = "未登録スタッフToolStripMenuItem";
+            this.未登録スタッフToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.未登録スタッフToolStripMenuItem.Text = "未登録スタッフ";
+            this.未登録スタッフToolStripMenuItem.Click += new System.EventHandler(this.未登録スタッフToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -323,6 +359,10 @@
         private System.Windows.Forms.ToolStripMenuItem 商品リストEditToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem サーバーを建てるToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 接続者確認ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem テストToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 商品ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem スタッフToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 未登録スタッフToolStripMenuItem;
     }
 }
 

@@ -11,10 +11,7 @@ namespace PosSystem.Setting
     {
         Form context;
 
-        public const int port = 10800;
-        public string targetIP { get; private set; }
         public string year { get;private set; }
-        public StoreObject store { get;private set; }
         private StaffObject reg { get;set; }
         static PosInformation instance = new PosInformation();
         PosInformation() { }
@@ -22,20 +19,14 @@ namespace PosSystem.Setting
         {
             return instance;
         }
-        public void init(Form context,StoreObject _store, string _targetIP = "")
+        public void init(Form context)
         {
             this.context = context;
-            this.store = _store;
             this.year = DateTime.Now.ToString("yyyy").Substring(2);
-            this.targetIP = _targetIP;
         }
         public void setStaff(StaffObject obj)
         {
             this.reg = obj;
-        }
-        public void setStore(StoreObject store)
-        {
-            this.store = store;
         }
         public string getStaffName()
         {

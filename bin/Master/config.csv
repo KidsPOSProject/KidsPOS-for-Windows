@@ -1,1 +1,4 @@
-#store_number,1
+#StoreNum, 0
+#TargetIP, デフォルト1, 127.0.0.1
+#TargetIP, デフォルト2, 127.0.0.1
+#TargetPort, 10800

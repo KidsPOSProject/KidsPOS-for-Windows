@@ -11,13 +11,14 @@ using System.Drawing.Printing;
 using PosSystem.Object.Database;
 using PosSystem.Util;
 using PosSystem.Setting;
+using PosSystem.Object;
 
 namespace PosSystem_Master
 {
     public partial class Account_change : Form
     {
         ListView item_list = null;
-        string barcode = "";
+        SaleObject sale;
 
         public Account_change(string _rec_money, ListView _rec_points, string _rec_items)
         {
@@ -32,12 +33,13 @@ namespace PosSystem_Master
 
             item_list = _rec_points;
 
-            new Database().insert<SaleObject>(new SaleObject(
+            sale = new SaleObject(
                 _rec_points.Items.Count,
                 Form1.sumItemPrice,
                 _rec_items,
-                PosInformation.getInstance().store.id,
-                PosInformation.getInstance().getStaffBarcode()));
+                Config.getInstance().store.id,
+                PosInformation.getInstance().getStaffBarcode());
+            new Database().insert<SaleObject>(sale);
         }
 
         private void Account_change_Load(object sender, EventArgs e)
@@ -69,7 +71,7 @@ namespace PosSystem_Master
 
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
         {
-            Print.getInstance().printReceipt(item_list, received_money.Text, e, barcode);
+            Print.getInstance().printReceipt(item_list, received_money.Text, e, sale.barcode);
         }
 
         private void Account_change_KeyDown(object sender, KeyEventArgs e)
