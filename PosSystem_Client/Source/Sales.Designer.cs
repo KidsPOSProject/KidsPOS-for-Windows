@@ -87,7 +87,6 @@
             this.sales_list.Size = new System.Drawing.Size(873, 424);
             this.sales_list.TabIndex = 5;
             this.sales_list.UseCompatibleStateImageBehavior = false;
-            this.sales_list.SizeChanged += new System.EventHandler(this.sales_list_SizeChanged);
             // 
             // Sales
             // 

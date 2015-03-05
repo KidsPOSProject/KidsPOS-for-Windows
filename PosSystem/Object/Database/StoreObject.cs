@@ -27,5 +27,9 @@ namespace PosSystem.Object.Database
                     this.name)
             );
         }
+        public string getID()
+        {
+            return id.ToString("D" + Barcode.DATA_MID_LENGTH);
+        }
     }
 }

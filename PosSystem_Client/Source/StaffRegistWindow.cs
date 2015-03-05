@@ -6,21 +6,23 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using PosSystem.Util;
+using PosSystem.Object.Database;
 
 namespace PosSystem_Client
 {
-    public partial class Staff_Regist : Form
+    public partial class StaffRegistWindow : Form
     {
         string barcode;
-        Connect cn;
-        public Staff_Regist(Connect _cn, string barcode)
+        SocketClient client;
+        public StaffRegistWindow(SocketClient client, string barcode)
         {
             InitializeComponent();
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.barcode = barcode;
-            cn = _cn;
+            this.client = client;
         }
 
         private void Staff_Regist_Load(object sender, EventArgs e)
@@ -35,7 +37,7 @@ namespace PosSystem_Client
                 DialogResult result = MessageBox.Show("このなまえでとうろくしますか？"+Environment.NewLine+textBox1.Text, "かくにん", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    atsumi_pos.regist_user(cn, textBox1.Text, barcode);
+                    client.registUser(new StaffObject(barcode, textBox1.Text));
                     this.Close();
                 }
             }
@@ -44,12 +46,5 @@ namespace PosSystem_Client
                 this.Close();
             }
         }
-
-        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
-        {
-            print_template.print_user(barcode, textBox1.Text, e);
-        }
-
-
     }
 }

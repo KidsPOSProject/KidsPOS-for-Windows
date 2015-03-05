@@ -53,8 +53,8 @@
             this.display_timer = new System.Windows.Forms.Timer(this.components);
             this.reg_goods_list = new System.Windows.Forms.ListView();
             this.disp_scan_goods = new System.Windows.Forms.Panel();
-            this.scan_goods_price = new System.Windows.Forms.Label();
-            this.scan_goods_name = new System.Windows.Forms.Label();
+            this.lScanItemPrice = new System.Windows.Forms.Label();
+            this.lScanItemName = new System.Windows.Forms.Label();
             this.reg_goods_sum = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.reg_account = new System.Windows.Forms.Button();
@@ -184,14 +184,12 @@
             this.ユーザーToolStripMenuItem.Name = "ユーザーToolStripMenuItem";
             this.ユーザーToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.ユーザーToolStripMenuItem.Text = "ユーザー";
-            this.ユーザーToolStripMenuItem.Click += new System.EventHandler(this.ユーザーToolStripMenuItem_Click);
             // 
             // 商品ToolStripMenuItem
             // 
             this.商品ToolStripMenuItem.Name = "商品ToolStripMenuItem";
             this.商品ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.商品ToolStripMenuItem.Text = "商品";
-            this.商品ToolStripMenuItem.Click += new System.EventHandler(this.商品ToolStripMenuItem_Click);
             // 
             // システムバーコードToolStripMenuItem
             // 
@@ -240,8 +238,8 @@
             this.disp_scan_goods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.disp_scan_goods.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.disp_scan_goods.Controls.Add(this.scan_goods_price);
-            this.disp_scan_goods.Controls.Add(this.scan_goods_name);
+            this.disp_scan_goods.Controls.Add(this.lScanItemPrice);
+            this.disp_scan_goods.Controls.Add(this.lScanItemName);
             this.disp_scan_goods.Location = new System.Drawing.Point(13, 343);
             this.disp_scan_goods.Name = "disp_scan_goods";
             this.disp_scan_goods.Size = new System.Drawing.Size(872, 92);
@@ -249,23 +247,23 @@
             // 
             // scan_goods_price
             // 
-            this.scan_goods_price.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
-            this.scan_goods_price.AutoSize = true;
-            this.scan_goods_price.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.scan_goods_price.Location = new System.Drawing.Point(680, 35);
-            this.scan_goods_price.Name = "scan_goods_price";
-            this.scan_goods_price.Size = new System.Drawing.Size(0, 37);
-            this.scan_goods_price.TabIndex = 1;
+            this.lScanItemPrice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.lScanItemPrice.AutoSize = true;
+            this.lScanItemPrice.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.lScanItemPrice.Location = new System.Drawing.Point(680, 35);
+            this.lScanItemPrice.Name = "scan_goods_price";
+            this.lScanItemPrice.Size = new System.Drawing.Size(0, 37);
+            this.lScanItemPrice.TabIndex = 1;
             // 
             // scan_goods_name
             // 
-            this.scan_goods_name.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.scan_goods_name.AutoSize = true;
-            this.scan_goods_name.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.scan_goods_name.Location = new System.Drawing.Point(63, 35);
-            this.scan_goods_name.Name = "scan_goods_name";
-            this.scan_goods_name.Size = new System.Drawing.Size(0, 37);
-            this.scan_goods_name.TabIndex = 0;
+            this.lScanItemName.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lScanItemName.AutoSize = true;
+            this.lScanItemName.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.lScanItemName.Location = new System.Drawing.Point(63, 35);
+            this.lScanItemName.Name = "scan_goods_name";
+            this.lScanItemName.Size = new System.Drawing.Size(0, 37);
+            this.lScanItemName.TabIndex = 0;
             // 
             // reg_goods_sum
             // 
@@ -398,8 +396,8 @@
         private System.Windows.Forms.ToolStripStatusLabel disp_store_name;
         private System.Windows.Forms.Timer display_timer;
         private System.Windows.Forms.Panel disp_scan_goods;
-        private System.Windows.Forms.Label scan_goods_name;
-        private System.Windows.Forms.Label scan_goods_price;
+        private System.Windows.Forms.Label lScanItemName;
+        private System.Windows.Forms.Label lScanItemPrice;
         private System.Windows.Forms.ToolStripStatusLabel debug_Test;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button reg_account;

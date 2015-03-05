@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.SQLite;
 using System.Collections;
+using PosSystem.Util;
+using PosSystem.Object.Database;
 
 namespace PosSystem_Client
 {
@@ -21,20 +23,20 @@ namespace PosSystem_Client
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            sales_list_SizeChanged(sales_list, new EventArgs());
             this.buycode = _buycode;
         }
 
         private void Sales_Load(object sender, EventArgs e)
         {
-            ArrayList sdr = read_sales(buycode);
-            if (sdr.Count == 0)
+            //id, barcode,created_at,points,price,items,store
+            SaleObject sale = new Database().selectSingle<SaleObject>(string.Format("where barcode = '{0}'", buycode));
+            if (sale == null)
             {
                 MessageBox.Show("無効な売り上げIDです。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Question);
                 this.Close();
             }
-            buy_time.Text = Unix_Time.FromUnixTime(long.Parse(sdr[2].ToString())).ToLocalTime().ToString();
-            scan_goods(sdr[5].ToString().Split(','));
+            buy_time.Text = UnixTime.FromUnixTime(long.Parse(sale.createdAt)).ToLocalTime().ToString();
+            scan_goods(sale.items.Split(','));
         }
         public static void InitializeListView(ListView listview)
         {
@@ -73,46 +75,17 @@ namespace PosSystem_Client
             ColumnHeader[] colHeaderRegValue = { goods_id, goods_order, goods_item, goods_price };
             listview.Columns.AddRange(colHeaderRegValue);
         }
-        public static string[] read_items(int item_id)
-        {
-            string[] ret = { "", "", "" };
-            using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT id,name,price FROM item_list WHERE id ='" + item_id + "'";
-
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        ret[0] = reader.GetInt32(0).ToString();
-                        ret[1] = reader.GetString(1);
-                        ret[2] = reader.GetInt32(2).ToString();
-                    }
-                }
-            }
-            return ret;
-        }
 
         public void scan_goods(string[] item_num)
         {
             int bad_item = 0;
-
+            Database db = new Database();
             for (int i = 0; i < item_num.Length; i++)
             {
-                string[] data = read_items(int.Parse(item_num[i]));
-
-                if (data[0] != "" && data[1] != "" && data[2] != "")
+                ItemObject item = db.selectSingle<ItemObject>(string.Format("where id = '{0}'", item_num[i]));
+                if (item != null)
                 {
-                    //TODO item_num をデータベースから検索し表示
-                    string read_items_id = data[0];
-                    string read_items_name = data[1];
-                    string read_items_price = data[2];
-
-                    string[] item1 = { (int.Parse(read_items_id).ToString("000")), read_items_name, "1", read_items_price, "×" };
-                    sales_list.Items.Add(new ListViewItem(item1));
+                    sales_list.Items.Add(new ListViewItem(new string[] {item.id.ToString(), item.name, "1", item.price.ToString(), "×"}));
                 }
                 else
                 {
@@ -120,38 +93,6 @@ namespace PosSystem_Client
                 }
             }
             if (bad_item > 0) MessageBox.Show("現在は登録されていない商品がありました", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        private ArrayList read_sales(string buycode)
-        {
-            ArrayList al = new ArrayList();
-            using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
-            {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM sales_list WHERE buycode ='" + buycode + "'";
-
-                    SQLiteDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        al.Add(reader.GetInt32(0).ToString());
-                        al.Add(reader.GetString(1));
-                        al.Add(reader.GetString(2));
-                        al.Add(reader.GetInt32(3).ToString());
-                        al.Add(reader.GetInt32(4).ToString());
-                        al.Add(reader.GetString(5));
-                    }
-                }
-                conn.Close();
-            }
-            return al;
-        }
-
-        private void sales_list_SizeChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void Sales_KeyDown(object sender, KeyEventArgs e)

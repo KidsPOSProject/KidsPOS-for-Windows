@@ -3,6 +3,7 @@ using ZXing;
 using System.Drawing;
 using System.IO;
 using PosSystem.Setting;
+using System.Text;
 
 namespace PosSystem.Object
 {
@@ -12,9 +13,20 @@ namespace PosSystem.Object
         string store;
         string itemNum;
         public string barcode { get; private set; }
+        /// <summary>
+        /// Systemバーコード, 生成済みバーコード
+        /// </summary>
+        /// <param name="barcode"></param>
         public BarcodeObject(string barcode)
         {
-            if (barcode.Length != Barcode.BARCODE_NUM) throw new InvalidDataException();
+            if (barcode.Length == Barcode.ITEM.Length)
+            {
+                barcode = Barcode.PREFIX + barcode + 0.ToString("D" + (Barcode.BARCODE_NUM - Barcode.PREFIX.Length - Barcode.ITEM.Length));
+            }
+            else if (barcode.Length != Barcode.BARCODE_NUM)
+            {
+                throw new InvalidDataException();
+            }
             this.barcode = barcode;
         }
 

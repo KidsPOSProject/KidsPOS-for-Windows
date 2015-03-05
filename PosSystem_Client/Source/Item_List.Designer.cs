@@ -48,8 +48,6 @@
             this.reg_goods_list.Size = new System.Drawing.Size(768, 382);
             this.reg_goods_list.TabIndex = 3;
             this.reg_goods_list.UseCompatibleStateImageBehavior = false;
-            this.reg_goods_list.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.reg_goods_list_ColumnWidthChanged);
-            this.reg_goods_list.SizeChanged += new System.EventHandler(this.reg_goods_list_SizeChanged);
             // 
             // label1
             // 

@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using PosSystem.Object.Database;
+using PosSystem.Util;
 
 namespace PosSystem_Client
 {
@@ -23,10 +25,9 @@ namespace PosSystem_Client
         private void Staff_List_Load(object sender, EventArgs e)
         {
             reg_staff_list.Items.Clear();
-            string[,] st = atsumi_pos.read_staff_list(Form1.db_file_staff);
-            for (int i = 0; i < st.GetLength(0); i++)
+            foreach (StaffObject obj in new Database().selectMulti<StaffObject>())
             {
-                reg_staff_list.Items.Add(new ListViewItem(new string[] { st[i, 0], st[i, 1], st[i, 2] }));
+                reg_staff_list.Items.Add(new ListViewItem(new string[] { obj.id.ToString(), obj.barcode, obj.name }));
             }
         }
         public static void InitializeListView(ListView listview)

@@ -1,5 +1,6 @@
 ﻿using PosSystem.Setting;
 using System.Data.SQLite;
+using System.IO;
 
 namespace PosSystem.Object.Database
 {
@@ -8,11 +9,20 @@ namespace PosSystem.Object.Database
         public string barcode { get; private set; }
         public string name { get; private set; }
 
-        public StaffObject(string staffID, string _name)
+        public StaffObject(int staffID, string _name)
             : base(DBPath.STAFF)
         {
-            barcode = gen(staffID);
+            string _staffID = staffID.ToString();
+            if (_staffID.Length != Barcode.DATA_LENGTH) throw new InvalidDataException();
+            barcode = gen(staffID.ToString());
             name = _name;
+            genQuery();
+        }
+        public StaffObject(string staffID, string name)
+            : base(DBPath.STAFF)
+        {
+            this.barcode = gen(staffID);
+            this.name = name;
             genQuery();
         }
         public StaffObject(SQLiteDataReader reader) : base(DBPath.STAFF, reader) { setData(); }
@@ -26,8 +36,8 @@ namespace PosSystem.Object.Database
         {
             return
                 Barcode.PREFIX + //10
-                Barcode.USER +   //00
-                PosInformation.year +
+                Barcode.STAFF +   //00
+                PosInformation.getInstance().year +
                 sID; //0001
         }
         public override void genQuery()

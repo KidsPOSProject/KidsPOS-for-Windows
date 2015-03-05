@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using PosSystem.Object.Database;
+using PosSystem.Util;
 
 namespace PosSystem_Client
 {
@@ -63,10 +65,9 @@ namespace PosSystem_Client
         public void InsertListView()
         {
             reg_goods_list.Items.Clear();
-            string[,] st = atsumi_pos.read_sales_list(Form1.db_file_item);
-            for (int i = 0; i < st.GetLength(0); i++)
+            foreach (SaleObject obj in new Database().selectMulti<SaleObject>())
             {
-                reg_goods_list.Items.Add(new ListViewItem(new string[] {st[i,0], Unix_Time.FromUnixTime(long.Parse(st[i, 1])).ToLocalTime().ToString(), st[i, 2], st[i, 3] }));
+                reg_goods_list.Items.Add(new ListViewItem(new string[] { obj.barcode, obj.createdAt, obj.price.ToString(), obj.points.ToString() }));
             }
             turn_over.Text = calc_turnover();
         }

@@ -46,7 +46,7 @@ namespace PosSystem.Util
 
         public int count<T>(string where = "")
         {
-            int ret = -1;
+            int ret = 0;
             using (var conn = new SQLiteConnection("Data Source=" + DBPath.getPath<T>()))
             {
                 conn.Open();
@@ -80,6 +80,10 @@ namespace PosSystem.Util
         {
             ItemObject ret = selectSingle<ItemObject>(string.Format("WHERE name = '{0}' AND price = '{1}' AND shop = '{2}'", itemName, price, storeNum));
             return ret == null ? -1 : ret.id;
+        }
+        public void updateItem(ItemObject item)
+        {
+            queryImpl(item.db, "UPDATE " + TableList.ITEM + string.Format(" SET name = '{0}' , price = '{1}' WHERE id = '{2}'", item.id));
         }
 
         private bool queryImpl(string db, string query)
@@ -221,7 +225,7 @@ namespace PosSystem.Util
     {
         public const string ITEM = "CREATE TABLE " + TableList.ITEM + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
         public const string ITEM_GENRE = "CREATE TABLE " + TableList.ITEM_GENRE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
-        public const string SALE = "CREATE TABLE " + TableList.SALE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, buycode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT)";
+        public const string SALE = "CREATE TABLE " + TableList.SALE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER)";
         public const string STORE = "CREATE TABLE " + TableList.STORE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
         public const string STAFF = "CREATE TABLE " + TableList.STAFF + "(barcode INTEGER PRIMARY KEY, name TEXT)";
     }

@@ -14,8 +14,7 @@ namespace PosSystem.Util
     public class Print
     {
         static Print instance = new Print();
-        Print(){
-        }
+        Print(){}
         public static Print getInstance() { return instance; }
         public void printItemBarcode(PrintItemObject obj, bool drawGrid, PrintPageEventArgs e)
         {
@@ -158,10 +157,10 @@ namespace PosSystem.Util
             drawHeightPosition += lineHeight;
             drawHeightPosition += lineHeight;
 
-            drawString(graphics, fontBig, "おみせ：　" + PosInformation.storeName, marginMin, drawHeightPosition);
+            drawString(graphics, fontBig, "おみせ：　" + PosInformation.getInstance().store.name, marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight;
 
-            drawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.regUserName, marginMin, drawHeightPosition);
+            drawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.getInstance().regUserName, marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight + 5;
 
 
@@ -182,9 +181,82 @@ namespace PosSystem.Util
 
             e.HasMorePages = false;
         }
+        private class PrintConfigSystemBarcode
+        {
+            public int drawHeightPosition = 0;
+            public Graphics graphics;
+            public readonly int marginMin = 3;
+            public readonly int marginMax = 70;
+            public readonly int alignCenter = 27;
+            public readonly int lineHeight = 7;
+            public readonly Font font = new Font("MS UI Gothic", 10);
+            public readonly Font fontBig = new Font("MS UI Gothic", 13);
+            public readonly int marginStrBarcode = 1;
+            public readonly int marginBarcode = 40;
+            public PrintConfigSystemBarcode(Graphics g)
+            {
+                this.graphics = g;
+                g.PageUnit = GraphicsUnit.Millimeter;
+                g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
+            }
+        }
+        public void printSystemBarcode(object sender, PrintPageEventArgs e)
+        {
+            PrintConfigSystemBarcode config = new PrintConfigSystemBarcode(e.Graphics);
+
+            config.drawHeightPosition += config.lineHeight + 22;
+
+            drawString(config.graphics, config.fontBig, "<システムバーコード>", config.alignCenter - 20, config.drawHeightPosition);
+
+            config.drawHeightPosition += config.lineHeight + 3;
+
+            config.graphics.DrawLine(new Pen(Brushes.Black),
+                new Point(config.marginMin, config.drawHeightPosition),
+                new Point(config.marginMax, config.drawHeightPosition));
+
+            config.drawHeightPosition += config.lineHeight + 2;
+
+            /* ---  バーコード生成  --- */
+
+            drawBarcodeRow("商品登録", Setting.Barcode.ITEM_REGIST, "商品リスト", Setting.Barcode.ITEM_LIST, ref config);
+
+            drawBarcodeRow("売上リスト", Setting.Barcode.SALE_LIST, "会計", Setting.Barcode.ACCOUNT, ref config);
+
+            drawBarcodeRow("スタッフリスト", Setting.Barcode.STAFF_LIST, "スタッフ登録", Setting.Barcode.STAFF_REGIST, ref config);
+
+            drawBarcodeRow("ツールバー表示", Setting.Barcode.SHOW_TOOLBAR, "ツールバー非表示", Setting.Barcode.HIDE_TOOLBAR, ref config);
+
+            drawBarcode("商品リストEdit", Setting.Barcode.ITEM_LIST_EDIT, ref config);
+
+            config.graphics.DrawLine(new Pen(Brushes.Black),
+                new Point(config.marginMin, config.drawHeightPosition),
+                new Point(config.marginMax, config.drawHeightPosition));
+
+            e.HasMorePages = false;
+        }
         private void drawString(Graphics g, Font f, string s, int x, int y)
         {
             g.DrawString(s, f, Brushes.Black, new PointF(x, y));
+        }
+        private void drawBarcode(
+            string sysName, string sysCode, ref PrintConfigSystemBarcode c)
+        {
+            drawString(c.graphics, c.font, sysName, c.marginMin, c.drawHeightPosition);
+            c.drawHeightPosition += c.lineHeight + c.marginBarcode;
+            c.graphics.DrawImage(new BarcodeObject(sysCode).getBitmap(), new Point(c.marginMin, c.drawHeightPosition));
+            c.drawHeightPosition += c.lineHeight + 25;
+        }
+        private void drawBarcodeRow(
+            string LSysName, string LSysCode, 
+            string RSysName, string RSysCode, ref PrintConfigSystemBarcode c)
+        {
+            drawString(c.graphics, c.font, LSysName, c.marginMin, c.drawHeightPosition);
+            drawString(c.graphics, c.font, RSysName, c.marginMin + c.marginBarcode, c.drawHeightPosition);
+            c.drawHeightPosition += c.lineHeight + c.marginBarcode;
+
+            c.graphics.DrawImage(new BarcodeObject(LSysCode).getBitmap(), new Point(c.marginMin, c.drawHeightPosition));
+            c.graphics.DrawImage(new BarcodeObject(RSysCode).getBitmap(), new Point(c.marginMin + c.marginBarcode, c.drawHeightPosition));
+            c.drawHeightPosition += c.lineHeight + 25;
         }
     }
 }

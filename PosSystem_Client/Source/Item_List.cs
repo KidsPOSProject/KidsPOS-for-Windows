@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.SQLite;
 using System.Drawing.Printing;
+using PosSystem.Object.Database;
+using PosSystem.Util;
 
 namespace PosSystem_Client
 {
@@ -23,7 +25,6 @@ namespace PosSystem_Client
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
 
         }
 
@@ -68,86 +69,10 @@ namespace PosSystem_Client
         public void InsertListView()
         {
             reg_goods_list.Items.Clear();
-            string[,] st = atsumi_pos.read_item_list(Form1.db_file_item);
-            for (int i = 0; i < st.GetLength(0); i++)
+            List<ItemObject> item = new Database().selectMulti<ItemObject>();
+            foreach (ItemObject obj in item)
             {
-                reg_goods_list.Items.Add(new ListViewItem(new string[] { (int.Parse(st[i, 0])).ToString("000"), st[i, 2], st[i, 1], st[i, 3] }));
-            }
-        }
-
-
-        #region リストのカラム幅調整
-        private bool Resizing = false;
-        private void reg_goods_list_SizeChanged(object sender, EventArgs e)
-        {
-            if (!Resizing)
-            {
-                Resizing = true;
-
-                ListView listView = sender as ListView;
-                if (listView != null)
-                {
-                    float totalColumnWidth = 0;
-
-                    for (int i = 0; i < listView.Columns.Count; i++)
-                        totalColumnWidth += Convert.ToInt32(listView.Columns[i].Tag);
-
-                    for (int i = 0; i < listView.Columns.Count; i++)
-                    {
-                        float colPercentage = (Convert.ToInt32(listView.Columns[i].Tag) / totalColumnWidth);
-                        listView.Columns[i].Width = (int)(colPercentage * listView.ClientRectangle.Width);
-                    }
-                }
-            }
-            Resizing = false;
-        }
-        #endregion
-
-        private void reg_goods_list_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
-        {
-
-            //reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
-        }
-        private class ItemTable
-        {
-            public string id = null;
-            public string name;
-            public string price;
-
-            public ItemTable(string _id, string _name, string _price)
-            {
-                id = _id;
-                name = _name;
-                price = _price;
-            }
-        }
-        private bool Update(ItemTable it)
-        {
-            try
-            {
-                using (var conn = new SQLiteConnection("Data Source=" + Form1.db_file_item))
-                {
-                    conn.Open();
-                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
-                    {
-                        using (SQLiteCommand command = conn.CreateCommand())
-                        {
-                            string query = string.Format("UPDATE item_list SET name = '{0}', price = '{1}' WHERE id = '{2}'",
-                            it.name,it.price,it.id);
-
-                            command.CommandText = query;
-                            command.ExecuteNonQuery();
-                        }
-                        sqlt.Commit();
-                    }
-                    conn.Close();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                System_log.ShowDialog(e.ToString());
-                return false;
+                reg_goods_list.Items.Add(new ListViewItem(new string[] { obj.id.ToString(), obj.barcode, obj.name, obj.price.ToString() }));
             }
         }
 
