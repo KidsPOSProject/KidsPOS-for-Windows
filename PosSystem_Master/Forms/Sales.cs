@@ -6,31 +6,30 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.SQLite;
-using System.Drawing.Printing;
 using PosSystem.Object.Database;
 using PosSystem.Util;
 
-namespace PosSystem_Client
+namespace PosSystem_Master.Source
 {
-    public partial class Item_List : Form
+    public partial class Sales : Form
     {
-        string selected_item_barcode = "";
-
-        public Item_List()
+        SaleObject sale;
+        public Sales(SaleObject sale)
         {
             InitializeComponent();
-            InitializeListView(reg_goods_list);
-
+            InitializeListView(sales_list);
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-
+            this.sale = sale;
         }
 
-        private void Item_List_Load(object sender, EventArgs e)
+        private void Sales_Load(object sender, EventArgs e)
         {
-            InsertListView();
+            buy_time.Text = sale.createdAt;
+            scan_goods(sale.items.Split(','));
+            StaffObject staff = new Database().selectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", sale.staffID));
+            if (staff != null) sale_staff_name.Text = staff.name;
         }
         public static void InitializeListView(ListView listview)
         {
@@ -47,57 +46,49 @@ namespace PosSystem_Client
             ColumnHeader goods_price = new ColumnHeader();
 
             goods_id.Text = "ID";
+            goods_id.Width = 100;
             goods_id.Tag = 1;
             goods_id.TextAlign = HorizontalAlignment.Center;
 
-            goods_order.Text = "バーコード";
+            goods_order.Text = "商品名";
+            goods_order.Width = 430;
             goods_order.Tag = 4;
             goods_order.TextAlign = HorizontalAlignment.Center;
 
-            goods_item.Text = "商品名";
-            goods_item.Tag = 5;
+            goods_item.Text = "個数";
+            goods_item.Width = 150;
+            goods_item.Tag = 1;
             goods_item.TextAlign = HorizontalAlignment.Center;
 
             goods_price.Text = "金額";
+            goods_price.Width = 150;
             goods_price.Tag = 2;
             goods_price.TextAlign = HorizontalAlignment.Right;
 
-            ColumnHeader[] colHeaderRegValue = { goods_id, goods_item,goods_order,  goods_price };
+            ColumnHeader[] colHeaderRegValue = { goods_id, goods_order, goods_item, goods_price };
             listview.Columns.AddRange(colHeaderRegValue);
         }
-
-        public void InsertListView()
+        public void scan_goods(string[] item_num)
         {
-            reg_goods_list.Items.Clear();
-            List<ItemObject> item = new Database().selectMulti<ItemObject>();
-            foreach (ItemObject obj in item)
+            int bad_item = 0;
+            Database db = new Database();
+            for (int i = 0; i < item_num.Length; i++)
             {
-                reg_goods_list.Items.Add(new ListViewItem(new string[] { obj.id.ToString(), obj.barcode, obj.name, obj.price.ToString() }));
-            }
-        }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-            for (int index = 0; index < printDocument1.PrinterSettings.PaperSizes.Count; index++)
-            {
-                if (printDocument1.PrinterSettings.PaperSizes[index].PaperName.Contains("A4") == true)
+                ItemObject item = db.selectSingle<ItemObject>(string.Format("where id = '{0}'", item_num[i]));
+                if (item != null)
                 {
-                    printDocument1.DefaultPageSettings.PaperSize = printDocument1.PrinterSettings.PaperSizes[index];
-                    break;
+                    sales_list.Items.Add(new ListViewItem(new string[] { item.id.ToString(), item.name, "1", item.price.ToString(), "×" }));
+                }
+                else
+                {
+                    bad_item++;
                 }
             }
-
-            PrintDialog pdlg = new PrintDialog();
-            printDocument1.DocumentName = selected_item_barcode;
-            pdlg.Document = printDocument1;
-            if (pdlg.ShowDialog() == DialogResult.OK)
-            {
-                printDocument1.Print();
-            }
+            if (bad_item > 0) MessageBox.Show("現在は登録されていない商品がありました", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void Item_List_KeyDown(object sender, KeyEventArgs e)
+        private void Sales_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) this.Close();
         }

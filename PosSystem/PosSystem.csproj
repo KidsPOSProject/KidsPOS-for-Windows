@@ -70,7 +70,8 @@
     <Compile Include="Util\Print.cs" />
     <Compile Include="Util\SocketBase.cs" />
     <Compile Include="Util\SocketClient.cs" />
-    <Compile Include="Util\UnixTime.cs" />
+    <Compile Include="Util\SocketServer.cs" />
+    <Compile Include="Util\Time.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

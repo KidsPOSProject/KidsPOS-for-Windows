@@ -12,8 +12,14 @@ namespace PosSystem.Util
 {
     public class SocketClient : SocketBase
     {
+        static SocketClient instance = new SocketClient();
+        public static SocketClient getInstance()
+        {
+            return instance;
+        }
+
         TcpClient client = null;
-        public SocketClient(SocketListener listener): base(listener){}
+        SocketClient() { }
 
         public bool ClientStart()
         {
@@ -49,7 +55,7 @@ namespace PosSystem.Util
                         uniBytes = Encoding.Convert(ecSjis, ecUni, bytes);
                         string strGetText = ecUni.GetString(uniBytes);
                         strGetText = strGetText.Substring(0, strGetText.IndexOf((char)0));
-                        listener.onReceiveDel(strGetText);
+                        listener.onReceive(strGetText);
                     }
                     else
                     {
@@ -72,14 +78,17 @@ namespace PosSystem.Util
         }
         private void CloseClient(SocketCloseType type)
         {
-            NetworkStream ns = client.GetStream();
+            try
+            {
+                client.GetStream().Close();
+            }
+            catch { }
             if (client != null && client.Connected)
-                ns.Close();
-            client.Close();
+                client.Close();
 
             if (thread != null)
                 thread.Abort();
-            listener.onConnectCloseDel(type);
+            listener.onClose(type);
         }
         public void sendData(string dataText)
         {

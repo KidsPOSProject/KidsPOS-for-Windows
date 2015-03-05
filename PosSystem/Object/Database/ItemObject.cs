@@ -10,6 +10,7 @@ namespace PosSystem.Object.Database
         public int price { get; private set; }
         public int storeNum { get; private set; }
         public int genreNum { get; private set; }
+        public string queryUpdate { get; private set; }
 
         public ItemObject(string barcode, string name, int price, int storeNum, int genreNum)
             : base(DBPath.ITEM)
@@ -39,6 +40,9 @@ namespace PosSystem.Object.Database
                 string.Format("INSERT INTO " + TableList.ITEM + " (barcode,name,price,shop,genre) VALUES ('{0}','{1}','{2}','{3}','{4}')",
                     this.barcode, this.name, this.price, this.storeNum, this.genreNum)
             );
+            queryUpdate =
+                string.Format("UPDATE item_list SET name = '{0}', price = '{1}' WHERE id = '{2}'",
+                    this.name, this.price, this.id);
         }
     }
 }

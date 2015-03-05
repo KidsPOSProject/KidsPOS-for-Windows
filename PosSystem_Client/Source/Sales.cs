@@ -15,28 +15,23 @@ namespace PosSystem_Client
 {
     public partial class Sales : Form
     {
-        string buycode = "";
-        public Sales(string _buycode)
+        SaleObject sale;
+        public Sales(SaleObject sale)
         {
             InitializeComponent();
             InitializeListView(sales_list);
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.buycode = _buycode;
+            this.sale = sale;
         }
 
         private void Sales_Load(object sender, EventArgs e)
         {
-            //id, barcode,created_at,points,price,items,store
-            SaleObject sale = new Database().selectSingle<SaleObject>(string.Format("where barcode = '{0}'", buycode));
-            if (sale == null)
-            {
-                MessageBox.Show("無効な売り上げIDです。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Question);
-                this.Close();
-            }
-            buy_time.Text = UnixTime.FromUnixTime(long.Parse(sale.createdAt)).ToLocalTime().ToString();
+            buy_time.Text = sale.createdAt;
             scan_goods(sale.items.Split(','));
+            StaffObject staff = new Database().selectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", sale.staffID));
+            if(staff != null) sale_staff_name.Text = staff.name;
         }
         public static void InitializeListView(ListView listview)
         {
@@ -82,6 +77,7 @@ namespace PosSystem_Client
             Database db = new Database();
             for (int i = 0; i < item_num.Length; i++)
             {
+
                 ItemObject item = db.selectSingle<ItemObject>(string.Format("where id = '{0}'", item_num[i]));
                 if (item != null)
                 {

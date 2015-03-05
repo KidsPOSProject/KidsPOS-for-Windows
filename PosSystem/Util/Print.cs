@@ -160,7 +160,7 @@ namespace PosSystem.Util
             drawString(graphics, fontBig, "おみせ：　" + PosInformation.getInstance().store.name, marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight;
 
-            drawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.getInstance().regUserName, marginMin, drawHeightPosition);
+            drawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.getInstance().getStaffName(), marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight + 5;
 
 
@@ -218,15 +218,15 @@ namespace PosSystem.Util
 
             /* ---  バーコード生成  --- */
 
-            drawBarcodeRow("商品登録", Setting.Barcode.ITEM_REGIST, "商品リスト", Setting.Barcode.ITEM_LIST, ref config);
+            drawBarcodeRow("商品登録", Setting.BarcodeConfig.ITEM_REGIST, "商品リスト", Setting.BarcodeConfig.ITEM_LIST, ref config);
 
-            drawBarcodeRow("売上リスト", Setting.Barcode.SALE_LIST, "会計", Setting.Barcode.ACCOUNT, ref config);
+            drawBarcodeRow("売上リスト", Setting.BarcodeConfig.SALE_LIST, "会計", Setting.BarcodeConfig.ACCOUNT, ref config);
 
-            drawBarcodeRow("スタッフリスト", Setting.Barcode.STAFF_LIST, "スタッフ登録", Setting.Barcode.STAFF_REGIST, ref config);
+            drawBarcodeRow("スタッフリスト", Setting.BarcodeConfig.STAFF_LIST, "スタッフ登録", Setting.BarcodeConfig.STAFF_REGIST, ref config);
 
-            drawBarcodeRow("ツールバー表示", Setting.Barcode.SHOW_TOOLBAR, "ツールバー非表示", Setting.Barcode.HIDE_TOOLBAR, ref config);
+            drawBarcodeRow("ツールバー表示", Setting.BarcodeConfig.SHOW_TOOLBAR, "ツールバー非表示", Setting.BarcodeConfig.HIDE_TOOLBAR, ref config);
 
-            drawBarcode("商品リストEdit", Setting.Barcode.ITEM_LIST_EDIT, ref config);
+            drawBarcode("商品リストEdit", Setting.BarcodeConfig.ITEM_LIST_EDIT, ref config);
 
             config.graphics.DrawLine(new Pen(Brushes.Black),
                 new Point(config.marginMin, config.drawHeightPosition),
@@ -242,7 +242,7 @@ namespace PosSystem.Util
             string sysName, string sysCode, ref PrintConfigSystemBarcode c)
         {
             drawString(c.graphics, c.font, sysName, c.marginMin, c.drawHeightPosition);
-            c.drawHeightPosition += c.lineHeight + c.marginBarcode;
+            c.drawHeightPosition += c.lineHeight + c.marginBarcode / 12;
             c.graphics.DrawImage(new BarcodeObject(sysCode).getBitmap(), new Point(c.marginMin, c.drawHeightPosition));
             c.drawHeightPosition += c.lineHeight + 25;
         }
@@ -252,7 +252,7 @@ namespace PosSystem.Util
         {
             drawString(c.graphics, c.font, LSysName, c.marginMin, c.drawHeightPosition);
             drawString(c.graphics, c.font, RSysName, c.marginMin + c.marginBarcode, c.drawHeightPosition);
-            c.drawHeightPosition += c.lineHeight + c.marginBarcode;
+            c.drawHeightPosition += c.lineHeight + c.marginBarcode / 12;
 
             c.graphics.DrawImage(new BarcodeObject(LSysCode).getBitmap(), new Point(c.marginMin, c.drawHeightPosition));
             c.graphics.DrawImage(new BarcodeObject(RSysCode).getBitmap(), new Point(c.marginMin + c.marginBarcode, c.drawHeightPosition));

@@ -29,7 +29,7 @@ namespace PosSystem.Object.Database
         }
         public string getID()
         {
-            return id.ToString("D" + Barcode.DATA_MID_LENGTH);
+            return id.ToString("D" + BarcodeConfig.DATA_MID_LENGTH);
         }
     }
 }

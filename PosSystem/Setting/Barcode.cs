@@ -8,7 +8,7 @@ using ZXing;
 
 namespace PosSystem.Setting
 {
-    public class Barcode
+    public class BarcodeConfig
     {
         BarcodeFormat format = BarcodeFormat.CODABAR;
 

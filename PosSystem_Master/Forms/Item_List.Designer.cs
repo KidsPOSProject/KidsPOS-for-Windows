@@ -1,6 +1,6 @@
 ﻿namespace PosSystem_Master
 {
-    partial class Item_List
+    partial class ItemList
     {
         /// <summary>
         /// Required designer variable.
@@ -28,36 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Item_List));
-            this.reg_goods_list = new System.Windows.Forms.ListView();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.change_item_name = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.change_item_price = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.printDocument1 = new System.Drawing.Printing.PrintDocument();
-            this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
+            this.updateItem = new System.Windows.Forms.Button();
             this.edit_panel = new System.Windows.Forms.Panel();
+            this.mGridView = new System.Windows.Forms.DataGridView();
             this.edit_panel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mGridView)).BeginInit();
             this.SuspendLayout();
-            // 
-            // reg_goods_list
-            // 
-            this.reg_goods_list.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.reg_goods_list.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.reg_goods_list.Location = new System.Drawing.Point(12, 63);
-            this.reg_goods_list.MultiSelect = false;
-            this.reg_goods_list.Name = "reg_goods_list";
-            this.reg_goods_list.Size = new System.Drawing.Size(768, 216);
-            this.reg_goods_list.TabIndex = 3;
-            this.reg_goods_list.UseCompatibleStateImageBehavior = false;
-            this.reg_goods_list.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.reg_goods_list_ColumnWidthChanged);
-            this.reg_goods_list.SizeChanged += new System.EventHandler(this.reg_goods_list_SizeChanged);
-            this.reg_goods_list.MouseClick += new System.Windows.Forms.MouseEventHandler(this.reg_goods_list_MouseClick);
             // 
             // label1
             // 
@@ -109,74 +91,69 @@
             this.change_item_price.TabIndex = 7;
             this.change_item_price.Text = " ";
             // 
-            // button1
+            // updateItem
             // 
-            this.button1.Enabled = false;
-            this.button1.Font = new System.Drawing.Font("MS UI Gothic", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button1.Location = new System.Drawing.Point(582, 19);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(168, 91);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "こうしん";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Enabled = false;
-            this.button2.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button2.Location = new System.Drawing.Point(10, 117);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(272, 40);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "バーコードいんさつ";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // printDocument1
-            // 
-            this.printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage);
-            // 
-            // printPreviewDialog1
-            // 
-            this.printPreviewDialog1.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.printPreviewDialog1.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.printPreviewDialog1.ClientSize = new System.Drawing.Size(400, 300);
-            this.printPreviewDialog1.Document = this.printDocument1;
-            this.printPreviewDialog1.Enabled = true;
-            this.printPreviewDialog1.Icon = ((System.Drawing.Icon)(resources.GetObject("printPreviewDialog1.Icon")));
-            this.printPreviewDialog1.Name = "printPreviewDialog1";
-            this.printPreviewDialog1.Visible = false;
+            this.updateItem.Enabled = false;
+            this.updateItem.Font = new System.Drawing.Font("MS UI Gothic", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.updateItem.Location = new System.Drawing.Point(582, 19);
+            this.updateItem.Name = "updateItem";
+            this.updateItem.Size = new System.Drawing.Size(168, 91);
+            this.updateItem.TabIndex = 9;
+            this.updateItem.Text = "こうしん";
+            this.updateItem.UseVisualStyleBackColor = true;
+            this.updateItem.Click += new System.EventHandler(this.updateItem_Click);
             // 
             // edit_panel
             // 
             this.edit_panel.Controls.Add(this.label2);
-            this.edit_panel.Controls.Add(this.button2);
             this.edit_panel.Controls.Add(this.change_item_name);
-            this.edit_panel.Controls.Add(this.button1);
+            this.edit_panel.Controls.Add(this.updateItem);
             this.edit_panel.Controls.Add(this.change_item_price);
             this.edit_panel.Controls.Add(this.label3);
             this.edit_panel.Location = new System.Drawing.Point(12, 285);
             this.edit_panel.Name = "edit_panel";
-            this.edit_panel.Size = new System.Drawing.Size(768, 160);
+            this.edit_panel.Size = new System.Drawing.Size(768, 126);
             this.edit_panel.TabIndex = 11;
             this.edit_panel.Visible = false;
             // 
-            // Item_List
+            // mGridView
+            // 
+            this.mGridView.AllowUserToAddRows = false;
+            this.mGridView.AllowUserToDeleteRows = false;
+            this.mGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("MS UI Gothic", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.mGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            this.mGridView.Location = new System.Drawing.Point(12, 53);
+            this.mGridView.MultiSelect = false;
+            this.mGridView.Name = "mGridView";
+            this.mGridView.ReadOnly = true;
+            this.mGridView.RowTemplate.Height = 21;
+            this.mGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.mGridView.Size = new System.Drawing.Size(768, 226);
+            this.mGridView.TabIndex = 22;
+            // 
+            // ItemList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 457);
+            this.ClientSize = new System.Drawing.Size(792, 421);
+            this.Controls.Add(this.mGridView);
             this.Controls.Add(this.edit_panel);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.reg_goods_list);
             this.KeyPreview = true;
-            this.Name = "Item_List";
+            this.Name = "ItemList";
             this.Text = "Item_List";
             this.Load += new System.EventHandler(this.Item_List_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Item_List_KeyDown);
             this.edit_panel.ResumeLayout(false);
             this.edit_panel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -184,16 +161,13 @@
 
         #endregion
 
-        public System.Windows.Forms.ListView reg_goods_list;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox change_item_name;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox change_item_price;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Drawing.Printing.PrintDocument printDocument1;
-        private System.Windows.Forms.PrintPreviewDialog printPreviewDialog1;
+        private System.Windows.Forms.Button updateItem;
         private System.Windows.Forms.Panel edit_panel;
+        private System.Windows.Forms.DataGridView mGridView;
     }
 }

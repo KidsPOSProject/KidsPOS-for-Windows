@@ -13,7 +13,7 @@ namespace PosSystem.Object.Database
             : base(DBPath.STAFF)
         {
             string _staffID = staffID.ToString();
-            if (_staffID.Length != Barcode.DATA_LENGTH) throw new InvalidDataException();
+            if (_staffID.Length != BarcodeConfig.DATA_LENGTH) throw new InvalidDataException();
             barcode = gen(staffID.ToString());
             name = _name;
             genQuery();
@@ -21,7 +21,7 @@ namespace PosSystem.Object.Database
         public StaffObject(string staffID, string name)
             : base(DBPath.STAFF)
         {
-            this.barcode = gen(staffID);
+            this.barcode = BarcodeConfig.DATA_LENGTH >= staffID.Length?gen(staffID):staffID;
             this.name = name;
             genQuery();
         }
@@ -35,8 +35,8 @@ namespace PosSystem.Object.Database
         private string gen(string sID)
         {
             return
-                Barcode.PREFIX + //10
-                Barcode.STAFF +   //00
+                BarcodeConfig.PREFIX + //10
+                BarcodeConfig.STAFF +   //00
                 PosInformation.getInstance().year +
                 sID; //0001
         }

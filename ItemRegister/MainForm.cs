@@ -34,8 +34,8 @@ namespace DBRegister
             DateTime dt = DateTime.Now;
             string stPrompt1 = dt.ToString("yyyy");
             lKidsDate.Text = stPrompt1 + " 年のキッズ用に登録されます" + Environment.NewLine;
-            lKidsDate.Text += "出力ユーザバーコード例: " + PosSystem.Setting.Barcode.PREFIX + PosSystem.Setting.Barcode.STAFF + stPrompt1.Substring(2) + "0001" + Environment.NewLine;
-            lKidsDate.Text += "出力商品バーコード例　: " + PosSystem.Setting.Barcode.PREFIX + PosSystem.Setting.Barcode.ITEM + "010001";
+            lKidsDate.Text += "出力ユーザバーコード例: " + PosSystem.Setting.BarcodeConfig.PREFIX + PosSystem.Setting.BarcodeConfig.STAFF + stPrompt1.Substring(2) + "0001" + Environment.NewLine;
+            lKidsDate.Text += "出力商品バーコード例　: " + PosSystem.Setting.BarcodeConfig.PREFIX + PosSystem.Setting.BarcodeConfig.ITEM + "010001";
         }
 
         private void load_csv_file_Click(object sender, EventArgs e)
@@ -113,7 +113,7 @@ namespace DBRegister
         }
         private Boolean checkFormatUser(string[] row)
         {
-            return row[0].Length == PosSystem.Setting.Barcode.DATA_LENGTH && !row[1].Equals("");
+            return row[0].Length == PosSystem.Setting.BarcodeConfig.DATA_LENGTH && !row[1].Equals("");
         }
 
         public bool registItem(ArrayList csv)

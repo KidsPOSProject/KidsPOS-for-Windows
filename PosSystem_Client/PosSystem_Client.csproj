@@ -80,11 +80,11 @@
     <Compile Include="Source\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Source\Item_List.cs">
+    <Compile Include="Source\ItemList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Source\Item_List.Designer.cs">
-      <DependentUpon>Item_List.cs</DependentUpon>
+    <Compile Include="Source\ItemList.Designer.cs">
+      <DependentUpon>ItemList.cs</DependentUpon>
     </Compile>
     <Compile Include="Source\Sales.cs">
       <SubType>Form</SubType>
@@ -97,12 +97,6 @@
     </Compile>
     <Compile Include="Source\Sales_List.Designer.cs">
       <DependentUpon>Sales_List.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Source\Staff_List.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Source\Staff_List.Designer.cs">
-      <DependentUpon>Staff_List.cs</DependentUpon>
     </Compile>
     <Compile Include="Source\StaffRegistWindow.cs">
       <SubType>Form</SubType>
@@ -130,17 +124,14 @@
       <DependentUpon>Form1.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Source\Item_List.resx">
-      <DependentUpon>Item_List.cs</DependentUpon>
+    <EmbeddedResource Include="Source\ItemList.resx">
+      <DependentUpon>ItemList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Source\Sales.resx">
       <DependentUpon>Sales.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Source\Sales_List.resx">
       <DependentUpon>Sales_List.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Source\Staff_List.resx">
-      <DependentUpon>Staff_List.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Source\StaffRegistWindow.resx">
       <DependentUpon>StaffRegistWindow.cs</DependentUpon>

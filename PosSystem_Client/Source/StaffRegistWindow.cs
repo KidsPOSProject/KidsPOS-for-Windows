@@ -8,21 +8,20 @@ using System.Text;
 using System.Windows.Forms;
 using PosSystem.Util;
 using PosSystem.Object.Database;
+using PosSystem.Setting;
 
 namespace PosSystem_Client
 {
     public partial class StaffRegistWindow : Form
     {
         string barcode;
-        SocketClient client;
-        public StaffRegistWindow(SocketClient client, string barcode)
+        public StaffRegistWindow(string barcode)
         {
             InitializeComponent();
             this.MaximizeBox = !this.MaximizeBox;
             this.MinimizeBox = !this.MinimizeBox;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.barcode = barcode;
-            this.client = client;
         }
 
         private void Staff_Regist_Load(object sender, EventArgs e)
@@ -37,7 +36,9 @@ namespace PosSystem_Client
                 DialogResult result = MessageBox.Show("このなまえでとうろくしますか？"+Environment.NewLine+textBox1.Text, "かくにん", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.Yes)
                 {
-                    client.registUser(new StaffObject(barcode, textBox1.Text));
+                    StaffObject staff = new StaffObject(barcode, textBox1.Text);
+                    SocketClient.getInstance().registUser(staff);
+                    PosInformation.getInstance().setStaff(staff);
                     this.Close();
                 }
             }

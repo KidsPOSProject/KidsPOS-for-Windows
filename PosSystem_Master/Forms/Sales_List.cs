@@ -9,8 +9,9 @@ using System.Windows.Forms;
 using PosSystem.Object.Database;
 using PosSystem.Util;
 using PosSystem.Setting;
+using PosSystem_Master.Source;
 
-namespace PosSystem_Client
+namespace PosSystem_Master.Forms
 {
     public partial class Sales_List : Form
     {
@@ -34,11 +35,10 @@ namespace PosSystem_Client
         private void Sales_List_Load(object sender, EventArgs e)
         {
             Database db = new Database();
-            db.insertView<SaleObject>(table," SELECT barcode, created_at, price, points FROM " + TableList.SALE);
+            db.insertView<SaleObject>(table, " SELECT barcode, created_at, price, points FROM " + TableList.SALE);
             list = db.selectMulti<SaleObject>(string.Format("WHERE store = '{0}'", PosInformation.getInstance().store.id));
             turn_over.Text = calc_turnover();
         }
-
         public string calc_turnover()
         {
             int sum = 0;
@@ -48,19 +48,23 @@ namespace PosSystem_Client
             }
             return sum.ToString();
         }
+
+        private void mGridView_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                Sales sl = new Sales(
+        new Database().selectSingle<SaleObject>(
+        string.Format("WHERE barcode = '{0}'", mGridView[0, mGridView.CurrentCell.RowIndex].Value.ToString())));
+                sl.ShowDialog(this);
+                sl.Dispose();
+            }
+            catch { }
+        }
+
         private void Sales_List_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) this.Close();
         }
-
-        private void mGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            Sales sl = new Sales(
-                new Database().selectSingle<SaleObject>(
-                string.Format("WHERE barcode = '{0}'", mGridView[0, mGridView.CurrentCell.RowIndex].Value.ToString())));
-            sl.ShowDialog(this); 
-            sl.Dispose();
-        }
-
     }
 }

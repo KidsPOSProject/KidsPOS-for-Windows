@@ -187,6 +187,12 @@ namespace PosSystem.Util
             }
             return true;
         }
+        public bool updateItem(int id, string name, int price)
+        {
+            return queryImpl(DBPath.ITEM,
+                string.Format("UPDATE " + TableList.ITEM + " SET name = '{0}', price = '{1}' WHERE id = '{2}'",
+                    name, price, id));
+        }
         // Insertview
         public void insertView<T>(DataTable dt, string query = "") where T : RecordObject
         {
@@ -211,13 +217,14 @@ namespace PosSystem.Util
         }
         public string getString(string item)
         {
-            if (reader == null || reader[item] == null) return "";
+            if (reader == null || reader[item] == null || reader[item].Equals("")) return "";
             return reader[item].ToString();
         }
         public int getInt(string item)
         {
-            if (reader == null || reader[item] == null) return 0;
-            return Convert.ToInt32(reader[item].ToString());
+            if (reader == null || reader[item] == null || reader[item].Equals("")) return 0;
+            string st = reader[item].ToString();
+            return Convert.ToInt32(st);
         }
     }
 
@@ -225,7 +232,7 @@ namespace PosSystem.Util
     {
         public const string ITEM = "CREATE TABLE " + TableList.ITEM + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
         public const string ITEM_GENRE = "CREATE TABLE " + TableList.ITEM_GENRE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
-        public const string SALE = "CREATE TABLE " + TableList.SALE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER)";
+        public const string SALE = "CREATE TABLE " + TableList.SALE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER, staff INTEGER)";
         public const string STORE = "CREATE TABLE " + TableList.STORE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
         public const string STAFF = "CREATE TABLE " + TableList.STAFF + "(barcode INTEGER PRIMARY KEY, name TEXT)";
     }

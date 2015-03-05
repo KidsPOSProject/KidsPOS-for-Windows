@@ -1,4 +1,4 @@
-﻿namespace PosSystem_Client
+﻿namespace PosSystem_Master.Forms
 {
     partial class Sales_List
     {
@@ -29,71 +29,21 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.turn_over = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.mGridView = new System.Windows.Forms.DataGridView();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.turn_over = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mGridView)).BeginInit();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(5, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(123, 37);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "うりあげ";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("MS UI Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label2.Location = new System.Drawing.Point(249, 313);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(174, 33);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "うりあげだか：";
-            // 
-            // turn_over
-            // 
-            this.turn_over.Font = new System.Drawing.Font("MS UI Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.turn_over.Location = new System.Drawing.Point(429, 310);
-            this.turn_over.Name = "turn_over";
-            this.turn_over.ReadOnly = true;
-            this.turn_over.Size = new System.Drawing.Size(258, 39);
-            this.turn_over.TabIndex = 8;
-            this.turn_over.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("MS UI Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(693, 313);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(87, 33);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "リバー";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label4.Location = new System.Drawing.Point(376, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(404, 35);
-            this.label4.TabIndex = 20;
-            this.label4.Text = "エンターキーを押すと戻ります";
             // 
             // mGridView
             // 
             this.mGridView.AllowUserToAddRows = false;
             this.mGridView.AllowUserToDeleteRows = false;
             this.mGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.mGridView.Location = new System.Drawing.Point(13, 50);
+            this.mGridView.Location = new System.Drawing.Point(13, 52);
             this.mGridView.MultiSelect = false;
             this.mGridView.Name = "mGridView";
             this.mGridView.ReadOnly = true;
@@ -108,21 +58,70 @@
             this.mGridView.RowTemplate.Height = 21;
             this.mGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.mGridView.Size = new System.Drawing.Size(767, 254);
-            this.mGridView.TabIndex = 21;
-            this.mGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.mGridView_CellDoubleClick);
+            this.mGridView.TabIndex = 27;
+            this.mGridView.DoubleClick += new System.EventHandler(this.mGridView_DoubleClick);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label4.Location = new System.Drawing.Point(376, 11);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(404, 35);
+            this.label4.TabIndex = 26;
+            this.label4.Text = "エンターキーを押すと戻ります";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("MS UI Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label3.Location = new System.Drawing.Point(693, 315);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(87, 33);
+            this.label3.TabIndex = 25;
+            this.label3.Text = "リバー";
+            // 
+            // turn_over
+            // 
+            this.turn_over.Font = new System.Drawing.Font("MS UI Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.turn_over.Location = new System.Drawing.Point(429, 312);
+            this.turn_over.Name = "turn_over";
+            this.turn_over.ReadOnly = true;
+            this.turn_over.Size = new System.Drawing.Size(258, 39);
+            this.turn_over.TabIndex = 24;
+            this.turn_over.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("MS UI Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label2.Location = new System.Drawing.Point(249, 315);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(174, 33);
+            this.label2.TabIndex = 23;
+            this.label2.Text = "うりあげだか：";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label1.Location = new System.Drawing.Point(5, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(123, 37);
+            this.label1.TabIndex = 22;
+            this.label1.Text = "うりあげ";
             // 
             // Sales_List
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 361);
+            this.ClientSize = new System.Drawing.Size(784, 362);
             this.Controls.Add(this.mGridView);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.turn_over);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.KeyPreview = true;
             this.Name = "Sales_List";
             this.Text = "Sales_List";
             this.Load += new System.EventHandler(this.Sales_List_Load);
@@ -135,11 +134,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox turn_over;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridView mGridView;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox turn_over;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }

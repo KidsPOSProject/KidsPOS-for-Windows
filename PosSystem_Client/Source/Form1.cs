@@ -9,6 +9,7 @@ using PosSystem.Util;
 using PosSystem.Setting;
 using System.Drawing.Printing;
 using Microsoft.VisualBasic.FileIO;
+using System.Text;
 
 namespace PosSystem_Client
 {
@@ -31,37 +32,31 @@ namespace PosSystem_Client
 
         public static string shop_person = "";
 
-        SocketClient cn;
-
         #endregion
-        #region HashTableなど
 
-        Hashtable day_of_week = new Hashtable();
-        public static Hashtable genre = new Hashtable();
         public static Hashtable ip_list = new Hashtable();
 
         //バーコード関係の変数
 
         //読み取った数値格納
-        public static string[] input = new string[PosSystem.Setting.Barcode.BARCODE_NUM];
+        public static string[] readTextArray = new string[PosSystem.Setting.BarcodeConfig.BARCODE_NUM];
 
         //現在読み取っている数値の場所
-        public int input_count = 0;
+        public int inputCount = 0;
 
         public static int reg_item_price_sum = 0;
 
-        #endregion
         public Form1()
         {
             InitializeComponent();
             InitializeValues();
-            InitializeListView(reg_goods_list);
+            InitializeListView(tItemList);
 
-            PosInformation.getInstance().init(new StoreObject("デパート") , "");
+            PosInformation.getInstance().init(this, new StoreObject("デパート"), "");
+            SocketClient.getInstance().init(new StreamCallback(this));
 
             this.KeyPreview = !this.KeyPreview;
-            reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
-            take_mode.Enabled = false;
+            reg_goods_list_SizeChanged(tItemList, new EventArgs());
             this.Text = form_name;
 
             this.WindowState = FormWindowState.Maximized;
@@ -75,18 +70,6 @@ namespace PosSystem_Client
         #region Initialize
         public void InitializeValues()
         {
-            #region HashTable day_or_week
-            day_of_week.Add(DayOfWeek.Sunday, "日");
-            day_of_week.Add(DayOfWeek.Monday, "月");
-            day_of_week.Add(DayOfWeek.Tuesday, "火");
-            day_of_week.Add(DayOfWeek.Wednesday, "水");
-            day_of_week.Add(DayOfWeek.Thursday, "木");
-            day_of_week.Add(DayOfWeek.Friday, "金");
-            day_of_week.Add(DayOfWeek.Saturday, "土");
-            #endregion
-
-            genre.Add("食品", 01);
-            genre.Add("汎用", 02);
 
 
             ArrayList al = loadSettings();
@@ -184,25 +167,25 @@ namespace PosSystem_Client
         }
         public void InitializeREG()
         {
-            reg_goods_list.Items.Clear();
+            tItemList.Items.Clear();
             reg_item_price_sum = 0;
-            reg_goods_sum.Text = "0";
+            tSumItemPrice.Text = "0";
             lScanItemName.Text = "";
             lScanItemPrice.Text = "";
         }
 
         #region DB_SHORI
         //スキャンしたときの処理
-        public void scan_goods(string itemBarcode)
+        public void onReadItem(string itemBarcode)
         {
             ItemObject item = new Database().selectSingle<ItemObject>(string.Format("WHERE barcode = '{0}'", itemBarcode));
             if (item != null)
             {
                 lScanItemName.Text = item.name;
                 lScanItemPrice.Text = item.price.ToString();
-                reg_goods_list.Items.Add(new ListViewItem(new string[] { (item.id.ToString("D4")), item.name, "1", item.price.ToString(), "×" }));
+                tItemList.Items.Add(new ListViewItem(new string[] { (item.id.ToString()), item.name, "1", item.price.ToString(), "×" }));
                 reg_item_price_sum += item.price;
-                reg_goods_sum.Text = reg_item_price_sum.ToString();
+                tSumItemPrice.Text = reg_item_price_sum.ToString();
             }
             else
             {
@@ -216,9 +199,7 @@ namespace PosSystem_Client
         //タイマー  ステータスバーの日付等更新
         private void display_timer_Tick(object sender, EventArgs e)
         {
-            //if(isActive) this.Activate();
-            DateTime dt = DateTime.Now;
-            disp_now_time.Text = dt.ToString("yyyy年MM月dd日(" + day_of_week[dt.DayOfWeek] + ") HH時mm分ss秒");
+            disp_now_time.Text = new Time().getTime();
         }        
         
         private void reg_clear_Click(object sender, EventArgs e)
@@ -227,23 +208,31 @@ namespace PosSystem_Client
         }
         private void reg_goods_list_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            debug_Test.Text = reg_goods_list.SelectedItems[0].SubItems[1].Text;
+            debug_Test.Text = tItemList.SelectedItems[0].SubItems[1].Text;
         }
         private void reg_account_Click(object sender, EventArgs e)
         {
-            if (reg_goods_sum.Text != "" && reg_goods_sum.Text != "0")
+            会計();
+        }
+        private void 会計()
+        {
+            if (tSumItemPrice.Text != "" && tSumItemPrice.Text != "0")
             {
-                // 売上用のアイテムリスト生成
-                for (int i = 0; i < reg_goods_list.Items.Count; i++)
+                StringBuilder builder = new StringBuilder();
+                foreach (ListViewItem item in tItemList.Items)
                 {
-                    item_list += reg_goods_list.Items[i].SubItems[0].Text + ((i != reg_goods_list.Items.Count - 1) ? "," : "");
+                    builder.Append(item.SubItems[0].Text).Append(",");
                 }
-                Account ac = new Account(reg_goods_list);
+                string items = builder.ToString();
+                if (items.IndexOf(',') > -1)
+                {
+                    items = items.Substring(0, items.Length - 2);
+                }
+                item_list = items;
+                Account ac = new Account(tItemList);
                 ac.ShowDialog(this);
                 ac.Dispose();
             }
-            //売上テーブルにインサート処理
-
             InitializeREG();
         }
 
@@ -281,99 +270,60 @@ namespace PosSystem_Client
         //バーコードが入力されたとき
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (key_check(e) || input_count == PosSystem.Setting.Barcode.BARCODE_NUM) init_input();
+            if (keyCheck(e) || inputCount == BarcodeConfig.BARCODE_NUM) init_input();
 
-            input[input_count] = e.KeyCode.ToString();
-            input_count++;
+            readTextArray[inputCount] = e.KeyCode.ToString();
+            inputCount++;
 
-            if (input_count == PosSystem.Setting.Barcode.BARCODE_NUM)
+            if (inputCount == BarcodeConfig.BARCODE_NUM)
             {
-                string temp_barcode = comb_input_barcode();
-                
-                switch (temp_barcode[PosSystem.Setting.Barcode.PREFIX.Length].ToString()+
-                    temp_barcode[PosSystem.Setting.Barcode.PREFIX.Length+1].ToString())
+                string bar = genBarcode();
+                string barHead = bar.Substring(BarcodeConfig.PREFIX.Length, BarcodeConfig.PREFIX_LENGTH - BarcodeConfig.PREFIX.Length);
+
+                Database db = new Database();
+
+                switch (barHead)
                 {
                     
-                    case PosSystem.Setting.Barcode.ITEM:
-                        scan_goods(temp_barcode);
+                    case BarcodeConfig.ITEM:
+                        onReadItem(bar);
                         break;
 
-                    case PosSystem.Setting.Barcode.SALE:
-                        
-                        Sales sl = new Sales(temp_barcode);
+                    case BarcodeConfig.SALE:
+                        Sales sl = new Sales(db.selectSingle<SaleObject>(string.Format("WHERE barcode = '{0}'", bar)));
                         sl.ShowDialog(this);
                         sl.Dispose();
 
                         break;
 
-                    //従業員のバーコードを読み込んだとき
-                    case PosSystem.Setting.Barcode.STAFF:
-                        StaffObject staff = new Database().selectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", temp_barcode));
-                        if (staff != null)
-                        {
-                            reg_user.Text = staff.name;
-                            shop_person = staff.name;
-                        }
-                        else
-                        {
-                            StaffRegistWindow staffRegist = new StaffRegistWindow(cn,temp_barcode);
-                            staffRegist.ShowDialog(this);
-                            staffRegist.Dispose();
-                        }
+                    case BarcodeConfig.STAFF:
+                        onReadStaff(bar);
                         break;
 
-                    //商品リストを読み込んだ時
-                    case PosSystem.Setting.Barcode.ITEM_LIST:
+                    case BarcodeConfig.ITEM_LIST:
                         
-                        Item_List il = new Item_List();
+                        ItemList il = new ItemList();
                         il.ShowDialog(this);
                         il.Dispose();
                         
                         break;
 
-                    //売上リストを読み込んだ時
-                    case PosSystem.Setting.Barcode.SALE_LIST:
-                        
+                    case BarcodeConfig.SALE_LIST:
                         Sales_List sll = new Sales_List();
                         sll.ShowDialog(this);
                         sll.Dispose();
                         
                         break;
 
-                    //会計を読み込んだ時
-                    case PosSystem.Setting.Barcode.ACCOUNT:
-                        if (reg_goods_sum.Text != "" && reg_goods_sum.Text != "0")
-                        {
-                            for (int i = 0; i < reg_goods_list.Items.Count; i++)
-                            {
-                                // 売上用のアイテムリスト生成
-                                item_list += reg_goods_list.Items[i].SubItems[0].Text + ((i != reg_goods_list.Items.Count - 1) ? "," : "");
-                            }
-                            
-                            Account ac = new Account(reg_goods_list);
-                            ac.ShowDialog(this);
-                            ac.Dispose();
-                        }
-
-                        InitializeREG();
+                    case BarcodeConfig.ACCOUNT:
+                        会計();
                         break;
 
-                    //スタッフリストを読み込んだ時
-                    case PosSystem.Setting.Barcode.STAFF_LIST:
-                        
-                        Staff_List stf = new Staff_List();
-                        stf.ShowDialog(this);
-                        stf.Dispose();
-                        
+                    case BarcodeConfig.SHOW_TOOLBAR:
+                        top_menu.Visible = true;
                         break;
 
-                    //ツールバー表示を読み込んだ時
-                    case PosSystem.Setting.Barcode.SHOW_TOOLBAR:
-                            top_menu.Visible = true;
-                        break;
-
-                    //ツールバー非表示を読み込んだ時
-                    case PosSystem.Setting.Barcode.HIDE_TOOLBAR:
+                    case BarcodeConfig.HIDE_TOOLBAR:
                         top_menu.Visible = false;
                         break;
                 }
@@ -382,51 +332,31 @@ namespace PosSystem_Client
 
         public void init_input()
         {
-            //配列の初期化
-            input = new string[PosSystem.Setting.Barcode.BARCODE_NUM];
-            //参照要素ナンバーの初期化
-            input_count = 0;
+            readTextArray = new string[PosSystem.Setting.BarcodeConfig.BARCODE_NUM];
+            inputCount = 0;
         }
-        public bool key_check(KeyEventArgs e)
+        public bool keyCheck(KeyEventArgs e)
         {
-            string input_text = e.KeyCode.ToString();
-            //プリフィックスの長さ分だけ見るのよ
-
-            if (PosSystem.Setting.Barcode.PREFIX.Length > input_count){ 
-                 if(
-                     !input_text.Equals("D" + PosSystem.Setting.Barcode.PREFIX[input_count])
-                     )
-                 {
-                     return true;
-                 }
-            }
-            return false;
+            return
+                PosSystem.Setting.BarcodeConfig.PREFIX.Length > inputCount
+                && !e.KeyCode.ToString().Equals("D" + PosSystem.Setting.BarcodeConfig.PREFIX[inputCount]);
         }
 
-        public string comb_input_barcode()
+        public string genBarcode()
         {
             string ret = "";
-            for (int i = 0; i < PosSystem.Setting.Barcode.BARCODE_NUM; i++)
+            for (int i = 0; i < PosSystem.Setting.BarcodeConfig.BARCODE_NUM; i++)
             {
-                ret += input[i][1];
+                ret += readTextArray[i][1];
             }
             return ret;
         }
         #endregion
 
         #endregion
-
-        #region ツールメニュー
-        private void 印刷ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PrintDocument pd = new PrintDocument();
-            pd.PrintPage += new PrintPageEventHandler(Print.getInstance().printSystemBarcode);
-            pd.Print();
-        }
-
         private void 商品リストToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Item_List il = new Item_List();
+            ItemList il = new ItemList();
             il.ShowDialog();
             il.Dispose();
         }
@@ -438,14 +368,6 @@ namespace PosSystem_Client
             sl.Dispose();
         }
 
-        private void ユーザリストToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Staff_List sl = new Staff_List();
-            sl.ShowDialog(this);
-            sl.Dispose();
-        }
-        #endregion
-
         #endregion
         #endregion
 
@@ -453,36 +375,67 @@ namespace PosSystem_Client
         {
             if (sender.GetType() == this.接続先ToolStripMenuItem.GetType())
             {
-                ToolStripItem tsi = (ToolStripItem)sender;
-
-                SocketClient _cn = new SocketClient(new SocketListener());
-                if (!_cn.ClientStart()) MessageBox.Show("接続に失敗しました");
+                if (!SocketClient.getInstance().ClientStart()) MessageBox.Show("接続に失敗しました");
                 else
                 {
-                    this.Text += tsi.Text + " へ接続中";
+                    this.Text += ((ToolStripItem)sender).Text + " へ接続中";
                     for (int i = 0; i < 接続先ToolStripMenuItem.DropDownItems.Count; i++)
                     {
                         接続先ToolStripMenuItem.DropDownItems[i].Enabled = false;
                     }
-                    cn = _cn;
                 }
-
-            }
-        }
-        public void change()
-        {
-            this.Text = form_name + " 接続が解除されました。";
-            for (int i = 0; i < 接続先ToolStripMenuItem.DropDownItems.Count; i++)
-            {
-                接続先ToolStripMenuItem.DropDownItems[i].Enabled = true;
             }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             display_timer.Enabled = false;
-            if (cn != null) cn.StopSock();
+            SocketClient.getInstance().StopSock();
         }
 
+        private void 商品ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            onReadItem("1001010001");
+        }
+
+        private void スタッフToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            onReadStaff("1000150050");
+        }
+
+        private void 未登録スタッフToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int count = new Database().count<StaffObject>() + 1;
+            onReadStaff("100015" + count.ToString("D4"));
+        }
+
+        private void onReadStaff(string barcode)
+        {
+            StaffObject staff = new Database().selectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", barcode));
+            if (staff != null)
+            {
+                reg_user.Text = staff.name;
+                shop_person = staff.name;
+                PosInformation.getInstance().setStaff(staff);
+            }
+            else
+            {
+                StaffRegistWindow staffRegist = new StaffRegistWindow(barcode);
+                staffRegist.ShowDialog(this);
+                staffRegist.Dispose();
+            }
+        }
+        public class StreamCallback : SocketListener
+        {
+            public StreamCallback(Form context) : base(context){}
+            public override void onReceive(string text)
+            {
+                MessageBox.Show(text);
+            }
+            public override void onClose(SocketCloseType closeType)
+            {
+                MessageBox.Show("接続解除");
+            }
+        }
     }
 }

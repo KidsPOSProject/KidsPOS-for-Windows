@@ -19,11 +19,11 @@ namespace PosSystem.Object
         /// <param name="barcode"></param>
         public BarcodeObject(string barcode)
         {
-            if (barcode.Length == Barcode.ITEM.Length)
+            if (barcode.Length == BarcodeConfig.ITEM.Length)
             {
-                barcode = Barcode.PREFIX + barcode + 0.ToString("D" + (Barcode.BARCODE_NUM - Barcode.PREFIX.Length - Barcode.ITEM.Length));
+                barcode = BarcodeConfig.PREFIX + barcode + 0.ToString("D" + (BarcodeConfig.BARCODE_NUM - BarcodeConfig.PREFIX.Length - BarcodeConfig.ITEM.Length));
             }
-            else if (barcode.Length != Barcode.BARCODE_NUM)
+            else if (barcode.Length != BarcodeConfig.BARCODE_NUM)
             {
                 throw new InvalidDataException();
             }
@@ -32,14 +32,14 @@ namespace PosSystem.Object
 
         public BarcodeObject(int storeNum, int itemNum)
         {
-            this.store = storeNum.ToString("D" + Barcode.DATA_MID_LENGTH);
-            this.itemNum = itemNum.ToString("D" + Barcode.DATA_LENGTH);
+            this.store = storeNum.ToString("D" + BarcodeConfig.DATA_MID_LENGTH);
+            this.itemNum = itemNum.ToString("D" + BarcodeConfig.DATA_LENGTH);
             this.gen();
         }
         private void gen()
         {
-            string barcode = Barcode.PREFIX + Barcode.ITEM + store + itemNum;
-            if (barcode.Length == Barcode.BARCODE_NUM)
+            string barcode = BarcodeConfig.PREFIX + BarcodeConfig.ITEM + store + itemNum;
+            if (barcode.Length == BarcodeConfig.BARCODE_NUM)
             {
                 this.barcode = barcode;
             }
