@@ -10,7 +10,7 @@ namespace PosSystem.Setting
 {
     public class BarcodeConfig
     {
-        BarcodeFormat format = BarcodeFormat.CODABAR;
+        public const BarcodeFormat format = BarcodeFormat.CODABAR;
 
         // 00 11 22 33 4444
         public const int BARCODE_NUM = 10;
@@ -38,8 +38,8 @@ namespace PosSystem.Setting
         //操作
         public const string ENTER = "20";
         public const string BACK = "21";
-        public const string SHOW_TOOLBAR = "22";
-        public const string HIDE_TOOLBAR = "23";
+        public const string CHANGE_VISIBLE_DEBUG_TOOLBAR = "22";
+        public const string CHANGE_VISIBLE_TOOLBAR = "23";
 
         //動作モード変更
         public const string MODE_TAKE = "30";

@@ -102,7 +102,6 @@
             this.Name = "Sales";
             this.Text = "Sales";
             this.Load += new System.EventHandler(this.Sales_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Sales_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

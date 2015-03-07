@@ -34,10 +34,5 @@ namespace PosSystem_Client
                 + TableList.ITEM + " AS il," 
                 + TableList.ITEM_GENRE + " AS ig," + TableList.STORE +" AS sk WHERE il.genre = ig.id AND il.shop = sk.id;");
         }
-
-        private void ItemList_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter) this.Close();
-        }
     }
 }

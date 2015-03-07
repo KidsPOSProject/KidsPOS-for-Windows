@@ -79,6 +79,7 @@ namespace PosSystem_Client
             if (reg_goods_sum.Text != "" && received_money.Text != "" && check)
             {
                 Account_change ac = new Account_change(received_money.Text, reg_goods_list, Form1.item_list);
+                Form1.item_list = "";
                 ac.ShowDialog();
                 ac.Dispose();
                 this.Dispose();

@@ -35,7 +35,9 @@ namespace PosSystem_Client
         private void Sales_List_Load(object sender, EventArgs e)
         {
             Database db = new Database();
-            db.insertView<SaleObject>(table," SELECT barcode, created_at, price, points FROM " + TableList.SALE);
+            db.insertView<SaleObject>(table,
+                string.Format("SELECT barcode, created_at, price, points FROM {0} WHERE store ='{1}'",
+                TableList.SALE, Config.getInstance().store.id));
             list = db.selectMulti<SaleObject>(string.Format("WHERE store = '{0}'", Config.getInstance().store.id));
             turn_over.Text = calc_turnover();
         }
@@ -48,10 +50,6 @@ namespace PosSystem_Client
                 sum += item.price;
             }
             return sum.ToString();
-        }
-        private void Sales_List_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter) this.Close();
         }
 
         private void mGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

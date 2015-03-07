@@ -8,6 +8,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using PosSystem.Setting;
+using PosSystem.Object.Database;
+using System.Management;
 
 namespace PosSystem.Util
 {
@@ -170,10 +172,10 @@ namespace PosSystem.Util
             drawHeightPosition += lineHeight;
             drawHeightPosition += lineHeight;
 
-            BarcodeObject barcode = new BarcodeObject(ACCOUNT_CODE);
+            Bitmap barcode = new BarcodeObject(ACCOUNT_CODE).getBitmap();
 
-            graphics.DrawImage(barcode.getBitmap(), new Point(alignCenter - 5, drawHeightPosition));
-            drawHeightPosition += lineHeight + 30;
+            graphics.DrawImage(barcode, alignCenter - 13, drawHeightPosition, barcode.Width * 0.34f, barcode.Height * 0.14f);
+            drawHeightPosition += lineHeight + 10;
 
             graphics.DrawLine(new Pen(Brushes.Black),
                 new Point(marginMin, drawHeightPosition),
@@ -218,15 +220,11 @@ namespace PosSystem.Util
 
             /* ---  バーコード生成  --- */
 
-            drawBarcodeRow("商品登録", Setting.BarcodeConfig.ITEM_REGIST, "商品リスト", Setting.BarcodeConfig.ITEM_LIST, ref config);
-
-            drawBarcodeRow("売上リスト", Setting.BarcodeConfig.SALE_LIST, "会計", Setting.BarcodeConfig.ACCOUNT, ref config);
-
-            drawBarcodeRow("スタッフリスト", Setting.BarcodeConfig.STAFF_LIST, "スタッフ登録", Setting.BarcodeConfig.STAFF_REGIST, ref config);
-
-            drawBarcodeRow("ツールバー表示", Setting.BarcodeConfig.SHOW_TOOLBAR, "ツールバー非表示", Setting.BarcodeConfig.HIDE_TOOLBAR, ref config);
-
-            drawBarcode("商品リストEdit", Setting.BarcodeConfig.ITEM_LIST_EDIT, ref config);
+            drawBarcode("かいけい", Setting.BarcodeConfig.ACCOUNT, ref config);
+            drawBarcode("商品リスト", Setting.BarcodeConfig.ITEM_LIST, ref config);
+            drawBarcode("売上リスト", Setting.BarcodeConfig.SALE_LIST, ref config);
+            drawBarcode("ツールバー表示切り替え", Setting.BarcodeConfig.CHANGE_VISIBLE_TOOLBAR, ref config);
+            drawBarcode("デバッグ用ツールバー表示切り替え", Setting.BarcodeConfig.CHANGE_VISIBLE_DEBUG_TOOLBAR, ref config);
 
             config.graphics.DrawLine(new Pen(Brushes.Black),
                 new Point(config.marginMin, config.drawHeightPosition),
@@ -234,6 +232,33 @@ namespace PosSystem.Util
 
             e.HasMorePages = false;
         }
+        public void printDummyUserBarcode(object sender, PrintPageEventArgs e)
+        {
+            PrintConfigSystemBarcode config = new PrintConfigSystemBarcode(e.Graphics);
+
+            config.drawHeightPosition += config.lineHeight + 22;
+
+            drawString(config.graphics, config.fontBig, "<ダミーユーザ>", config.alignCenter - 20, config.drawHeightPosition);
+
+            config.drawHeightPosition += config.lineHeight + 3;
+
+            config.graphics.DrawLine(new Pen(Brushes.Black),
+                new Point(config.marginMin, config.drawHeightPosition),
+                new Point(config.marginMax, config.drawHeightPosition));
+
+            config.drawHeightPosition += config.lineHeight + 2;
+
+            /* ---  バーコード生成  --- */
+
+            drawBarcode("ダミー", new StaffObject(9999, "").barcode, ref config);
+
+            config.graphics.DrawLine(new Pen(Brushes.Black),
+                new Point(config.marginMin, config.drawHeightPosition),
+                new Point(config.marginMax, config.drawHeightPosition));
+
+            e.HasMorePages = false;
+        }
+
         private void drawString(Graphics g, Font f, string s, int x, int y)
         {
             g.DrawString(s, f, Brushes.Black, new PointF(x, y));
@@ -241,22 +266,27 @@ namespace PosSystem.Util
         private void drawBarcode(
             string sysName, string sysCode, ref PrintConfigSystemBarcode c)
         {
-            drawString(c.graphics, c.font, sysName, c.marginMin, c.drawHeightPosition);
-            c.drawHeightPosition += c.lineHeight + c.marginBarcode / 12;
-            c.graphics.DrawImage(new BarcodeObject(sysCode).getBitmap(), new Point(c.marginMin, c.drawHeightPosition));
-            c.drawHeightPosition += c.lineHeight + 25;
-        }
-        private void drawBarcodeRow(
-            string LSysName, string LSysCode, 
-            string RSysName, string RSysCode, ref PrintConfigSystemBarcode c)
-        {
-            drawString(c.graphics, c.font, LSysName, c.marginMin, c.drawHeightPosition);
-            drawString(c.graphics, c.font, RSysName, c.marginMin + c.marginBarcode, c.drawHeightPosition);
-            c.drawHeightPosition += c.lineHeight + c.marginBarcode / 12;
+            drawString(c.graphics, c.font, sysName, c.alignCenter - 12, c.drawHeightPosition);
+            c.drawHeightPosition += c.lineHeight - 3;
 
-            c.graphics.DrawImage(new BarcodeObject(LSysCode).getBitmap(), new Point(c.marginMin, c.drawHeightPosition));
-            c.graphics.DrawImage(new BarcodeObject(RSysCode).getBitmap(), new Point(c.marginMin + c.marginBarcode, c.drawHeightPosition));
-            c.drawHeightPosition += c.lineHeight + 25;
+            Bitmap barcode = new BarcodeObject(sysCode).getBitmap();
+            c.graphics.DrawImage(barcode, c.alignCenter - 13, c.drawHeightPosition, barcode.Width * 0.34f, barcode.Height * 0.14f);
+            c.drawHeightPosition += c.lineHeight + 10;
+        }
+        public static bool pingToPrinter(string printerIP)
+        {
+            bool ret = false;
+            ManagementObject mo = new ManagementObject(string.Format("Win32_PingStatus.address='{0}'", printerIP));
+            if (((uint)mo.Properties["StatusCode"].Value) == 0)
+            {
+                ret = true;
+            }
+            else
+            {
+                ret = false;
+            }
+            mo.Dispose();
+            return ret;
         }
     }
 }

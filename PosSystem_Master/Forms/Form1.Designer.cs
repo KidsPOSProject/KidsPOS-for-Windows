@@ -33,13 +33,17 @@
             this.disp_now_time = new System.Windows.Forms.ToolStripStatusLabel();
             this.disp_store_name = new System.Windows.Forms.ToolStripStatusLabel();
             this.debug_Test = new System.Windows.Forms.ToolStripStatusLabel();
-            this.top_menu = new System.Windows.Forms.MenuStrip();
+            this.toolMenuServer = new System.Windows.Forms.MenuStrip();
             this.各種リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.商品リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.商品リストEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.売上リストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.サーバーを建てるToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.接続者確認ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.テストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.商品ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.スタッフToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.未登録スタッフToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.display_timer = new System.Windows.Forms.Timer(this.components);
             this.readItemList = new System.Windows.Forms.ListView();
             this.disp_scan_goods = new System.Windows.Forms.Panel();
@@ -51,12 +55,8 @@
             this.reg_clear = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.reg_user = new System.Windows.Forms.Label();
-            this.テストToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.商品ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.スタッフToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.未登録スタッフToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debug_display.SuspendLayout();
-            this.top_menu.SuspendLayout();
+            this.toolMenuServer.SuspendLayout();
             this.disp_scan_goods.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,18 +90,18 @@
             this.debug_Test.Size = new System.Drawing.Size(12, 18);
             this.debug_Test.Text = " ";
             // 
-            // top_menu
+            // toolMenuServer
             // 
-            this.top_menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolMenuServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.各種リストToolStripMenuItem,
             this.サーバーを建てるToolStripMenuItem,
             this.接続者確認ToolStripMenuItem,
             this.テストToolStripMenuItem});
-            this.top_menu.Location = new System.Drawing.Point(0, 0);
-            this.top_menu.Name = "top_menu";
-            this.top_menu.Size = new System.Drawing.Size(897, 26);
-            this.top_menu.TabIndex = 1;
-            this.top_menu.Text = "menuStrip1";
+            this.toolMenuServer.Location = new System.Drawing.Point(0, 0);
+            this.toolMenuServer.Name = "toolMenuServer";
+            this.toolMenuServer.Size = new System.Drawing.Size(897, 26);
+            this.toolMenuServer.TabIndex = 1;
+            this.toolMenuServer.Text = "menuStrip1";
             // 
             // 各種リストToolStripMenuItem
             // 
@@ -149,6 +149,37 @@
             this.接続者確認ToolStripMenuItem.Text = "接続者確認";
             this.接続者確認ToolStripMenuItem.Click += new System.EventHandler(this.接続者確認ToolStripMenuItem_Click);
             // 
+            // テストToolStripMenuItem
+            // 
+            this.テストToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.商品ToolStripMenuItem,
+            this.スタッフToolStripMenuItem,
+            this.未登録スタッフToolStripMenuItem});
+            this.テストToolStripMenuItem.Name = "テストToolStripMenuItem";
+            this.テストToolStripMenuItem.Size = new System.Drawing.Size(56, 22);
+            this.テストToolStripMenuItem.Text = "テスト";
+            // 
+            // 商品ToolStripMenuItem
+            // 
+            this.商品ToolStripMenuItem.Name = "商品ToolStripMenuItem";
+            this.商品ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.商品ToolStripMenuItem.Text = "商品";
+            this.商品ToolStripMenuItem.Click += new System.EventHandler(this.商品ToolStripMenuItem_Click);
+            // 
+            // スタッフToolStripMenuItem
+            // 
+            this.スタッフToolStripMenuItem.Name = "スタッフToolStripMenuItem";
+            this.スタッフToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.スタッフToolStripMenuItem.Text = "スタッフ";
+            this.スタッフToolStripMenuItem.Click += new System.EventHandler(this.スタッフToolStripMenuItem_Click);
+            // 
+            // 未登録スタッフToolStripMenuItem
+            // 
+            this.未登録スタッフToolStripMenuItem.Name = "未登録スタッフToolStripMenuItem";
+            this.未登録スタッフToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.未登録スタッフToolStripMenuItem.Text = "未登録スタッフ";
+            this.未登録スタッフToolStripMenuItem.Click += new System.EventHandler(this.未登録スタッフToolStripMenuItem_Click);
+            // 
             // display_timer
             // 
             this.display_timer.Enabled = true;
@@ -156,9 +187,9 @@
             // 
             // readItemList
             // 
-            this.readItemList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.readItemList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.readItemList.Font = new System.Drawing.Font("MS UI Gothic", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.readItemList.Location = new System.Drawing.Point(12, 29);
             this.readItemList.MultiSelect = false;
@@ -171,8 +202,8 @@
             // 
             // disp_scan_goods
             // 
-            this.disp_scan_goods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.disp_scan_goods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.disp_scan_goods.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
             this.disp_scan_goods.Controls.Add(this.lScanItemPrice);
             this.disp_scan_goods.Controls.Add(this.lScanItemName);
@@ -203,8 +234,8 @@
             // 
             // tSumItemPrice
             // 
-            this.tSumItemPrice.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tSumItemPrice.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tSumItemPrice.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.tSumItemPrice.Location = new System.Drawing.Point(280, 438);
             this.tSumItemPrice.Name = "tSumItemPrice";
@@ -216,8 +247,8 @@
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("MS UI Gothic", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label1.Location = new System.Drawing.Point(130, 441);
@@ -272,37 +303,6 @@
             this.reg_user.TabIndex = 9;
             this.reg_user.Text = " ";
             // 
-            // テストToolStripMenuItem
-            // 
-            this.テストToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.商品ToolStripMenuItem,
-            this.スタッフToolStripMenuItem,
-            this.未登録スタッフToolStripMenuItem});
-            this.テストToolStripMenuItem.Name = "テストToolStripMenuItem";
-            this.テストToolStripMenuItem.Size = new System.Drawing.Size(56, 22);
-            this.テストToolStripMenuItem.Text = "テスト";
-            // 
-            // 商品ToolStripMenuItem
-            // 
-            this.商品ToolStripMenuItem.Name = "商品ToolStripMenuItem";
-            this.商品ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.商品ToolStripMenuItem.Text = "商品";
-            this.商品ToolStripMenuItem.Click += new System.EventHandler(this.商品ToolStripMenuItem_Click);
-            // 
-            // スタッフToolStripMenuItem
-            // 
-            this.スタッフToolStripMenuItem.Name = "スタッフToolStripMenuItem";
-            this.スタッフToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.スタッフToolStripMenuItem.Text = "スタッフ";
-            this.スタッフToolStripMenuItem.Click += new System.EventHandler(this.スタッフToolStripMenuItem_Click);
-            // 
-            // 未登録スタッフToolStripMenuItem
-            // 
-            this.未登録スタッフToolStripMenuItem.Name = "未登録スタッフToolStripMenuItem";
-            this.未登録スタッフToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.未登録スタッフToolStripMenuItem.Text = "未登録スタッフ";
-            this.未登録スタッフToolStripMenuItem.Click += new System.EventHandler(this.未登録スタッフToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -317,8 +317,8 @@
             this.Controls.Add(this.disp_scan_goods);
             this.Controls.Add(this.tSumItemPrice);
             this.Controls.Add(this.readItemList);
-            this.Controls.Add(this.top_menu);
-            this.MainMenuStrip = this.top_menu;
+            this.Controls.Add(this.toolMenuServer);
+            this.MainMenuStrip = this.toolMenuServer;
             this.Name = "Form1";
             this.Text = "POS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -326,8 +326,8 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.debug_display.ResumeLayout(false);
             this.debug_display.PerformLayout();
-            this.top_menu.ResumeLayout(false);
-            this.top_menu.PerformLayout();
+            this.toolMenuServer.ResumeLayout(false);
+            this.toolMenuServer.PerformLayout();
             this.disp_scan_goods.ResumeLayout(false);
             this.disp_scan_goods.PerformLayout();
             this.ResumeLayout(false);
@@ -338,7 +338,7 @@
         #endregion
 
         private System.Windows.Forms.StatusStrip debug_display;
-        private System.Windows.Forms.MenuStrip top_menu;
+        private System.Windows.Forms.MenuStrip toolMenuServer;
         private System.Windows.Forms.ToolStripStatusLabel disp_now_time;
         private System.Windows.Forms.ToolStripStatusLabel disp_store_name;
         private System.Windows.Forms.Timer display_timer;

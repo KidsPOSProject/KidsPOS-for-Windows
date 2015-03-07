@@ -9,7 +9,6 @@ namespace PosSystem.Object
 {
     public class BarcodeObject
     {
-        BarcodeFormat format = BarcodeFormat.CODABAR;
         string store;
         string itemNum;
         public string barcode { get; private set; }
@@ -51,7 +50,7 @@ namespace PosSystem.Object
         public Bitmap getBitmap()
         {
             BarcodeWriter writer = new BarcodeWriter();
-            writer.Format = this.format;
+            writer.Format = BarcodeConfig.format;
             return writer.Write("A" + this.barcode + "A");
         }
     }

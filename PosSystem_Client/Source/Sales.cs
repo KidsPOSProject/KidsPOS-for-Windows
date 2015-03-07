@@ -29,7 +29,7 @@ namespace PosSystem_Client
         private void Sales_Load(object sender, EventArgs e)
         {
             buy_time.Text = sale.createdAt;
-            scan_goods(sale.items.Split(','));
+            scan_goods(sale.items.Split(new string[]{","}, StringSplitOptions.RemoveEmptyEntries));
             StaffObject staff = new Database().selectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", sale.staffID));
             if(staff != null) sale_staff_name.Text = staff.name;
         }
@@ -73,27 +73,20 @@ namespace PosSystem_Client
 
         public void scan_goods(string[] item_num)
         {
-            int bad_item = 0;
             Database db = new Database();
             for (int i = 0; i < item_num.Length; i++)
             {
-
                 ItemObject item = db.selectSingle<ItemObject>(string.Format("where id = '{0}'", item_num[i]));
                 if (item != null)
                 {
                     sales_list.Items.Add(new ListViewItem(new string[] {item.id.ToString(), item.name, "1", item.price.ToString(), "×"}));
                 }
                 else
-                {
-                    bad_item++;
+                { 
+                     MessageBox.Show("現在は登録されていない商品がありました\n [" + item_num[i] + "]", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            if (bad_item > 0) MessageBox.Show("現在は登録されていない商品がありました", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        private void Sales_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter) this.Close();
+            
         }
     }
 }

@@ -21,7 +21,7 @@ namespace PosSystem.Util
 
         TcpListener tcpClient = null;
         List<ClientHandler> hClient = new List<ClientHandler>();
-        public SocketServer() { }
+        SocketServer() { }
 
         public bool ServerStart()
         {

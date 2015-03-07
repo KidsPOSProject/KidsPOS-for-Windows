@@ -84,9 +84,8 @@
             this.label4.Font = new System.Drawing.Font("MS UI Gothic", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label4.Location = new System.Drawing.Point(376, 9);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(404, 35);
+            this.label4.Size = new System.Drawing.Size(0, 35);
             this.label4.TabIndex = 20;
-            this.label4.Text = "エンターキーを押すと戻ります";
             // 
             // mGridView
             // 
@@ -126,7 +125,6 @@
             this.Name = "Sales_List";
             this.Text = "Sales_List";
             this.Load += new System.EventHandler(this.Sales_List_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Sales_List_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.mGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

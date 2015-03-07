@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using System.Threading;
-using PosSystem.Setting;
 using PosSystem.Object.Database;
 using PosSystem.Object;
 
@@ -21,6 +18,7 @@ namespace PosSystem.Util
 
         TcpClient client = null;
         SocketClient() { }
+
         string ip;
         public bool ClientStart(string targetIP)
         {
@@ -86,11 +84,13 @@ namespace PosSystem.Util
             }
             catch { }
             if (client != null && client.Connected)
+            {
                 client.Close();
+                listener.onClose(type);
+            }
 
             if (thread != null)
                 thread.Abort();
-            listener.onClose(type);
         }
         public void sendData(string dataText)
         {
