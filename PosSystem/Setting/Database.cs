@@ -1,5 +1,4 @@
 ﻿using KidsPos.Object.Database;
-using PosSystem.Object.Database;
 
 namespace KidsPos.Setting
 {

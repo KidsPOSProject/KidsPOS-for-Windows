@@ -1,11 +1,14 @@
-﻿namespace PosSystem_Client
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace PosSystem.Source
 {
     partial class Account
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -133,11 +136,11 @@
 
         #endregion
 
-        public System.Windows.Forms.ListView reg_goods_list;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox reg_goods_sum;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox received_money;
-        private System.Windows.Forms.Button button1;
+        public ListView reg_goods_list;
+        private Label label1;
+        private TextBox reg_goods_sum;
+        private Label label2;
+        private TextBox received_money;
+        private Button button1;
     }
 }

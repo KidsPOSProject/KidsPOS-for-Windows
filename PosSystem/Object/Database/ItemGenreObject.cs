@@ -1,6 +1,5 @@
 ﻿using System.Data.SQLite;
 using KidsPos.Setting;
-using PosSystem.Object.Database;
 
 namespace KidsPos.Object.Database
 {
@@ -12,23 +11,23 @@ namespace KidsPos.Object.Database
         public ItemGenreObject(string name, int storeNum)
             : base(DbPath.ItemGenre)
         {
-            this.Name = name;
-            this.StoreNum = storeNum;
+            Name = name;
+            StoreNum = storeNum;
             GenerateInsertQuery();
         }
 
-        public ItemGenreObject(SQLiteDataReader reader) : base(DbPath.ItemGenre, reader) { setData(); }
-        public sealed override void setData()
+        public ItemGenreObject(SQLiteDataReader reader) : base(DbPath.ItemGenre, reader) { SetData(); }
+        public sealed override void SetData()
         {
-            id = record.getInt("id");
-            this.Name = record.getString("name");
-            this.StoreNum = record.getInt("store");
+            Id = Record.GetInt("id");
+            Name = Record.GetString("name");
+            StoreNum = Record.GetInt("store");
             GenerateInsertQuery();
         }
         public sealed override void GenerateInsertQuery()
         {
-            setQueryInsert(
-                "INSERT INTO " + TableList.ItemGenre + $" (name,store) values('{this.Name}','{this.StoreNum}')"
+            SetQueryInsert(
+                "INSERT INTO " + TableList.ItemGenre + $" (name,store) values('{Name}','{StoreNum}')"
             );
         }
     }

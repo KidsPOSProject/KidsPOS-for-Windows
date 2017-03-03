@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Data;
 using System.Windows.Forms;
-using PosSystem.Util;
-using PosSystem.Object.Database;
+using KidsPos.Object.Database;
+using KidsPos.Util;
 
 namespace DBRegister
 {
     public partial class RegistedUser : Form
     {
-        private DataTable table = new DataTable();
+        private readonly DataTable _table = new DataTable();
         public RegistedUser()
         {
             InitializeComponent();
             mGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            this.MinimizeBox = false;
-            this.MaximizeBox = false;
+            MinimizeBox = false;
+            MaximizeBox = false;
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            mGridView.DataSource = table;
+            mGridView.DataSource = _table;
             base.OnLoad(e);
         }
         private void RegistedUser_Load(object sender, EventArgs e)
         {
-            new Database().insertView<StaffObject>(table);
+            new Database().InsertView<StaffObject>(_table);
         }
     }
 }

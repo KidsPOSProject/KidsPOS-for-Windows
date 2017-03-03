@@ -1,61 +1,58 @@
 ﻿using System.Data.SQLite;
 using KidsPos.Setting;
-using PosSystem.Object.Database;
-using PosSystem.Setting;
-using PosSystem.Util;
+using KidsPos.Util;
 
 namespace KidsPos.Object.Database
 {
     public class SaleObject : RecordObject
     {
-        public string barcode { get; private set; }
-        public string createdAt { get; private set; }
-        public int points { get; private set; }
-        public int price { get; private set; }
+        public string Barcode { get; private set; }
+        public string CreatedAt { get; private set; }
+        public int Points { get; private set; }
+        public int Price { get; private set; }
 
         // カンマ区切りのアイテムID  1, 42, 124, とか
-        public string items { get; private set; }
-        public int storeID {get; private set;}
-        public string staffID {get; private set;}
-        public SaleObject(int points, int price, string items, int storeID, string staffID)
-            : base(DbPath.Sale)
+        public string Items { get; private set; }
+        public int StoreId {get; private set;}
+        public string StaffId {get; private set;}
+        public SaleObject(int points, int price, string items, int storeId, string staffId) : base(DbPath.Sale)
         {
-            createdAt = new Time().getTime();
-            this.points = points;
-            this.price = price;
-            this.items = items;
-            this.storeID = storeID;
-            barcode = genBarcode();
-            this.staffID = staffID;
+            CreatedAt = new Time().GetTime();
+            Points = points;
+            Price = price;
+            Items = items;
+            StoreId = storeId;
+            Barcode = GenBarcode();
+            StaffId = staffId;
             GenerateInsertQuery();
         }
-        public SaleObject(SQLiteDataReader reader) : base(DbPath.Sale, reader) { setData(); }
-        public override void setData()
+        public SaleObject(SQLiteDataReader reader) : base(DbPath.Sale, reader) { SetData(); }
+        public sealed override void SetData()
         {
-            id = record.getInt("id");
-            barcode = record.getString("barcode");
-            createdAt = record.getString("created_at");
-            points = record.getInt("points");
-            price = record.getInt("price");
-            items = record.getString("items");
-            storeID = record.getInt("store");
-            staffID = record.getString("staff");
+            Id = Record.GetInt("id");
+            Barcode = Record.GetString("barcode");
+            CreatedAt = Record.GetString("created_at");
+            Points = Record.GetInt("points");
+            Price = Record.GetInt("price");
+            Items = Record.GetString("items");
+            StoreId = Record.GetInt("store");
+            StaffId = Record.GetString("staff");
             GenerateInsertQuery();
         }
-        private string genBarcode()
+        private string GenBarcode()
         {
             return 
-                BarcodeConfig.PREFIX + 
-                BarcodeConfig.SALE + 
-                storeID.ToString("D" + BarcodeConfig.DATA_MID_LENGTH) +
-                new PosSystem.Util.Database().count<SaleObject>(
-                    $"where store = '{storeID}'").ToString("D" + BarcodeConfig.DATA_LENGTH);
+                BarcodeConfig.Prefix + 
+                BarcodeConfig.Sale + 
+                StoreId.ToString("D" + BarcodeConfig.DataMidLength) +
+                new Util.Database().Count<SaleObject>(
+                    $"where store = '{StoreId}'").ToString("D" + BarcodeConfig.DataLength);
         }
         public sealed override void GenerateInsertQuery()
         {
-            setQueryInsert(
+            SetQueryInsert(
                 "INSERT INTO " + TableList.Sale +
-                $" (barcode,created_at,points,price,items,store,staff) VALUES('{barcode}','{createdAt}','{points}','{price}','{items}','{storeID}','{staffID}')"
+                $" (barcode,created_at,points,price,items,store,staff) VALUES('{Barcode}','{CreatedAt}','{Points}','{Price}','{Items}','{StoreId}','{StaffId}')"
             );
         }
     }

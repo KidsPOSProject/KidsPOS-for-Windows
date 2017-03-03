@@ -1,30 +1,32 @@
 ﻿using System.Data.SQLite;
-using PosSystem.Util;
+using KidsPos.Util;
 
-namespace PosSystem.Object.Database
+namespace KidsPos.Object.Database
 {
-    abstract public class RecordObject
+    public abstract class RecordObject
     {
-        public string db { get; private set; }
-        public string queryInsert { get; private set; }
-        public SQLiteItem record { get; private set; }
-        public int id { get; set; }
-        public RecordObject(string path)
-        {
-            this.db = path;
-        }
-        public RecordObject(string path, SQLiteDataReader reader)
-        {
-            this.db = path;
-            this.record = new SQLiteItem(reader);
-        }
-        abstract public void GenerateInsertQuery();
+        public string Db { get; private set; }
+        public string QueryInsert { get; private set; }
+        public SqLiteItem Record { get; private set; }
+        public int Id { get; set; }
 
-        public void setQueryInsert(string query)
+        protected RecordObject(string path)
         {
-            this.queryInsert = query;
+            Db = path;
         }
 
-        abstract public void setData();
+        protected RecordObject(string path, SQLiteDataReader reader)
+        {
+            Db = path;
+            Record = new SqLiteItem(reader);
+        }
+        public abstract void GenerateInsertQuery();
+
+        public void SetQueryInsert(string query)
+        {
+            QueryInsert = query;
+        }
+
+        public abstract void SetData();
     }
 }

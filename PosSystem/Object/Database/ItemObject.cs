@@ -1,49 +1,46 @@
 ﻿using System.Data.SQLite;
 using KidsPos.Setting;
-using PosSystem.Object.Database;
 
 namespace KidsPos.Object.Database
 {
     public class ItemObject : RecordObject
     {
-        public string barcode { get; private set; }
-        public string name { get; private set; }
-        public int price { get; private set; }
-        public int storeNum { get; private set; }
-        public int genreNum { get; private set; }
-        public string queryUpdate { get; private set; }
+        public string Barcode { get; private set; }
+        public string Name { get; private set; }
+        public int Price { get; private set; }
+        public int StoreNum { get; private set; }
+        public int GenreNum { get; private set; }
+        public string QueryUpdate { get; private set; }
 
-        public ItemObject(string barcode, string name, int price, int storeNum, int genreNum)
-            : base(DbPath.Item)
+        public ItemObject(string barcode, string name, int price, int storeNum, int genreNum) : base(DbPath.Item)
         {
-            this.barcode = barcode;
-            this.name = name;
-            this.price = price;
-            this.storeNum = storeNum;
-            this.genreNum = genreNum;
+            Barcode = barcode;
+            Name = name;
+            Price = price;
+            StoreNum = storeNum;
+            GenreNum = genreNum;
             GenerateInsertQuery();
         }
-        public ItemObject(SQLiteDataReader reader) : base(DbPath.Item, reader) { setData(); }
-        public override void setData()
+        public ItemObject(SQLiteDataReader reader) : base(DbPath.Item, reader) { SetData(); }
+        public sealed override void SetData()
         {
-            id = record.getInt("id");
-            this.barcode = record.getString("barcode");
-            this.name = record.getString("name");
-            this.price = record.getInt("price");
-            this.storeNum = record.getInt("shop");
-            this.genreNum = record.getInt("genre");
+            Id = Record.GetInt("id");
+            Barcode = Record.GetString("barcode");
+            Name = Record.GetString("name");
+            Price = Record.GetInt("price");
+            StoreNum = Record.GetInt("shop");
+            GenreNum = Record.GetInt("genre");
             GenerateInsertQuery();
         }
 
-        public override void GenerateInsertQuery()
+        public sealed override void GenerateInsertQuery()
         {
-            setQueryInsert(
-                string.Format("INSERT INTO " + TableList.Item + " (barcode,name,price,shop,genre) VALUES ('{0}','{1}','{2}','{3}','{4}')",
-                    this.barcode, this.name, this.price, this.storeNum, this.genreNum)
+            SetQueryInsert(
+                "INSERT INTO " + TableList.Item +
+                $" (barcode,name,price,shop,genre) VALUES ('{Barcode}','{Name}','{Price}','{StoreNum}','{GenreNum}')"
             );
-            queryUpdate =
-                string.Format("UPDATE item_list SET name = '{0}', price = '{1}' WHERE id = '{2}'",
-                    this.name, this.price, this.id);
+            QueryUpdate =
+                $"UPDATE item_list SET name = '{Name}', price = '{Price}' WHERE id = '{Id}'";
         }
     }
 }

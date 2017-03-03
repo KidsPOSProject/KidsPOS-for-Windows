@@ -1,11 +1,15 @@
-﻿namespace PosSystem_Client
+﻿using System.ComponentModel;
+using System.Drawing.Printing;
+using System.Windows.Forms;
+
+namespace PosSystem.Source
 {
-    partial class Account_change
+    partial class AccountChange
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -28,7 +32,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Account_change));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(AccountChange));
             this.label2 = new System.Windows.Forms.Label();
             this.received_money = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -165,7 +169,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.reg_goods_sum);
             this.KeyPreview = true;
-            this.Name = "Account_change";
+            this.Name = "AccountChange";
             this.Text = "Account_change";
             this.Load += new System.EventHandler(this.Account_change_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Account_change_KeyDown);
@@ -176,15 +180,15 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox received_money;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox reg_goods_sum;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox change;
-        private System.Windows.Forms.Label practice_status;
-        private System.Windows.Forms.PrintPreviewDialog printPreviewDialog1;
-        private System.Drawing.Printing.PrintDocument printDocument1;
-        private System.Windows.Forms.Label label4;
+        private Label label2;
+        private TextBox received_money;
+        private Label label1;
+        private TextBox reg_goods_sum;
+        private Label label3;
+        private TextBox change;
+        private Label practice_status;
+        private PrintPreviewDialog printPreviewDialog1;
+        private PrintDocument printDocument1;
+        private Label label4;
     }
 }

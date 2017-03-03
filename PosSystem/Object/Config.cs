@@ -1,43 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections;
-using PosSystem.Object.Database;
+﻿using System.Collections;
+using KidsPos.Object.Database;
 
-namespace PosSystem.Object
+namespace KidsPos.Object
 {
     public class Config
     {
-        public static bool isPrintEnable = false;
-        public static bool isClient = true;
-        static Config instance = new Config();
+        public static bool IsPrintEnable = false;
+        public static bool IsClient = true;
+        private static readonly Config Instance = new Config();
         private Config()
         {
 
         }
 
-        public static Config getInstance()
+        public static Config GetInstance()
         {
-            return instance;
+            return Instance;
         }
-        public int storeNumber { get; set; }
-        public Hashtable targetIP = new Hashtable();
-        public int targetPort { get; set; }
-        public StoreObject store { get; set; }
-        public void init(int storeNumber, int targetPort, Hashtable hostList)
+        public int StoreNumber { get; set; }
+        public Hashtable TargetIp = new Hashtable();
+        public int TargetPort { get; set; }
+        public StoreObject Store { get; set; }
+        public void Init(int storeNumber, int targetPort, Hashtable hostList)
         {
-            this.targetPort = targetPort;
-            this.storeNumber = storeNumber;
-            this.targetIP = hostList;
-            if (isClient)
+            TargetPort = targetPort;
+            StoreNumber = storeNumber;
+            TargetIp = hostList;
+            if (IsClient)
             {
-                this.store = new StoreObject("練習用クライアント");
-                this.storeNumber = 0;
+                Store = new StoreObject("練習用クライアント");
+                StoreNumber = 0;
             }
             else
             {
-                this.store = new PosSystem.Util.Database().selectSingle<StoreObject>(string.Format("WHERE id = '{0}'", storeNumber));
+                Store = new Util.Database().SelectSingle<StoreObject>($"WHERE id = '{storeNumber}'");
             }
         }
     }

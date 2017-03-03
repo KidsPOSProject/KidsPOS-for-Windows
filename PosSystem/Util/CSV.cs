@@ -1,104 +1,96 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PosSystem.Object.Database;
-using Microsoft.VisualBasic.FileIO;
-using System.IO;
-using System.Windows.Forms;
 using System.Collections;
-using PosSystem.Object;
-using PosSystem.Setting;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using KidsPos.Object;
 
-namespace PosSystem.Util
+namespace KidsPos.Util
 {
-    public class CSV
+    public class Csv
     {
-        public const string CONFIG_PATH = "config.csv";
+        public const string ConfigPath = "config.csv";
         public static class ConfigHead
         {
-            public const string STORE_NUM = "#StoreNum";
-            public const string TARGET_IP = "#TargetIP";
-            public const string TARGET_PORT = "#TargetPort";
-            public const string MODE = "#Mode";
-            public const string PRINT_ENABLE = "#PrintReceipt";
+            public const string StoreNum = "#StoreNum";
+            public const string TargetIp = "#TargetIP";
+            public const string TargetPort = "#TargetPort";
+            public const string Mode = "#Mode";
+            public const string PrintEnable = "#PrintReceipt";
         }
 
-        public void loadConfig()
+        public void LoadConfig()
         {
-            List<String> list = loadCSV(CONFIG_PATH);
+            var list = LoadCsv(ConfigPath);
             if (list == null || list.Count == 0)
             {
-                using (StreamWriter sw = new StreamWriter(CONFIG_PATH, false, Encoding.GetEncoding("Shift_JIS")))
+                using (var sw = new StreamWriter(ConfigPath, false, Encoding.GetEncoding("Shift_JIS")))
                 {
                     sw.WriteLine("-- お店番号 DBRegister.exe のお店リスト参照");
-                    sw.WriteLine(ConfigHead.STORE_NUM + ", 0");
+                    sw.WriteLine(ConfigHead.StoreNum + ", 0");
                     sw.WriteLine("");
                     sw.WriteLine("-- サーバかクライアントか\n-- 0 = Client,  1 = Server");
-                    sw.WriteLine(ConfigHead.MODE + ", 0");
+                    sw.WriteLine(ConfigHead.Mode + ", 0");
                     sw.WriteLine("");
                     sw.WriteLine("-- レシートをプリントするか\n-- クライアントはプリント出来ない\n-- 0 = しない, 1 = する");
-                    sw.WriteLine(ConfigHead.PRINT_ENABLE + ",0");
+                    sw.WriteLine(ConfigHead.PrintEnable + ",0");
                     sw.WriteLine("");
                     sw.WriteLine("-- クライアントの接続先");
-                    sw.WriteLine(ConfigHead.TARGET_IP + ", デフォルト1, 127.0.0.1");
-                    sw.WriteLine(ConfigHead.TARGET_IP + ", デフォルト2, 127.0.0.1");
+                    sw.WriteLine(ConfigHead.TargetIp + ", デフォルト1, 127.0.0.1");
+                    sw.WriteLine(ConfigHead.TargetIp + ", デフォルト2, 127.0.0.1");
                     sw.WriteLine("");
                     sw.WriteLine("-- 接続先ポート (基本的に変えない)");
-                    sw.WriteLine(ConfigHead.TARGET_PORT + ", 10800");
+                    sw.WriteLine(ConfigHead.TargetPort + ", 10800");
                 }
                 MessageBox.Show("設定ファイルが見つかりませんでした。" + Environment.NewLine + "新しくファイルを作成しました。");
-                Config.getInstance().init(0, 10800, new Hashtable());
+                Config.GetInstance().Init(0, 10800, new Hashtable());
             }
 
-            int storeNum = 0;
-            Hashtable table = new Hashtable();
-            int targetHost = 10800;
-            foreach (string item in list)
+            var storeNum = 0;
+            var table = new Hashtable();
+            var targetHost = 10800;
+            foreach (var item in list)
             {
-                string[] str = item.Split(',');
+                var str = item.Split(',');
                 switch (str[0])
                 {
-                    case ConfigHead.STORE_NUM:
+                    case ConfigHead.StoreNum:
                         storeNum = Convert.ToInt32(str[1]);
                         break;
-                    case ConfigHead.TARGET_IP:
+                    case ConfigHead.TargetIp:
                         table.Add(str[1], str[2]);
                         break;
-                    case ConfigHead.TARGET_PORT:
+                    case ConfigHead.TargetPort:
                         targetHost = Convert.ToInt32(str[1]);
                         break;
-                    case ConfigHead.MODE:
-                        Config.isClient = Convert.ToInt32(str[1]) == 0;
+                    case ConfigHead.Mode:
+                        Config.IsClient = Convert.ToInt32(str[1]) == 0;
                         break;
-                    case ConfigHead.PRINT_ENABLE:
-                        Config.isPrintEnable = Convert.ToInt32(str[1]) == 1;
-                        break;
-                    default:
+                    case ConfigHead.PrintEnable:
+                        Config.IsPrintEnable = Convert.ToInt32(str[1]) == 1;
                         break;
                 }
             }
-            Config.getInstance().init(storeNum, targetHost, table);
+            Config.GetInstance().Init(storeNum, targetHost, table);
         }
-        private List<String> loadCSV(string path)
+        private static List<string> LoadCsv(string path)
         {
-            List<String> ret = new List<string>();
-            if (File.Exists(path))
+            var ret = new List<string>();
+            if (!File.Exists(path)) return ret;
+            using (var sr = new StreamReader(path, Encoding.GetEncoding("Shift_JIS")))
             {
-                using (StreamReader sr = new StreamReader(path, Encoding.GetEncoding("Shift_JIS")))
+                while (!sr.EndOfStream)
                 {
-                    while (!sr.EndOfStream)
-                    {
-                        ret.Add(sr.ReadLine().Replace(" ","").Replace("\t",""));
-                    }
+                    ret.Add(sr.ReadLine()?.Replace(" ","").Replace("\t",""));
                 }
             }
             return ret;
         }
-        public static void runNotePad()
+        public static void RunNotePad()
         {
-            Process.Start("Notepad", Environment.CurrentDirectory + "\\" +CONFIG_PATH);
+            Process.Start("Notepad", Environment.CurrentDirectory + "\\" +ConfigPath);
         }
     }
 }

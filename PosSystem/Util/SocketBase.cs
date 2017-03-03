@@ -1,58 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace PosSystem.Util
+namespace KidsPos.Util
 {
     public class SocketBase
     {
-        public Encoding ecUni = Encoding.GetEncoding("utf-16");
-        public Encoding ecSjis = Encoding.GetEncoding("shift-jis");
-        public Thread thread = null;
+        public Encoding EcUni = Encoding.GetEncoding("utf-16");
+        public Encoding EcSjis = Encoding.GetEncoding("shift-jis");
+        public Thread Thread = null;
 
-        public SocketListener listener = null;
-        public SocketBase()
+        public SocketListener Listener;
+
+        public void Init(SocketListener listener)
         {
-        }
-        public void init(SocketListener listener)
-        {
-            this.listener = listener;
+            Listener = listener;
         }
     }
     public enum SocketCloseType
     {
-        ERROR,
-        CORRECT
+        Error,
+        Correct
     }
-    abstract public class SocketListener
+    public abstract class SocketListener
     {
-        Form context;
-        delegate void receiveDelegate(string json);
-        delegate void closeDelegate(SocketCloseType closeType);
-        public SocketListener(Form context)
+        private readonly Form _context;
+
+        private delegate void ReceiveDelegate(string json);
+
+        private delegate void CloseDelegate(SocketCloseType closeType);
+
+        protected SocketListener(Form context)
         {
-            this.context = context;
+            _context = context;
         }
-        public void receive(string text)
+        public void Receive(string text)
         {
-            context.BeginInvoke(new receiveDelegate(this.onReceive),text);
+            _context.BeginInvoke(new ReceiveDelegate(OnReceive),text);
         }
-        public void close(SocketCloseType closeType)
+        public void Close(SocketCloseType closeType)
         {
-            context.BeginInvoke(new closeDelegate(this.onClose), closeType);
+            _context.BeginInvoke(new CloseDelegate(OnClose), closeType);
         }
-        public Form getContext()
+        public Form GetContext()
         {
-            return this.context;
+            return _context;
         }
         /// <summary>
         /// データを受信したときの処理 受信例: reveice,barcode,1000150001,山田
         /// </summary>
         /// <param name="text"></param>
-        abstract public void onReceive(string text);
-        abstract public void onClose(SocketCloseType closeType);
+        public abstract void OnReceive(string text);
+        public abstract void OnClose(SocketCloseType closeType);
     }
 }

@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data.SQLite;
-using PosSystem.Setting;
-
-namespace PosSystem.Object
+﻿namespace KidsPos.Object
 {
     public class PrintItemObject
     {
-        public BarcodeObject barcode { get; private set; }
-        public string itemName { get; private set; }
-        public string storeName { get; private set; }
+        public BarcodeObject Barcode { get; private set; }
+        public string ItemName { get; private set; }
+        public string StoreName { get; private set; }
         public PrintItemObject(string barcode, string itemName, string storeName)
         {
-            this.barcode = new BarcodeObject(barcode);
-            this.itemName = itemName;
-            this.storeName = storeName;
+            Barcode = new BarcodeObject(barcode);
+            ItemName = itemName;
+            StoreName = storeName;
         }
     }
 }

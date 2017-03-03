@@ -1,91 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
 using System.Drawing.Printing;
-
-using PosSystem.Util;
-using PosSystem.Setting;
-using PosSystem.Object.Database;
-using PosSystem.Object;
+using System.Windows.Forms;
+using KidsPos.Object;
+using KidsPos.Object.Database;
+using KidsPos.Setting;
+using KidsPos.Util;
 
 namespace DBRegister
 {
-    public partial class Registed_List : Form
+    public partial class RegistedList : Form
     {
-        List<PrintItemObject> selectedItem = new List<PrintItemObject>();
+        private readonly List<PrintItemObject> _selectedItem = new List<PrintItemObject>();
 
-        public Registed_List()
+        public RegistedList()
         {
             InitializeComponent();
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MinimizeBox = false;
-            this.MaximizeBox = false;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MinimizeBox = false;
+            MaximizeBox = false;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
-        private DataTable dataTable = new DataTable();
-        private DataTable dataTable2 = new DataTable();
-        private DataTable dataTable3 = new DataTable();
-        private DataTable dataTable4 = new DataTable();
+        private readonly DataTable _dataTable = new DataTable();
+        private readonly DataTable _dataTable2 = new DataTable();
+        private readonly DataTable _dataTable3 = new DataTable();
+        private readonly DataTable _dataTable4 = new DataTable();
         protected override void OnLoad(EventArgs e)
         {
-            dataGridView1.DataSource = dataTable;
-            dataGridView2.DataSource = dataTable2;
-            dataGridView3.DataSource = dataTable3;
-            dataGridView4.DataSource = dataTable4;
+            dataGridView1.DataSource = _dataTable;
+            dataGridView2.DataSource = _dataTable2;
+            dataGridView3.DataSource = _dataTable3;
+            dataGridView4.DataSource = _dataTable4;
             base.OnLoad(e);
         }
         private void Registed_List_Load(object sender, EventArgs e)
         {
-            Database db = new Database();
-            db.insertView<ItemObject>(dataTable,
-                "SELECT il.id,il.barcode AS バーコード,sk.name AS お店, il.name AS 商品名,ig.name AS ジャンル,il.price AS 値段 FROM " 
-                + TableList.ITEM + " AS il," 
-                + TableList.ITEM_GENRE + " AS ig," + TableList.STORE +" AS sk WHERE il.genre = ig.id AND il.shop = sk.id;");
-            db.insertView<ItemObject>(dataTable2);
-            db.insertView<ItemGenreObject>(dataTable3);
-            db.insertView<StoreObject>(dataTable4);
+            var db = new Database();
+            db.InsertView<ItemObject>(_dataTable,
+                "SELECT il.id,il.barcode AS バーコード,sk.Name AS お店, il.Name AS 商品名,ig.Name AS ジャンル,il.price AS 値段 FROM " 
+                + TableList.Item + " AS il," 
+                + TableList.ItemGenre + " AS ig," + TableList.Store +" AS sk WHERE il.genre = ig.id AND il.shop = sk.id;");
+            db.InsertView<ItemObject>(_dataTable2);
+            db.InsertView<ItemGenreObject>(_dataTable3);
+            db.InsertView<StoreObject>(_dataTable4);
         }
 
-        int count = 0;
+        private int _count;
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
         {
-            Print.getInstance().printItemBarcode(selectedItem[count], print_grid.Checked, e);
-            bool b = count != selectedItem.Count - 1;
+            Print.GetInstance().PrintItemBarcode(_selectedItem[_count], print_grid.Checked, e);
+            var b = _count != _selectedItem.Count - 1;
             e.HasMorePages = b;
-            count++;
-            if (!b) count = 0;
+            _count++;
+            if (!b) _count = 0;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            selectedItem.Clear();
-            List<int> li = new List<int>();
-            Database db = new Database();
+            _selectedItem.Clear();
+            var li = new List<int>();
+            var db = new Database();
             foreach (DataGridViewCell r in dataGridView2.SelectedCells)
             {
                 if(0 > li.BinarySearch(r.RowIndex)){
-                    int index = r.RowIndex;
+                    var index = r.RowIndex;
                     li.Add(r.RowIndex);
                     li.Sort();
 
-                    StoreObject store = db.find_store(int.Parse(dataGridView2.Rows[index].Cells[4].Value.ToString()));
+                    var store = db.find_store(int.Parse(dataGridView2.Rows[index].Cells[4].Value.ToString()));
 
-                    selectedItem.Add(
+                    _selectedItem.Add(
                         new PrintItemObject(
                             dataGridView2.Rows[index].Cells[1].Value.ToString(),
                             dataGridView2.Rows[index].Cells[2].Value.ToString(),
-                            store.name));
+                            store.Name));
                 }
             }
-            if (selectedItem.Count > 0)
+            if (_selectedItem.Count > 0)
             {
-                PrintDocument pd = new PrintDocument();
-                pd.PrintPage += new PrintPageEventHandler(printDocument1_PrintPage);
-                PrintDialog pdlg = new PrintDialog();
+                var pd = new PrintDocument();
+                pd.PrintPage += printDocument1_PrintPage;
+                var pdlg = new PrintDialog();
                 pdlg.Document = pd;
                 if (pdlg.ShowDialog() == DialogResult.OK) pd.Print();
             }
@@ -93,24 +92,24 @@ namespace DBRegister
 
         private void button1_Click(object sender, EventArgs e)
         {
-            selectedItem.Clear();
-            Database db = new Database();
+            _selectedItem.Clear();
+            var db = new Database();
             foreach (DataGridViewRow r in dataGridView2.Rows)
             {
                 if (r.Cells[1].Value == null) break;
-                StoreObject store = db.find_store(int.Parse(r.Cells[4].Value.ToString()));
-                selectedItem.Add(
+                var store = db.find_store(int.Parse(r.Cells[4].Value.ToString()));
+                _selectedItem.Add(
                     new PrintItemObject(
                         r.Cells[1].Value.ToString(),
                         r.Cells[2].Value.ToString(),
-                        store.name));
+                        store.Name));
             }
-            if (selectedItem.Count > 0)
+            if (_selectedItem.Count > 0)
             {
-                PrintDocument pd = new PrintDocument();
-                pd.PrintPage += new PrintPageEventHandler(printDocument1_PrintPage);
+                var pd = new PrintDocument();
+                pd.PrintPage += printDocument1_PrintPage;
 
-                PrintDialog pdlg = new PrintDialog();
+                var pdlg = new PrintDialog();
                 pdlg.Document = pd;
                 if (pdlg.ShowDialog() == DialogResult.OK) pd.Print();
             }

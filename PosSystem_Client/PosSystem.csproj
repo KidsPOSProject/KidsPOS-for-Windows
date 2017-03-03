@@ -152,7 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PosSystem\KidsPosDLL.csproj">
-      <Project>{DD100C66-DDB6-4A3F-A421-8A02A9E92484}</Project>
+      <Project>{dd100c66-ddb6-4a3f-a421-8a02a9e92484}</Project>
       <Name>KidsPosDLL</Name>
     </ProjectReference>
   </ItemGroup>

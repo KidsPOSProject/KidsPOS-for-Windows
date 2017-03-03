@@ -1,66 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Data.SQLite;
 using System.Drawing.Printing;
-using PosSystem.Object;
-using PosSystem.Setting;
-using PosSystem.Object.Database;
-using PosSystem.Util;
+using System.Windows.Forms;
+using KidsPos.Object;
+using KidsPos.Object.Database;
+using KidsPos.Setting;
+using KidsPos.Util;
 
-namespace PosSystem_Client
+namespace PosSystem.Source
 {
-    public partial class Account_change : Form
+    public partial class AccountChange : Form
     {
-        ListView item_list = null;
-        SaleObject sale;
-        public Account_change(string _rec_money, ListView _rec_points, string _rec_items)
+        private readonly ListView _itemList;
+        private readonly SaleObject _sale;
+        public AccountChange(string recMoney, ListView recPoints, string recItems)
         {
             InitializeComponent();
 
-            this.MaximizeBox = !this.MaximizeBox;
-            this.MinimizeBox = !this.MinimizeBox;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = !MaximizeBox;
+            MinimizeBox = !MinimizeBox;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
 
-            reg_goods_sum.Text = Form1.reg_item_price_sum.ToString();
-            received_money.Text = _rec_money;
+            reg_goods_sum.Text = Form1.RegItemPriceSum.ToString();
+            received_money.Text = recMoney;
             change.Text =   (int.Parse(received_money.Text) - int.Parse(reg_goods_sum.Text)).ToString();
 
-            item_list = _rec_points;
+            _itemList = recPoints;
 
-            sale = new SaleObject(
-                _rec_points.Items.Count,
-                Form1.reg_item_price_sum,
-                _rec_items,
-                Config.getInstance().store.id,
-                PosInformation.getInstance().getStaffBarcode());
-            new Database().insert<SaleObject>(sale);
+            _sale = new SaleObject(
+                recPoints.Items.Count,
+                Form1.RegItemPriceSum,
+                recItems,
+                Config.GetInstance().Store.Id,
+                PosInformation.GetInstance().GetStaffBarcode());
+            new Database().Insert(_sale);
         }
 
         private void Account_change_Load(object sender, EventArgs e)
         {
-            if (!Config.isClient && Config.isPrintEnable)
+            if (!Config.IsClient && Config.IsPrintEnable)
             {
-                PrintDocument pd = new PrintDocument();
-                pd.PrintPage += new PrintPageEventHandler(printDocument1_PrintPage);
-                PrintDialog pdlg = new PrintDialog();
+                var pd = new PrintDocument();
+                pd.PrintPage += printDocument1_PrintPage;
+                var pdlg = new PrintDialog();
                 pdlg.Document = pd;
                 pd.Print();
             }
         }
         private void Account_change_KeyDown(object sender, KeyEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
         {
-            Print.getInstance().printReceipt(item_list, received_money.Text, e, sale.barcode);
+            Print.GetInstance().PrintReceipt(_itemList, received_money.Text, e, _sale.Barcode);
         }
     }
 }

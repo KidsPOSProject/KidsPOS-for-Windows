@@ -1,37 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Data.SQLite;
-using System.Collections;
-using PosSystem.Util;
-using PosSystem.Object.Database;
+using KidsPos.Object.Database;
+using KidsPos.Util;
 
-namespace PosSystem_Client
+namespace PosSystem.Source
 {
     public partial class Sales : Form
     {
-        SaleObject sale;
+        private readonly SaleObject _sale;
         public Sales(SaleObject sale)
         {
             InitializeComponent();
             InitializeListView(sales_list);
-            this.MaximizeBox = !this.MaximizeBox;
-            this.MinimizeBox = !this.MinimizeBox;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.sale = sale;
+            MaximizeBox = !MaximizeBox;
+            MinimizeBox = !MinimizeBox;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            _sale = sale;
         }
 
         private void Sales_Load(object sender, EventArgs e)
         {
-            buy_time.Text = sale.createdAt;
-            scan_goods(sale.items.Split(new string[]{","}, StringSplitOptions.RemoveEmptyEntries));
-            StaffObject staff = new Database().selectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", sale.staffID));
-            if(staff != null) sale_staff_name.Text = staff.name;
+            buy_time.Text = _sale.CreatedAt;
+            scan_goods(_sale.Items.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries));
+            StaffObject staff = new Database().SelectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", _sale.StaffId));
+            if(staff != null) sale_staff_name.Text = staff.Name;
         }
         public static void InitializeListView(ListView listview)
         {
@@ -42,48 +34,49 @@ namespace PosSystem_Client
             listview.View = View.Details;
 
             // 列（コラム）ヘッダの作成
-            ColumnHeader goods_id = new ColumnHeader();
-            ColumnHeader goods_order = new ColumnHeader();
-            ColumnHeader goods_item = new ColumnHeader();
-            ColumnHeader goods_price = new ColumnHeader();
+            var goodsId = new ColumnHeader();
+            var goodsOrder = new ColumnHeader();
+            var goodsItem = new ColumnHeader();
+            var goodsPrice = new ColumnHeader();
 
-            goods_id.Text = "ID";
-            goods_id.Width = 100;
-            goods_id.Tag = 1;
-            goods_id.TextAlign = HorizontalAlignment.Center;
+            goodsId.Text = "ID";
+            goodsId.Width = 100;
+            goodsId.Tag = 1;
+            goodsId.TextAlign = HorizontalAlignment.Center;
 
-            goods_order.Text = "商品名";
-            goods_order.Width = 430;
-            goods_order.Tag = 4;
-            goods_order.TextAlign = HorizontalAlignment.Center;
+            goodsOrder.Text = "商品名";
+            goodsOrder.Width = 430;
+            goodsOrder.Tag = 4;
+            goodsOrder.TextAlign = HorizontalAlignment.Center;
 
-            goods_item.Text = "個数";
-            goods_item.Width = 150;
-            goods_item.Tag = 1;
-            goods_item.TextAlign = HorizontalAlignment.Center;
+            goodsItem.Text = "個数";
+            goodsItem.Width = 150;
+            goodsItem.Tag = 1;
+            goodsItem.TextAlign = HorizontalAlignment.Center;
 
-            goods_price.Text = "金額";
-            goods_price.Width = 150;
-            goods_price.Tag = 2;
-            goods_price.TextAlign = HorizontalAlignment.Right;
+            goodsPrice.Text = "金額";
+            goodsPrice.Width = 150;
+            goodsPrice.Tag = 2;
+            goodsPrice.TextAlign = HorizontalAlignment.Right;
 
-            ColumnHeader[] colHeaderRegValue = { goods_id, goods_order, goods_item, goods_price };
+            ColumnHeader[] colHeaderRegValue = { goodsId, goodsOrder, goodsItem, goodsPrice };
             listview.Columns.AddRange(colHeaderRegValue);
         }
 
-        public void scan_goods(string[] item_num)
+        public void scan_goods(string[] itemNum)
         {
             Database db = new Database();
-            for (int i = 0; i < item_num.Length; i++)
+            for (var i = 0; i < itemNum.Length; i++)
             {
-                ItemObject item = db.selectSingle<ItemObject>(string.Format("where id = '{0}'", item_num[i]));
+                ItemObject item = db.SelectSingle<ItemObject>($"where id = '{itemNum[i]}'");
                 if (item != null)
                 {
-                    sales_list.Items.Add(new ListViewItem(new string[] {item.id.ToString(), item.name, "1", item.price.ToString(), "×"}));
+                    sales_list.Items.Add(new ListViewItem(new[] {item.Id.ToString(), item.Name, "1", item.Price.ToString(), "×"}));
                 }
                 else
                 { 
-                     MessageBox.Show("現在は登録されていない商品がありました\n [" + item_num[i] + "]", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                     MessageBox.Show(@"現在は登録されていない商品がありました
+ [" + itemNum[i] + "]", @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             

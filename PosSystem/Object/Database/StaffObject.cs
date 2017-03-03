@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data.SQLite;
 using KidsPos.Setting;
-using PosSystem.Object.Database;
-using PosSystem.Setting;
 
 namespace KidsPos.Object.Database
 {
@@ -14,39 +12,39 @@ namespace KidsPos.Object.Database
         public StaffObject(int staffId, string name) : base(DbPath.Staff)
         {
             Barcode = CreateStaffBarcode(staffId);
-            this.Name = name;
+            Name = name;
             GenerateInsertQuery();
         }
 
         public StaffObject(string staffId, string name) : base(DbPath.Staff)
         {
             Barcode = CreateStaffBarcode(Int32.Parse(staffId));
-            this.Name = name;
+            Name = name;
             GenerateInsertQuery();
         }
 
         public StaffObject(SQLiteDataReader reader) : base(DbPath.Staff, reader)
         {
-            setData();
+            SetData();
         }
 
-        public sealed override void setData()
+        public sealed override void SetData()
         {
-            this.Barcode = record.getString("barcode");
-            this.Name = record.getString("name");
+            Barcode = Record.GetString("barcode");
+            Name = Record.GetString("name");
             GenerateInsertQuery();
         }
 
         private static string CreateStaffBarcode(int staffId)
         {
             return
-                $"{BarcodeConfig.PREFIX}{BarcodeConfig.STAFF}{PosInformation.GetInstance().Year}{staffId:D4}";
+                $"{BarcodeConfig.Prefix}{BarcodeConfig.Staff}{PosInformation.GetInstance().Year}{staffId:D4}";
         }
 
         public sealed override void GenerateInsertQuery()
         {
-            setQueryInsert(
-                "INSERT INTO " + TableList.Staff + $" (barcode,name) VALUES('{this.Barcode}', '{this.Name}')"
+            SetQueryInsert(
+                "INSERT INTO " + TableList.Staff + $" (barcode,name) VALUES('{Barcode}', '{Name}')"
             );
         }
     }

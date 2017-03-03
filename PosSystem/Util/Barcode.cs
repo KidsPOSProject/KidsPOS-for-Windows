@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace PosSystem.Util
+﻿namespace KidsPos.Util
 {
     public class Barcode
     {
-        public static string createCheckDigit(string barcode)
+        public static string CreateCheckDigit(string barcode)
         {
-            int even = 0;
-            int odd = 0;
+            var even = 0;
+            var odd = 0;
 
-            for (int i = 0; i < barcode.Length; i++)
+            for (var i = 0; i < barcode.Length; i++)
             {
                 if (i == 0 || i % 2 == 0) odd += int.Parse(barcode[i].ToString());
                 else even += int.Parse(barcode[i].ToString());
             }
 
-            int check_digit = 10 - (even * 3 + odd) % 10; if (check_digit == 10) check_digit = 0;
+            var checkDigit = 10 - (even * 3 + odd) % 10; if (checkDigit == 10) checkDigit = 0;
 
-            return check_digit.ToString();
+            return checkDigit.ToString();
         }
     }
 }

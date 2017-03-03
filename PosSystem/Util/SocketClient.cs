@@ -1,34 +1,33 @@
 ﻿using System;
-using System.Text;
 using System.Net.Sockets;
-using System.Windows.Forms;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
+using KidsPos.Object;
 using KidsPos.Object.Database;
-using PosSystem.Object.Database;
-using PosSystem.Object;
 
-namespace PosSystem.Util
+namespace KidsPos.Util
 {
     public class SocketClient : SocketBase
     {
-        static SocketClient instance = new SocketClient();
-        public static SocketClient getInstance()
+        private static readonly SocketClient Instance = new SocketClient();
+        public static SocketClient GetInstance()
         {
-            return instance;
+            return Instance;
         }
 
-        TcpClient client = null;
-        SocketClient() { }
+        private TcpClient _client;
+        private SocketClient() { }
 
-        string ip;
-        public bool ClientStart(string targetIP)
+        private string _ip;
+        public bool ClientStart(string targetIp)
         {
             try
             {
-                this.ip = targetIP;
-                client = new TcpClient(targetIP, Config.getInstance().targetPort);
-                thread = new Thread(new ThreadStart(this.ClientListen));
-                thread.Start();
+                _ip = targetIp;
+                _client = new TcpClient(targetIp, Config.GetInstance().TargetPort);
+                Thread = new Thread(ClientListen);
+                Thread.Start();
                 return true;
             }
             catch
@@ -39,32 +38,34 @@ namespace PosSystem.Util
 
         private void ClientListen()
         {
-            NetworkStream stream = client.GetStream();
-            Byte[] bytes = new Byte[100];
+            var stream = _client.GetStream();
+            var bytes = new byte[100];
             while (true)
             {
                 try
                 {
-                    int intCount = stream.Read(bytes, 0, bytes.Length);
-                    if (intCount > 0)
+                    if (stream != null)
                     {
-                        Byte[] getByte = new byte[intCount];
-                        for (int i = 0; i < intCount; i++)
-                            getByte[i] = bytes[i];
+                        var intCount = stream.Read(bytes, 0, bytes.Length);
+                        if (intCount > 0)
+                        {
+                            var getByte = new byte[intCount];
+                            for (var i = 0; i < intCount; i++)
+                                getByte[i] = bytes[i];
 
-                        byte[] uniBytes;
-                        uniBytes = Encoding.Convert(ecSjis, ecUni, bytes);
-                        string strGetText = ecUni.GetString(uniBytes);
-                        strGetText = strGetText.Substring(0, strGetText.IndexOf((char)0));
-                        listener.onReceive(strGetText);
-                    }
-                    else
-                    {
-                        stream.Close();
-                        stream = null;
-                        Thread.Sleep(20);//これを入れないとNullReferenceExceptionが起きる
-                        MessageBox.Show("サーバーから切断されました");
-                        StopSock();
+                            var uniBytes = Encoding.Convert(EcSjis, EcUni, bytes);
+                            var strGetText = EcUni.GetString(uniBytes);
+                            strGetText = strGetText.Substring(0, strGetText.IndexOf((char)0));
+                            Listener.OnReceive(strGetText);
+                        }
+                        else
+                        {
+                            stream.Close();
+                            stream = null;
+                            Thread.Sleep(20);//これを入れないとNullReferenceExceptionが起きる
+                            MessageBox.Show(@"何らかの原因で登録できませんでした。");
+                            StopSock();
+                        }
                     }
                 }
                 catch
@@ -73,7 +74,7 @@ namespace PosSystem.Util
                 }
             }
         }
-        public void StopSock(SocketCloseType type = SocketCloseType.CORRECT)
+        public void StopSock(SocketCloseType type = SocketCloseType.Correct)
         {
             CloseClient(type);
         }
@@ -81,41 +82,42 @@ namespace PosSystem.Util
         {
             try
             {
-                client.GetStream().Close();
+                _client.GetStream().Close();
             }
-            catch { }
-            if (client != null && client.Connected)
+            catch
             {
-                client.Close();
-                listener.onClose(type);
+                // ignored
+            }
+            if (_client != null && _client.Connected)
+            {
+                _client.Close();
+                Listener.OnClose(type);
             }
 
-            if (thread != null)
-                thread.Abort();
+            Thread?.Abort();
         }
-        public void sendData(string dataText)
+        public void SendData(string dataText)
         {
-            Byte[] data = ecSjis.GetBytes(dataText);
-            NetworkStream stream = null;
+            var data = EcSjis.GetBytes(dataText);
             try
             {
-                stream = client.GetStream();
+                var stream = _client.GetStream();
                 stream.Write(data, 0, data.Length);
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString() + Environment.NewLine + "送信できませんでした。", "送信エラー");
+                MessageBox.Show(e + Environment.NewLine + "送信できませんでした。", "送信エラー");
             }
         }
-        public void registUser(StaffObject staff)
+        public void RegistUser(StaffObject staff)
         {
-            if (this.client != null) this.sendData(string.Format("staff,{0},{1}", staff.Name, staff.Barcode));
-            new Database().insert<StaffObject>(staff);
+            if (_client != null) SendData($"staff,{staff.Name},{staff.Barcode}");
+            new Database().Insert(staff);
         }
         public void RestartServer()
         {
             StopSock();
-            ClientStart(this.ip);
+            ClientStart(_ip);
         }
     }
 }

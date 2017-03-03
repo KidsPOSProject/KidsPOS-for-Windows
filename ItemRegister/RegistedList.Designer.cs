@@ -1,11 +1,15 @@
-﻿namespace DBRegister
+﻿using System.ComponentModel;
+using System.Drawing.Printing;
+using System.Windows.Forms;
+
+namespace DBRegister
 {
-    partial class Registed_List
+    partial class RegistedList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -188,7 +192,7 @@
             this.Controls.Add(this.dataGridView3);
             this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.dataGridView1);
-            this.Name = "Registed_List";
+            this.Name = "RegistedList";
             this.Text = "Registed_List";
             this.Load += new System.EventHandler(this.Registed_List_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
@@ -202,17 +206,17 @@
 
         #endregion
 
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridView dataGridView2;
-        private System.Windows.Forms.DataGridView dataGridView3;
-        private System.Windows.Forms.DataGridView dataGridView4;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Drawing.Printing.PrintDocument printDocument1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        public System.Windows.Forms.CheckBox print_grid;
+        private DataGridView dataGridView1;
+        private DataGridView dataGridView2;
+        private DataGridView dataGridView3;
+        private DataGridView dataGridView4;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private PrintDocument printDocument1;
+        private Button button1;
+        private Button button2;
+        public CheckBox print_grid;
     }
 }

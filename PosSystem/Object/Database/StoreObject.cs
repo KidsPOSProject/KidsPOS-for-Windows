@@ -1,36 +1,33 @@
-﻿using PosSystem.Setting;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using KidsPos.Setting;
 
-namespace PosSystem.Object.Database
+namespace KidsPos.Object.Database
 {
     public class StoreObject : RecordObject
     {
-        public string name { get; private set; }
+        public string Name { get; private set; }
 
-        public StoreObject(string name)
-            : base(DbPath.Store)
+        public StoreObject(string name)　: base(DbPath.Store)
         {
-            this.name = name;
+            Name = name;
             GenerateInsertQuery();
         }
-        public StoreObject(SQLiteDataReader reader) : base(DbPath.Store, reader) { setData(); }
-        public override void setData()
+        public StoreObject(SQLiteDataReader reader) : base(DbPath.Store, reader) { SetData(); }
+        public sealed override void SetData()
         {
-            id = record.getInt("id");
-            this.name = record.getString("name");
+            Id = Record.GetInt("id");
+            Name = Record.GetString("name");
             GenerateInsertQuery();
         }
-        public override void GenerateInsertQuery()
+        public sealed override void GenerateInsertQuery()
         {
-            setQueryInsert(
-                string.Format("INSERT INTO " + TableList.Store + " (name) values('{0}')",
-                    this.name)
+            SetQueryInsert(
+                "INSERT INTO " + TableList.Store + $" (name) values('{Name}')"
             );
         }
-        public string getID()
+        public string GetId()
         {
-            return id.ToString("D" + BarcodeConfig.DATA_MID_LENGTH);
+            return Id.ToString("D" + BarcodeConfig.DataMidLength);
         }
     }
 }

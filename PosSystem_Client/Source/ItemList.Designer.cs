@@ -1,11 +1,14 @@
-﻿namespace PosSystem_Client
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace PosSystem.Source
 {
     partial class ItemList
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -28,7 +31,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            var dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.mGridView = new System.Windows.Forms.DataGridView();
@@ -96,8 +99,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.DataGridView mGridView;
+        private Label label1;
+        private Label label4;
+        private DataGridView mGridView;
     }
 }

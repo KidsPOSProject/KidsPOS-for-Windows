@@ -1,62 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using PosSystem.Object.Database;
-using PosSystem.Util;
-using PosSystem.Setting;
-using PosSystem.Object;
+using KidsPos.Object;
+using KidsPos.Object.Database;
+using KidsPos.Setting;
+using KidsPos.Util;
 
-namespace PosSystem_Client
+namespace PosSystem.Source
 {
-    public partial class Sales_List : Form
+    public partial class SalesList : Form
     {
-        private DataTable table = new DataTable();
-        List<SaleObject> list = new List<SaleObject>();
-        public Sales_List()
+        private readonly DataTable _table = new DataTable();
+        private List<SaleObject> _list = new List<SaleObject>();
+        public SalesList()
         {
             InitializeComponent();
-            this.MaximizeBox = !this.MaximizeBox;
-            this.MinimizeBox = !this.MinimizeBox;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = !MaximizeBox;
+            MinimizeBox = !MinimizeBox;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             mGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             mGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
         }
         protected override void OnLoad(EventArgs e)
         {
-            mGridView.DataSource = table;
+            mGridView.DataSource = _table;
             base.OnLoad(e);
         }
 
         private void Sales_List_Load(object sender, EventArgs e)
         {
             Database db = new Database();
-            db.insertView<SaleObject>(table,
-                string.Format("SELECT barcode, created_at, price, points FROM {0} WHERE store ='{1}'",
-                TableList.SALE, Config.getInstance().store.id));
-            list = db.selectMulti<SaleObject>(string.Format("WHERE store = '{0}'", Config.getInstance().store.id));
+            db.InsertView<SaleObject>(_table,
+                $"SELECT barcode, created_at, price, points FROM {TableList.Sale} WHERE store ='{Config.GetInstance().Store.Id}'");
+            _list = db.SelectMulti<SaleObject>(string.Format("WHERE store = '{0}'", Config.GetInstance().Store.Id));
             turn_over.Text = calc_turnover();
         }
 
         public string calc_turnover()
         {
-            int sum = 0;
-            foreach (SaleObject item in list)
+            var sum = 0;
+            foreach (SaleObject item in _list)
             {
-                sum += item.price;
+                sum += item.Price;
             }
             return sum.ToString();
         }
 
         private void mGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            Sales sl = new Sales(
-                new Database().selectSingle<SaleObject>(
-                string.Format("WHERE barcode = '{0}'", mGridView[0, mGridView.CurrentCell.RowIndex].Value.ToString())));
+            var sl = new Sales(
+                new Database().SelectSingle<SaleObject>(
+                    $"WHERE barcode = '{mGridView[0, mGridView.CurrentCell.RowIndex].Value}'"));
             sl.ShowDialog(this); 
             sl.Dispose();
         }

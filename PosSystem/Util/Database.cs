@@ -1,58 +1,56 @@
 ﻿using System;
-using System.Data.SQLite;
-using PosSystem.Setting;
 using System.Collections.Generic;
-using PosSystem.Object.Database;
 using System.Data;
+using System.Data.SQLite;
 using KidsPos.Object.Database;
 using KidsPos.Setting;
 
-namespace PosSystem.Util
+namespace KidsPos.Util
 {
     public class Database
     {
         // method
-        public bool insert<T>(T obj) where T : RecordObject
+        public bool Insert<T>(T obj) where T : RecordObject
         {
-            return queryImpl(obj.db, obj.queryInsert);
+            return QueryImpl(obj.Db, obj.QueryInsert);
         }
-        public bool insert<T>(List<T> obj) where T : RecordObject
+        public bool Insert<T>(List<T> obj) where T : RecordObject
         {
-            return insertImpl(obj);
+            return InsertImpl(obj);
         }
-        public void createTable()
+        public void CreateTable()
         {
-            queryImpl(DbPath.Item, DBQueryCreate.ITEM);
-            queryImpl(DbPath.ItemGenre, DBQueryCreate.ITEM_GENRE);
-            queryImpl(DbPath.Sale, DBQueryCreate.SALE);
-            queryImpl(DbPath.Store, DBQueryCreate.STORE);
-            queryImpl(DbPath.Staff, DBQueryCreate.STAFF);
+            QueryImpl(DbPath.Item, DbQueryCreate.Item);
+            QueryImpl(DbPath.ItemGenre, DbQueryCreate.ItemGenre);
+            QueryImpl(DbPath.Sale, DbQueryCreate.Sale);
+            QueryImpl(DbPath.Store, DbQueryCreate.Store);
+            QueryImpl(DbPath.Staff, DbQueryCreate.Staff);
         }
-        public List<ItemObject> getItem(string barcode)
+        public List<ItemObject> GetItem(string barcode)
         {
-            return selectMulti<ItemObject>("");
+            return SelectMulti<ItemObject>();
         }
 
-        public T selectSingle<T>(string where = "") where T : RecordObject
+        public T SelectSingle<T>(string where = "") where T : RecordObject
         {
-            return querySelectImplSingle<T>(
+            return QuerySelectImplSingle<T>(
                 DbPath.GetPath<T>(),
                 "SELECT * FROM " + TableList.GetTableName<T>() + " " + where);
         }
-        public List<T> selectMulti<T>(string where = "") where T : RecordObject
+        public List<T> SelectMulti<T>(string where = "") where T : RecordObject
         {
-            return querySelectImpl<T>(
+            return QuerySelectImpl<T>(
                 DbPath.GetPath<T>(),
                 "SELECT * FROM " + TableList.GetTableName<T>() + " " + where);
         }
 
-        public int count<T>(string where = "")
+        public int Count<T>(string where = "")
         {
-            int ret = 0;
+            int ret;
             using (var conn = new SQLiteConnection("Data Source=" + DbPath.GetPath<T>()))
             {
                 conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
+                using (var command = conn.CreateCommand())
                 {
                     command.CommandText = "SELECT COUNT(*) FROM " + TableList.GetTableName<T>() + " " + where;
                     ret = int.Parse(command.ExecuteScalar().ToString());
@@ -64,40 +62,42 @@ namespace PosSystem.Util
 
         public StoreObject find_store(int id)
         {
-            StoreObject ret = selectSingle<StoreObject>(string.Format("WHERE id = '{0}'", id));
-            return ret == null ? null : ret;
+            var ret = SelectSingle<StoreObject>($"WHERE id = '{id}'");
+            return ret;
         }
         public int find_store(string storeName)
         {
-            StoreObject ret = selectSingle<StoreObject>(string.Format("WHERE name = '{0}'", storeName));
-            return ret == null ? -1 : ret.id;
+            var ret = SelectSingle<StoreObject>($"WHERE name = '{storeName}'");
+            return ret?.Id ?? -1;
         }
         public int find_ganre(string genre, int storeNum)
         {
-            ItemGenreObject ret = selectSingle<ItemGenreObject>(string.Format("WHERE name = '{0}' AND store = '{1}'", genre, storeNum));
-            return ret == null ? -1 : ret.id;
+            var ret = SelectSingle<ItemGenreObject>($"WHERE name = '{genre}' AND store = '{storeNum}'");
+            return ret?.Id ?? -1;
         }
 
         public int find_item(string itemName, int price, int storeNum)
         {
-            ItemObject ret = selectSingle<ItemObject>(string.Format("WHERE name = '{0}' AND price = '{1}' AND shop = '{2}'", itemName, price, storeNum));
-            return ret == null ? -1 : ret.id;
+            var ret = SelectSingle<ItemObject>(
+                $"WHERE name = '{itemName}' AND price = '{price}' AND shop = '{storeNum}'");
+            return ret?.Id ?? -1;
         }
-        public void updateItem(ItemObject item)
+        public void UpdateItem(ItemObject item)
         {
-            queryImpl(item.db, "UPDATE " + TableList.Item + string.Format(" SET name = '{0}' , price = '{1}' WHERE id = '{2}'", item.id));
+            QueryImpl(item.Db, "UPDATE " + TableList.Item +
+                               $" SET name = '{item.Name}' , price = '{item.Price}' WHERE id = '{item.Id}'");
         }
 
-        private bool queryImpl(string db, string query)
+        private bool QueryImpl(string db, string query)
         {
             try
             {
                 using (var conn = new SQLiteConnection("Data Source=" + db))
                 {
                     conn.Open();
-                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
+                    using (var sqlt = conn.BeginTransaction())
                     {
-                        using (SQLiteCommand com = conn.CreateCommand())
+                        using (var com = conn.CreateCommand())
                         {
                             com.CommandText = query;
                             com.ExecuteNonQuery();
@@ -113,21 +113,21 @@ namespace PosSystem.Util
             }
             return true;
         }
-        private T querySelectImplSingle<T>(string db, string where) where T : RecordObject
+        private T QuerySelectImplSingle<T>(string db, string where) where T : RecordObject
         {
             T ret = null;
             using (var conn = new SQLiteConnection("Data Source=" + db))
             {
                 conn.Open();
-                using (SQLiteTransaction sqlt = conn.BeginTransaction())
+                using (conn.BeginTransaction())
                 {
-                    using (SQLiteCommand com = conn.CreateCommand())
+                    using (var com = conn.CreateCommand())
                     {
                         com.CommandText = where;
-                        SQLiteDataReader reader = com.ExecuteReader();
+                        var reader = com.ExecuteReader();
                         while (reader.Read())
                         {
-                            ret = (T)Activator.CreateInstance(typeof(T), new object[] { reader });
+                            ret = (T)Activator.CreateInstance(typeof(T), reader);
                         }
                         com.Dispose();
                     }
@@ -136,21 +136,21 @@ namespace PosSystem.Util
             }
             return ret;
         }
-        private List<T> querySelectImpl<T>(string db, string where) where T : RecordObject
+        private static List<T> QuerySelectImpl<T>(string db, string where) where T : RecordObject
         {
-            List<T> ret = new List<T>();
+            var ret = new List<T>();
             using (var conn = new SQLiteConnection("Data Source=" + db))
             {
                 conn.Open();
-                using (SQLiteTransaction sqlt = conn.BeginTransaction())
+                using (conn.BeginTransaction())
                 {
-                    using (SQLiteCommand com = conn.CreateCommand())
+                    using (var com = conn.CreateCommand())
                     {
                         com.CommandText = where;
-                        SQLiteDataReader reader = com.ExecuteReader();
+                        var reader = com.ExecuteReader();
                         while (reader.Read())
                         {
-                            ret.Add((T)Activator.CreateInstance(typeof(T), new object[] { reader }));
+                            ret.Add((T)Activator.CreateInstance(typeof(T), reader));
                         }
                         com.Dispose();
                     }
@@ -159,21 +159,21 @@ namespace PosSystem.Util
             }
             return ret;
         }
-        private bool insertImpl<T>(List<T> tbl) where T : RecordObject
+        private static bool InsertImpl<T>(IList<T> tbl) where T : RecordObject
         {
             if (1 > tbl.Count) return true;
             try
             {
-                using (var conn = new SQLiteConnection("Data Source=" + tbl[0].db))
+                using (var conn = new SQLiteConnection("Data Source=" + tbl[0].Db))
                 {
                     conn.Open();
-                    using (SQLiteTransaction sqlt = conn.BeginTransaction())
+                    using (var sqlt = conn.BeginTransaction())
                     {
-                        using (SQLiteCommand com = conn.CreateCommand())
+                        using (var com = conn.CreateCommand())
                         {
-                            foreach (T obj in tbl)
+                            foreach (var obj in tbl)
                             {
-                                com.CommandText = obj.queryInsert;
+                                com.CommandText = obj.QueryInsert;
                                 com.ExecuteNonQuery();
                             }
                         }
@@ -189,18 +189,17 @@ namespace PosSystem.Util
             }
             return true;
         }
-        public bool updateItem(int id, string name, int price)
+        public bool UpdateItem(int id, string name, int price)
         {
-            return queryImpl(DbPath.Item,
-                string.Format("UPDATE " + TableList.Item + " SET name = '{0}', price = '{1}' WHERE id = '{2}'",
-                    name, price, id));
+            return QueryImpl(DbPath.Item,
+                "UPDATE " + TableList.Item + $" SET name = '{name}', price = '{price}' WHERE id = '{id}'");
         }
         // Insertview
-        public void insertView<T>(DataTable dt, string query = "") where T : RecordObject
+        public void InsertView<T>(DataTable dt, string query = "") where T : RecordObject
         {
-            using (SQLiteConnection con = new SQLiteConnection("Data Source=" + DbPath.GetPath<T>()))
+            using (var con = new SQLiteConnection("Data Source=" + DbPath.GetPath<T>()))
             {
-                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(
+                using (var adapter = new SQLiteDataAdapter(
                     (query.Equals("")) ? "SELECT * FROM " + TableList.GetTableName<T>() : query, con))
                 {
                     adapter.Fill(dt);
@@ -210,32 +209,32 @@ namespace PosSystem.Util
         }
     }
 
-    public class SQLiteItem
+    public class SqLiteItem
     {
-        private SQLiteDataReader reader { get; set; }
-        public SQLiteItem(SQLiteDataReader reader)
+        private SQLiteDataReader Reader { get; set; }
+        public SqLiteItem(SQLiteDataReader reader)
         {
-            this.reader = reader;
+            Reader = reader;
         }
-        public string getString(string item)
+        public string GetString(string item)
         {
-            if (reader == null || reader[item] == null || reader[item].Equals("")) return "";
-            return reader[item].ToString();
+            if (Reader?[item] == null || Reader[item].Equals("")) return "";
+            return Reader[item].ToString();
         }
-        public int getInt(string item)
+        public int GetInt(string item)
         {
-            if (reader == null || reader[item] == null || reader[item].Equals("")) return 0;
-            string st = reader[item].ToString();
+            if (Reader?[item] == null || Reader[item].Equals("")) return 0;
+            var st = Reader[item].ToString();
             return Convert.ToInt32(st);
         }
     }
 
-    public class DBQueryCreate
+    public class DbQueryCreate
     {
-        public const string ITEM = "CREATE TABLE " + TableList.Item + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
-        public const string ITEM_GENRE = "CREATE TABLE " + TableList.ItemGenre + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
-        public const string SALE = "CREATE TABLE " + TableList.Sale + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER, staff INTEGER)";
-        public const string STORE = "CREATE TABLE " + TableList.Store + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
-        public const string STAFF = "CREATE TABLE " + TableList.Staff + "(barcode INTEGER PRIMARY KEY, name TEXT)";
+        public const string Item = "CREATE TABLE " + TableList.Item + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
+        public const string ItemGenre = "CREATE TABLE " + TableList.ItemGenre + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
+        public const string Sale = "CREATE TABLE " + TableList.Sale + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER, staff INTEGER)";
+        public const string Store = "CREATE TABLE " + TableList.Store + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
+        public const string Staff = "CREATE TABLE " + TableList.Staff + "(barcode INTEGER PRIMARY KEY, name TEXT)";
     }
 }

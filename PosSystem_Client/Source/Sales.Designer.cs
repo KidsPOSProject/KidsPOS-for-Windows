@@ -1,11 +1,14 @@
-﻿namespace PosSystem_Client
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace PosSystem.Source
 {
     partial class Sales
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -109,11 +112,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Label sales_time;
-        private System.Windows.Forms.Label buy_time;
-        private System.Windows.Forms.Label sale_staff_name;
-        private System.Windows.Forms.Label sale_staff;
-        public System.Windows.Forms.ListView sales_list;
+        private Label sales_time;
+        private Label buy_time;
+        private Label sale_staff_name;
+        private Label sale_staff;
+        public ListView sales_list;
 
     }
 }

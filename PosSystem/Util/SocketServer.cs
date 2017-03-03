@@ -1,34 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Net.Sockets;
-using System.Net;
-using PosSystem.Setting;
-using System.Windows.Forms;
-using PosSystem.Object;
+using KidsPos.Object;
 
-namespace PosSystem.Util
+namespace KidsPos.Util
 {
     public class SocketServer :SocketBase
     {
-        static SocketServer instance = new SocketServer();
-        public static SocketServer getInstance()
+        private static readonly SocketServer Instance = new SocketServer();
+        public static SocketServer GetInstance()
         {
-            return instance;
+            return Instance;
         }
 
-        TcpListener tcpClient = null;
-        List<ClientHandler> hClient = new List<ClientHandler>();
-        SocketServer() { }
+        private TcpListener _tcpClient;
+        private readonly List<ClientHandler> _hClient = new List<ClientHandler>();
+        private SocketServer() { }
 
         public bool ServerStart()
         {
             try
             {
-                thread = new Thread(new ThreadStart(this.ServerListen));
-                thread.Start();
+                Thread = new Thread(ServerListen);
+                Thread.Start();
                 return true;
             }
             catch
@@ -38,121 +36,113 @@ namespace PosSystem.Util
         }
         private void ServerListen()
         {
-            tcpClient = new TcpListener(IPAddress.Any, Config.getInstance().targetPort);
-            tcpClient.Start();
+            _tcpClient = new TcpListener(IPAddress.Any, Config.GetInstance().TargetPort);
+            _tcpClient.Start();
             try
             {
                 do
                 {
-                    ClientHandler handler = new ClientHandler(this, tcpClient.AcceptSocket());
+                    var handler = new ClientHandler(this, _tcpClient.AcceptSocket());
                     Console.WriteLine("クライアントが接続してきました");
-                    hClient.Add(handler);
+                    _hClient.Add(handler);
                     handler.StartRead();
                 } while (true);
             }
             catch
             {
-                return;
+                // ignored
             }
         }
-        public List<ClientHandler> getClient()
+        public List<ClientHandler> GetClient()
         {
-            return this.hClient;
+            return _hClient;
         }
-        private void deleteClient(ClientHandler cl)
+        private void DeleteClient(ClientHandler cl)
         {
             Console.WriteLine("クライアントが抜けました");
-            foreach (ClientHandler handler in hClient)
+            if (_hClient.Any(handler => handler == cl))
             {
-                if (handler == cl)
-                {
-                    hClient.Remove(cl);
-                    break;
-                }
+                _hClient.Remove(cl);
             }
         }
         public void CloseServer()
         {
-            if (tcpClient != null)
+            if (_tcpClient != null)
             {
-                tcpClient.Stop();
+                _tcpClient.Stop();
                 Thread.Sleep(20);
-                tcpClient = null;
+                _tcpClient = null;
             }
-            if (thread != null)
-            {
-                thread.Abort();
-                thread = null;
-            }
+            if (Thread == null) return;
+            Thread.Abort();
+            Thread = null;
         }
 
         public class ClientHandler
         {
-            private SocketServer parent;
-            private byte[] buffer;
-            private Socket socket;
-            private NetworkStream networkStream;
-            private AsyncCallback callbackRead;
-            private AsyncCallback callbackWrite;
+            private readonly SocketServer _parent;
+            private readonly byte[] _buffer;
+            private Socket _socket;
+            private NetworkStream _networkStream;
+            private readonly AsyncCallback _callbackRead;
+            private readonly AsyncCallback _callbackWrite;
 
             public ClientHandler(SocketServer parent, Socket socketForClient)
             {
-                this.socket = socketForClient;
-                this.parent = parent;
-                buffer = new byte[256];
-                networkStream = new NetworkStream(socketForClient);
-                callbackRead = new AsyncCallback(this.OnReadComplete);
-                callbackWrite = new AsyncCallback(this.OnWriteComplete);
+                _socket = socketForClient;
+                _parent = parent;
+                _buffer = new byte[256];
+                _networkStream = new NetworkStream(socketForClient);
+                _callbackRead = OnReadComplete;
+                _callbackWrite = OnWriteComplete;
             }
 
-            public IntPtr ClientHandle
-            {
-                get { return socket.Handle; }
-            }
+            public IntPtr ClientHandle => _socket.Handle;
+
             public void StartRead()
             {
-                networkStream.BeginRead(buffer, 0, buffer.Length, callbackRead, null);
+                _networkStream.BeginRead(_buffer, 0, _buffer.Length, _callbackRead, null);
             }
 
             private void OnReadComplete(IAsyncResult ar)
             {
                 try
                 {
-                    if (networkStream == null)
+                    if (_networkStream == null)
                         return;
-                    int bytesRead = networkStream.EndRead(ar);
+                    var bytesRead = _networkStream.EndRead(ar);
                     if (bytesRead > 0)
                     {
-                        Byte[] getByte = new byte[bytesRead];
-                        for (int i = 0; i < bytesRead; i++)
-                            getByte[i] = buffer[i];
-                        parent.listener.onReceive(parent.ecUni.GetString(Encoding.Convert(parent.ecSjis, parent.ecUni, getByte)));
+                        var getByte = new byte[bytesRead];
+                        for (var i = 0; i < bytesRead; i++)
+                            getByte[i] = _buffer[i];
+                        _parent.Listener.OnReceive(_parent.EcUni.GetString(Encoding.Convert(_parent.EcSjis, _parent.EcUni, getByte)));
                         StartRead();
 
                     }
                     else
                     {
-                        parent.deleteClient(this);
-                        networkStream.Close();
-                        socket.Close();
-                        networkStream = null;
+                        _parent.DeleteClient(this);
+                        _networkStream.Close();
+                        _socket.Close();
+                        _networkStream = null;
                         Thread.Sleep(20);
-                        socket = null;
-                        parent.listener.onClose(SocketCloseType.CORRECT);
+                        _socket = null;
+                        _parent.Listener.OnClose(SocketCloseType.Correct);
                     }
                 }
                 catch
                 {
-                    return;
+                    // ignored
                 }
             }
             public void WriteString(byte[] buffer)
             {
-                networkStream.BeginWrite(buffer, 0, buffer.Length, callbackWrite, null);
+                _networkStream.BeginWrite(buffer, 0, buffer.Length, _callbackWrite, null);
             }
             private void OnWriteComplete(IAsyncResult ar)
             {
-                networkStream.EndWrite(ar);
+                _networkStream.EndWrite(ar);
             }
         }
     }
