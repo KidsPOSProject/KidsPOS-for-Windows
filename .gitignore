@@ -1,10 +1,9 @@
-/bin/*.db
-/bin/*.pdb
-/bin/*.vshost.exe
-/bin/*.vshost.exe.manifest
-/PosSystem/bin
-/PosSystem/obj
-/PosSystem/Service References
-/PosSystem/StyleCop.Cache
-/PosSystem_Client/
-/bin/*.xml
+/bin/*/KidsDB-STAFF.db
+/bin/*/*.pdb
+/bin/*/*.vshost.exe
+/bin/*/*.vshost.exe.manifest
+/bin/*/*.xml
+/*/bin
+/*/obj
+/*/Service References
+/*/StyleCop.Cache

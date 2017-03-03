@@ -1,13 +1,17 @@
-PosSystem_for_KidsBusinessTownIchikawa
+KidsPos
 ======================================
+### Deprecated  
+ 現在はAndroidアプリで動いています  
+ ですがこちらのソフトもまだ使えます(印刷とか
 
-キッズで使う予定のシステムです。
+==========
+キッズで使っているシステムです。
 
 システム詳細
 ==========
 ## 動作環境
 1. Windows NT以降
-2. .Net Framework 3.5以上
+2. .Net Framework 4.0以上
   
 ## インストール
  binディレクトリのPosSystem.exeを起動  
