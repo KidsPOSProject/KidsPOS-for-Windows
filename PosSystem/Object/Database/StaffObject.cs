@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using KidsPos.Setting;
 
 namespace KidsPos.Object.Database
@@ -18,7 +17,7 @@ namespace KidsPos.Object.Database
 
         public StaffObject(string staffId, string name) : base(DbPath.Staff)
         {
-            Barcode = CreateStaffBarcode(Int32.Parse(staffId));
+            Barcode = CreateStaffBarcode(int.Parse(staffId));
             Name = name;
             GenerateInsertQuery();
         }

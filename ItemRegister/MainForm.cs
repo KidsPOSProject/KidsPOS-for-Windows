@@ -28,6 +28,7 @@ namespace DBRegister
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MinimizeBox = false;
             MaximizeBox = false;
+            PosInformation.GetInstance().Init(this);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -119,7 +120,7 @@ namespace DBRegister
 
         private static bool CheckFormatUser(IList<string> row)
         {
-            var staffId = Int32.Parse(row[0]);
+            var staffId = int.Parse(row[0]);
             return staffId > 0 && 10000 > staffId && !row[1].Equals("");
         }
 
@@ -181,9 +182,8 @@ namespace DBRegister
                 }
 
                 if (itemPosition == itemList) throw new InvalidDataException();
-
-                var _g = db.SelectMulti<ItemGenreObject>($"WHERE store = '{storeNum}'");
-                var g = _g.Select(_ => _.Name).ToList();
+                
+                var g = db.SelectMulti<ItemGenreObject>($"WHERE store = '{storeNum}'").Select(_ => _.Name).ToList();
                 var tempGenre = new List<ItemGenreObject>();
                 for (var i = itemPosition + 1; i < itemList; i++)
                 {
@@ -270,14 +270,9 @@ namespace DBRegister
         }
         public void RegistUser(ArrayList csv)
         {
-            List<StaffObject> arr = new List<StaffObject>();
-            foreach (string row in csv)
-            {
-                var s = row.Split(',');
-                arr.Add(new StaffObject(s[0], s[1]));
-            }
-            new Database().Insert(arr);
-            MessageBox.Show(@"何らかの原因で登録できませんでした。");
+            var result = new Database()
+                .Insert((from string row in csv select row.Split(',') into s select new StaffObject(s[0], s[1])).ToList());
+            MessageBox.Show(result ? @"商品リストを更新しました" : @"??");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -293,6 +288,5 @@ namespace DBRegister
             rl.ShowDialog(this);
             rl.Dispose();
         }
-
     }
 }
