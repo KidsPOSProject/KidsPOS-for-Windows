@@ -1,50 +1,52 @@
-﻿using PosSystem.Setting;
+﻿using System;
 using System.Data.SQLite;
-using System.IO;
+using KidsPos.Setting;
+using PosSystem.Object.Database;
+using PosSystem.Setting;
 
-namespace PosSystem.Object.Database
+namespace KidsPos.Object.Database
 {
     public class StaffObject : RecordObject
     {
-        public string barcode { get; private set; }
-        public string name { get; private set; }
+        public string Barcode { get; private set; }
+        public string Name { get; private set; }
 
-        public StaffObject(int staffID, string _name)
-            : base(DBPath.STAFF)
+        public StaffObject(int staffId, string name) : base(DbPath.Staff)
         {
-            string _staffID = staffID.ToString();
-            if (_staffID.Length != BarcodeConfig.DATA_LENGTH) throw new InvalidDataException();
-            barcode = gen(staffID.ToString());
-            name = _name;
-            genQuery();
+            Barcode = CreateStaffBarcode(staffId);
+            this.Name = name;
+            GenerateInsertQuery();
         }
-        public StaffObject(string staffID, string name)
-            : base(DBPath.STAFF)
+
+        public StaffObject(string staffId, string name) : base(DbPath.Staff)
         {
-            this.barcode = BarcodeConfig.DATA_LENGTH >= staffID.Length?gen(staffID):staffID;
-            this.name = name;
-            genQuery();
+            Barcode = CreateStaffBarcode(Int32.Parse(staffId));
+            this.Name = name;
+            GenerateInsertQuery();
         }
-        public StaffObject(SQLiteDataReader reader) : base(DBPath.STAFF, reader) { setData(); }
-        public override void setData()
+
+        public StaffObject(SQLiteDataReader reader) : base(DbPath.Staff, reader)
         {
-            this.barcode = record.getString("barcode");
-            this.name = record.getString("name");
-            genQuery();
+            setData();
         }
-        private string gen(string sID)
+
+        public sealed override void setData()
+        {
+            this.Barcode = record.getString("barcode");
+            this.Name = record.getString("name");
+            GenerateInsertQuery();
+        }
+
+        private static string CreateStaffBarcode(int staffId)
         {
             return
-                BarcodeConfig.PREFIX + //10
-                BarcodeConfig.STAFF +   //00
-                PosInformation.getInstance().year +
-                sID; //0001
+                $"{BarcodeConfig.PREFIX}{BarcodeConfig.STAFF}{PosInformation.GetInstance().Year}{staffId:D4}";
         }
-        public override void genQuery()
+
+        public sealed override void GenerateInsertQuery()
         {
             setQueryInsert(
-                string.Format("INSERT INTO " + TableList.STAFF + " (barcode,name) VALUES('{0}', '{1}')",
-                    this.barcode, this.name)
+                "INSERT INTO " + TableList.Staff + $" (barcode,name) VALUES('{this.Barcode}', '{this.Name}')"
             );
         }
     }

@@ -18,7 +18,7 @@ namespace PosSystem.Object.Database
             this.db = path;
             this.record = new SQLiteItem(reader);
         }
-        abstract public void genQuery();
+        abstract public void GenerateInsertQuery();
 
         public void setQueryInsert(string query)
         {

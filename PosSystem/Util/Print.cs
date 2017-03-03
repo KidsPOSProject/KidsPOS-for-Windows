@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using PosSystem.Setting;
 using PosSystem.Object.Database;
 using System.Management;
+using KidsPos.Object.Database;
+using KidsPos.Setting;
 
 namespace PosSystem.Util
 {
@@ -162,7 +164,7 @@ namespace PosSystem.Util
             drawString(graphics, fontBig, "おみせ：　" + Config.getInstance().store.name, marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight;
 
-            drawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.getInstance().getStaffName(), marginMin, drawHeightPosition);
+            drawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.GetInstance().GetStaffName(), marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight + 5;
 
 
@@ -250,7 +252,7 @@ namespace PosSystem.Util
 
             /* ---  バーコード生成  --- */
 
-            drawBarcode("ダミー", new StaffObject(9999, "").barcode, ref config);
+            drawBarcode("ダミー", new StaffObject(9999, "").Barcode, ref config);
 
             config.graphics.DrawLine(new Pen(Brushes.Black),
                 new Point(config.marginMin, config.drawHeightPosition),

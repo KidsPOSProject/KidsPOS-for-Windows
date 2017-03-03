@@ -1,38 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data.SQLite;
-using PosSystem.Setting;
+﻿using System.Data.SQLite;
+using KidsPos.Setting;
+using PosSystem.Object.Database;
 
-namespace PosSystem.Object.Database
+namespace KidsPos.Object.Database
 {
     public class ItemGenreObject : RecordObject
     {
-        public string name { get; private set; }
-        public int storeNum { get; private set; }
+        public string Name { get; private set; }
+        public int StoreNum { get; private set; }
 
         public ItemGenreObject(string name, int storeNum)
-            : base(DBPath.ITEM_GENRE)
+            : base(DbPath.ItemGenre)
         {
-            this.name = name;
-            this.storeNum = storeNum;
-            genQuery();
+            this.Name = name;
+            this.StoreNum = storeNum;
+            GenerateInsertQuery();
         }
 
-        public ItemGenreObject(SQLiteDataReader reader) : base(DBPath.ITEM_GENRE, reader) { setData(); }
-        public override void setData()
+        public ItemGenreObject(SQLiteDataReader reader) : base(DbPath.ItemGenre, reader) { setData(); }
+        public sealed override void setData()
         {
             id = record.getInt("id");
-            this.name = record.getString("name");
-            this.storeNum = record.getInt("store");
-            genQuery();
+            this.Name = record.getString("name");
+            this.StoreNum = record.getInt("store");
+            GenerateInsertQuery();
         }
-        public override void genQuery()
+        public sealed override void GenerateInsertQuery()
         {
             setQueryInsert(
-                string.Format("INSERT INTO " + TableList.ITEM_GENRE + " (name,store) values('{0}','{1}')",
-                    this.name, this.storeNum)
+                "INSERT INTO " + TableList.ItemGenre + $" (name,store) values('{this.Name}','{this.StoreNum}')"
             );
         }
     }

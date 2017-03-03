@@ -1,8 +1,10 @@
 ﻿using System.Data.SQLite;
+using KidsPos.Setting;
+using PosSystem.Object.Database;
 using PosSystem.Setting;
 using PosSystem.Util;
 
-namespace PosSystem.Object.Database
+namespace KidsPos.Object.Database
 {
     public class SaleObject : RecordObject
     {
@@ -16,43 +18,44 @@ namespace PosSystem.Object.Database
         public int storeID {get; private set;}
         public string staffID {get; private set;}
         public SaleObject(int points, int price, string items, int storeID, string staffID)
-            : base(DBPath.SALE)
+            : base(DbPath.Sale)
         {
-            this.createdAt = new Time().getTime();
+            createdAt = new Time().getTime();
             this.points = points;
             this.price = price;
             this.items = items;
             this.storeID = storeID;
-            this.barcode = genBarcode();
+            barcode = genBarcode();
             this.staffID = staffID;
-            genQuery();
+            GenerateInsertQuery();
         }
-        public SaleObject(SQLiteDataReader reader) : base(DBPath.SALE, reader) { setData(); }
+        public SaleObject(SQLiteDataReader reader) : base(DbPath.Sale, reader) { setData(); }
         public override void setData()
         {
             id = record.getInt("id");
-            this.barcode = record.getString("barcode");
-            this.createdAt = record.getString("created_at");
-            this.points = record.getInt("points");
-            this.price = record.getInt("price");
-            this.items = record.getString("items");
-            this.storeID = record.getInt("store");
-            this.staffID = record.getString("staff");
-            genQuery();
+            barcode = record.getString("barcode");
+            createdAt = record.getString("created_at");
+            points = record.getInt("points");
+            price = record.getInt("price");
+            items = record.getString("items");
+            storeID = record.getInt("store");
+            staffID = record.getString("staff");
+            GenerateInsertQuery();
         }
         private string genBarcode()
         {
             return 
-                PosSystem.Setting.BarcodeConfig.PREFIX + 
-                PosSystem.Setting.BarcodeConfig.SALE + 
-                storeID.ToString("D" + PosSystem.Setting.BarcodeConfig.DATA_MID_LENGTH) +
-                new Util.Database().count<SaleObject>(string.Format("where store = '{0}'", storeID)).ToString("D" + PosSystem.Setting.BarcodeConfig.DATA_LENGTH);
+                BarcodeConfig.PREFIX + 
+                BarcodeConfig.SALE + 
+                storeID.ToString("D" + BarcodeConfig.DATA_MID_LENGTH) +
+                new PosSystem.Util.Database().count<SaleObject>(
+                    $"where store = '{storeID}'").ToString("D" + BarcodeConfig.DATA_LENGTH);
         }
-        public override void genQuery()
+        public sealed override void GenerateInsertQuery()
         {
             setQueryInsert(
-                string.Format("INSERT INTO " + TableList.SALE + " (barcode,created_at,points,price,items,store,staff) VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
-                    this.barcode, this.createdAt, this.points, this.price, this.items, this.storeID, this.staffID)
+                "INSERT INTO " + TableList.Sale +
+                $" (barcode,created_at,points,price,items,store,staff) VALUES('{barcode}','{createdAt}','{points}','{price}','{items}','{storeID}','{staffID}')"
             );
         }
     }

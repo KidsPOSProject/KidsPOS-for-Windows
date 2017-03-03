@@ -1,5 +1,6 @@
 ﻿using PosSystem.Setting;
 using System.Data.SQLite;
+using KidsPos.Setting;
 
 namespace PosSystem.Object.Database
 {
@@ -8,22 +9,22 @@ namespace PosSystem.Object.Database
         public string name { get; private set; }
 
         public StoreObject(string name)
-            : base(DBPath.STORE)
+            : base(DbPath.Store)
         {
             this.name = name;
-            genQuery();
+            GenerateInsertQuery();
         }
-        public StoreObject(SQLiteDataReader reader) : base(DBPath.STORE, reader) { setData(); }
+        public StoreObject(SQLiteDataReader reader) : base(DbPath.Store, reader) { setData(); }
         public override void setData()
         {
             id = record.getInt("id");
             this.name = record.getString("name");
-            genQuery();
+            GenerateInsertQuery();
         }
-        public override void genQuery()
+        public override void GenerateInsertQuery()
         {
             setQueryInsert(
-                string.Format("INSERT INTO " + TableList.STORE + " (name) values('{0}')",
+                string.Format("INSERT INTO " + TableList.Store + " (name) values('{0}')",
                     this.name)
             );
         }

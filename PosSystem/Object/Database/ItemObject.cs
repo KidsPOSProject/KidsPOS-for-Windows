@@ -1,7 +1,8 @@
 ﻿using System.Data.SQLite;
-using PosSystem.Setting;
+using KidsPos.Setting;
+using PosSystem.Object.Database;
 
-namespace PosSystem.Object.Database
+namespace KidsPos.Object.Database
 {
     public class ItemObject : RecordObject
     {
@@ -13,16 +14,16 @@ namespace PosSystem.Object.Database
         public string queryUpdate { get; private set; }
 
         public ItemObject(string barcode, string name, int price, int storeNum, int genreNum)
-            : base(DBPath.ITEM)
+            : base(DbPath.Item)
         {
             this.barcode = barcode;
             this.name = name;
             this.price = price;
             this.storeNum = storeNum;
             this.genreNum = genreNum;
-            genQuery();
+            GenerateInsertQuery();
         }
-        public ItemObject(SQLiteDataReader reader) : base(DBPath.ITEM, reader) { setData(); }
+        public ItemObject(SQLiteDataReader reader) : base(DbPath.Item, reader) { setData(); }
         public override void setData()
         {
             id = record.getInt("id");
@@ -31,13 +32,13 @@ namespace PosSystem.Object.Database
             this.price = record.getInt("price");
             this.storeNum = record.getInt("shop");
             this.genreNum = record.getInt("genre");
-            genQuery();
+            GenerateInsertQuery();
         }
 
-        public override void genQuery()
+        public override void GenerateInsertQuery()
         {
             setQueryInsert(
-                string.Format("INSERT INTO " + TableList.ITEM + " (barcode,name,price,shop,genre) VALUES ('{0}','{1}','{2}','{3}','{4}')",
+                string.Format("INSERT INTO " + TableList.Item + " (barcode,name,price,shop,genre) VALUES ('{0}','{1}','{2}','{3}','{4}')",
                     this.barcode, this.name, this.price, this.storeNum, this.genreNum)
             );
             queryUpdate =

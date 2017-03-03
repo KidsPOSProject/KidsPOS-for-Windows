@@ -3,6 +3,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using System.Threading;
+using KidsPos.Object.Database;
 using PosSystem.Object.Database;
 using PosSystem.Object;
 
@@ -108,7 +109,7 @@ namespace PosSystem.Util
         }
         public void registUser(StaffObject staff)
         {
-            if (this.client != null) this.sendData(string.Format("staff,{0},{1}", staff.name, staff.barcode));
+            if (this.client != null) this.sendData(string.Format("staff,{0},{1}", staff.Name, staff.Barcode));
             new Database().insert<StaffObject>(staff);
         }
         public void RestartServer()

@@ -1,78 +1,64 @@
-﻿using System;
+﻿using KidsPos.Object.Database;
 using PosSystem.Object.Database;
 
-namespace PosSystem.Setting
+namespace KidsPos.Setting
 {
     public class TableList
     {
-        public const string ITEM = "item";
-        public const string ITEM_GENRE = "item_genre";
-        public const string SALE = "sale";
-        public const string STORE = "store";
-        public const string STAFF = "staff";
-        public static string getTableName<T>()
+        public const string Item = "item";
+        public const string ItemGenre = "item_genre";
+        public const string Sale = "sale";
+        public const string Store = "store";
+        public const string Staff = "staff";
+        public static string GetTableName<T>()
         {
-            Type type = typeof(T);
+            var type = typeof(T);
             if (typeof(ItemObject) == type)
             {
-                return ITEM;
+                return Item;
             }
-            else if (typeof(ItemGenreObject) == type)
+            if (typeof(ItemGenreObject) == type)
             {
-                return ITEM_GENRE;
+                return ItemGenre;
             }
-            else if (typeof(SaleObject) == type)
+            if (typeof(SaleObject) == type)
             {
-                return SALE;
+                return Sale;
             }
-            else if (typeof(StoreObject) == type)
+            if (typeof(StoreObject) == type)
             {
-                return STORE;
+                return Store;
             }
-            else if (typeof(StaffObject) == type)
-            {
-                return STAFF;
-            }
-            else
-            {
-                return "";
-            }
+            return typeof(StaffObject) == type ? Staff : "";
         }
     }
-    public class DBPath
+    public class DbPath
     {
-        public const string ITEM = "item.db";
-        public const string ITEM_GENRE = "item.db";
-        public const string SALE = "item.db";
-        public const string STORE = "item.db";
-        public const string STAFF = "staff.db";
-        public static string getPath<T>()
+        public const string Item = "item.db";
+        public const string ItemGenre = "item.db";
+        public const string Sale = "item.db";
+        public const string Store = "item.db";
+        public const string Staff = "staff.db";
+        public static string GetPath<T>()
         {
-            Type type = typeof(T);
+            var type = typeof(T);
             if (typeof(ItemObject) == type)
             {
-                return ITEM;
+                return Item;
             }
-            else if (typeof(ItemGenreObject) == type)
+            if (typeof(ItemGenreObject) == type)
             {
-                return ITEM_GENRE;
+                return ItemGenre;
             }
-            else if (typeof(SaleObject) == type)
+            if (typeof(SaleObject) == type)
             {
-                return SALE;
+                return Sale;
             }
-            else if (typeof(StoreObject) == type)
+            if (typeof(StoreObject) == type)
             {
-                return STORE;
+                return Store;
             }
-            else if (typeof(StaffObject) == type)
-            {
-                return STAFF;
-            }
-            else
-            {
-                return "";
-            }
+            return typeof(StaffObject) == type ? Staff : "";
         }
     }
 }

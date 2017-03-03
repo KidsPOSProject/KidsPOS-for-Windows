@@ -1,40 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PosSystem.Object.Database;
 using System.Windows.Forms;
+using KidsPos.Object.Database;
 
-namespace PosSystem.Setting
+namespace KidsPos.Setting
 {
     public class PosInformation
     {
-        Form context;
-
-        public string year { get;private set; }
-        private StaffObject reg { get;set; }
-        static PosInformation instance = new PosInformation();
-        PosInformation() { }
-        public static PosInformation getInstance()
+        public string Year { get;private set; }
+        private StaffObject CurrentStaff { get;set; }
+        private static readonly PosInformation Instance = new PosInformation();
+        private PosInformation() { }
+        public static PosInformation GetInstance()
         {
-            return instance;
+            return Instance;
         }
-        public void init(Form context)
+        public void Init(Form context)
         {
-            this.context = context;
-            this.year = DateTime.Now.ToString("yyyy").Substring(2);
+            Year = DateTime.Now.ToString("yyyy").Substring(2);
         }
-        public void setStaff(StaffObject obj)
+        public void SetStaff(StaffObject staffObject)
         {
-            this.reg = obj;
+            CurrentStaff = staffObject;
         }
-        public string getStaffName()
+        public string GetStaffName()
         {
-            return this.reg == null ? "" : this.reg.name;
+            return CurrentStaff == null ? "" : CurrentStaff.Name;
         }
-        public string getStaffBarcode()
+        public string GetStaffBarcode()
         {
-            return this.reg == null ? "" : this.reg.barcode;
+            return CurrentStaff == null ? "" : CurrentStaff.Barcode;
         }
     }
 }

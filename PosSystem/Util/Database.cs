@@ -4,6 +4,8 @@ using PosSystem.Setting;
 using System.Collections.Generic;
 using PosSystem.Object.Database;
 using System.Data;
+using KidsPos.Object.Database;
+using KidsPos.Setting;
 
 namespace PosSystem.Util
 {
@@ -20,11 +22,11 @@ namespace PosSystem.Util
         }
         public void createTable()
         {
-            queryImpl(DBPath.ITEM, DBQueryCreate.ITEM);
-            queryImpl(DBPath.ITEM_GENRE, DBQueryCreate.ITEM_GENRE);
-            queryImpl(DBPath.SALE, DBQueryCreate.SALE);
-            queryImpl(DBPath.STORE, DBQueryCreate.STORE);
-            queryImpl(DBPath.STAFF, DBQueryCreate.STAFF);
+            queryImpl(DbPath.Item, DBQueryCreate.ITEM);
+            queryImpl(DbPath.ItemGenre, DBQueryCreate.ITEM_GENRE);
+            queryImpl(DbPath.Sale, DBQueryCreate.SALE);
+            queryImpl(DbPath.Store, DBQueryCreate.STORE);
+            queryImpl(DbPath.Staff, DBQueryCreate.STAFF);
         }
         public List<ItemObject> getItem(string barcode)
         {
@@ -34,25 +36,25 @@ namespace PosSystem.Util
         public T selectSingle<T>(string where = "") where T : RecordObject
         {
             return querySelectImplSingle<T>(
-                DBPath.getPath<T>(),
-                "SELECT * FROM " + TableList.getTableName<T>() + " " + where);
+                DbPath.GetPath<T>(),
+                "SELECT * FROM " + TableList.GetTableName<T>() + " " + where);
         }
         public List<T> selectMulti<T>(string where = "") where T : RecordObject
         {
             return querySelectImpl<T>(
-                DBPath.getPath<T>(),
-                "SELECT * FROM " + TableList.getTableName<T>() + " " + where);
+                DbPath.GetPath<T>(),
+                "SELECT * FROM " + TableList.GetTableName<T>() + " " + where);
         }
 
         public int count<T>(string where = "")
         {
             int ret = 0;
-            using (var conn = new SQLiteConnection("Data Source=" + DBPath.getPath<T>()))
+            using (var conn = new SQLiteConnection("Data Source=" + DbPath.GetPath<T>()))
             {
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
-                    command.CommandText = "SELECT COUNT(*) FROM " + TableList.getTableName<T>() + " " + where;
+                    command.CommandText = "SELECT COUNT(*) FROM " + TableList.GetTableName<T>() + " " + where;
                     ret = int.Parse(command.ExecuteScalar().ToString());
                 }
                 conn.Close();
@@ -83,7 +85,7 @@ namespace PosSystem.Util
         }
         public void updateItem(ItemObject item)
         {
-            queryImpl(item.db, "UPDATE " + TableList.ITEM + string.Format(" SET name = '{0}' , price = '{1}' WHERE id = '{2}'", item.id));
+            queryImpl(item.db, "UPDATE " + TableList.Item + string.Format(" SET name = '{0}' , price = '{1}' WHERE id = '{2}'", item.id));
         }
 
         private bool queryImpl(string db, string query)
@@ -189,17 +191,17 @@ namespace PosSystem.Util
         }
         public bool updateItem(int id, string name, int price)
         {
-            return queryImpl(DBPath.ITEM,
-                string.Format("UPDATE " + TableList.ITEM + " SET name = '{0}', price = '{1}' WHERE id = '{2}'",
+            return queryImpl(DbPath.Item,
+                string.Format("UPDATE " + TableList.Item + " SET name = '{0}', price = '{1}' WHERE id = '{2}'",
                     name, price, id));
         }
         // Insertview
         public void insertView<T>(DataTable dt, string query = "") where T : RecordObject
         {
-            using (SQLiteConnection con = new SQLiteConnection("Data Source=" + DBPath.getPath<T>()))
+            using (SQLiteConnection con = new SQLiteConnection("Data Source=" + DbPath.GetPath<T>()))
             {
                 using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(
-                    (query.Equals("")) ? "SELECT * FROM " + TableList.getTableName<T>() : query, con))
+                    (query.Equals("")) ? "SELECT * FROM " + TableList.GetTableName<T>() : query, con))
                 {
                     adapter.Fill(dt);
                 }
@@ -230,10 +232,10 @@ namespace PosSystem.Util
 
     public class DBQueryCreate
     {
-        public const string ITEM = "CREATE TABLE " + TableList.ITEM + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
-        public const string ITEM_GENRE = "CREATE TABLE " + TableList.ITEM_GENRE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
-        public const string SALE = "CREATE TABLE " + TableList.SALE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER, staff INTEGER)";
-        public const string STORE = "CREATE TABLE " + TableList.STORE + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
-        public const string STAFF = "CREATE TABLE " + TableList.STAFF + "(barcode INTEGER PRIMARY KEY, name TEXT)";
+        public const string ITEM = "CREATE TABLE " + TableList.Item + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
+        public const string ITEM_GENRE = "CREATE TABLE " + TableList.ItemGenre + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
+        public const string SALE = "CREATE TABLE " + TableList.Sale + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER, staff INTEGER)";
+        public const string STORE = "CREATE TABLE " + TableList.Store + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
+        public const string STAFF = "CREATE TABLE " + TableList.Staff + "(barcode INTEGER PRIMARY KEY, name TEXT)";
     }
 }
