@@ -1,11 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PosSystem", "PosSystem_Client\PosSystem.csproj", "{369FE5A3-61B1-4E97-B8B4-63B70B62BD4F}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PosSystem", "PosSystem\PosSystem.csproj", "{369FE5A3-61B1-4E97-B8B4-63B70B62BD4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBRegister", "ItemRegister\DBRegister.csproj", "{A10E6D7A-8166-4792-8178-6899564E7ECB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBRegister", "DBRegister\DBRegister.csproj", "{A10E6D7A-8166-4792-8178-6899564E7ECB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KidsPosDLL", "PosSystem\KidsPosDLL.csproj", "{DD100C66-DDB6-4A3F-A421-8A02A9E92484}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KidsPosDLL", "KidsPosDLL\KidsPosDLL.csproj", "{DD100C66-DDB6-4A3F-A421-8A02A9E92484}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,7 +43,9 @@ Global
 		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
 		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Debug|x86.Build.0 = Debug|Any CPU
 		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DD100C66-DDB6-4A3F-A421-8A02A9E92484}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
