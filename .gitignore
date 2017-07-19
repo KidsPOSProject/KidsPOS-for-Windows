@@ -4,6 +4,8 @@
 /bin/*/*.vshost.exe.manifest
 /bin/*/*.xml
 /*/bin
+/*/Debug
+/*/Release
 /*/obj
 /*/Service References
 /*/StyleCop.Cache
