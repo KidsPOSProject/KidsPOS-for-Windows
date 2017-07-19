@@ -71,27 +71,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Object\BarcodeObject.cs" />
-    <Compile Include="Object\Config.cs" />
-    <Compile Include="Object\Database\ItemGenreObject.cs" />
-    <Compile Include="Object\Database\ItemObject.cs" />
-    <Compile Include="Object\Database\RecordObject.cs" />
-    <Compile Include="Object\Database\SaleObject.cs" />
-    <Compile Include="Object\Database\StaffObject.cs" />
-    <Compile Include="Object\Database\StoreObject.cs" />
-    <Compile Include="Object\PrintItemObject.cs" />
+    <Compile Include="Sources\BarcodeObject.cs" />
+    <Compile Include="Sources\Config.cs" />
+    <Compile Include="Sources\Database\ItemGenreObject.cs" />
+    <Compile Include="Sources\Database\ItemObject.cs" />
+    <Compile Include="Sources\Database\RecordObject.cs" />
+    <Compile Include="Sources\Database\SaleObject.cs" />
+    <Compile Include="Sources\Database\StaffObject.cs" />
+    <Compile Include="Sources\Database\StoreObject.cs" />
+    <Compile Include="Sources\PrintItemObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Setting\Database.cs" />
-    <Compile Include="Setting\BarcodeConfig.cs" />
-    <Compile Include="Setting\PosInformation.cs" />
-    <Compile Include="Util\Barcode.cs" />
-    <Compile Include="Util\CSV.cs" />
-    <Compile Include="Util\Database.cs" />
-    <Compile Include="Util\Print.cs" />
-    <Compile Include="Util\SocketBase.cs" />
-    <Compile Include="Util\SocketClient.cs" />
-    <Compile Include="Util\SocketServer.cs" />
-    <Compile Include="Util\Time.cs" />
+    <Compile Include="Sources\Setting\Database.cs" />
+    <Compile Include="Sources\Setting\BarcodeConfig.cs" />
+    <Compile Include="Sources\Setting\PosInformation.cs" />
+    <Compile Include="Sources\Util\Barcode.cs" />
+    <Compile Include="Sources\Util\CSV.cs" />
+    <Compile Include="Sources\Util\Database.cs" />
+    <Compile Include="Sources\Util\Print.cs" />
+    <Compile Include="Sources\Util\SocketBase.cs" />
+    <Compile Include="Sources\Util\SocketClient.cs" />
+    <Compile Include="Sources\Util\SocketServer.cs" />
+    <Compile Include="Sources\Util\Time.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
