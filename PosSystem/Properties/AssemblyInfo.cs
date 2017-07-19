@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PosSystem")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 次の GUID は、このプロジェクトが COM に公開される場合の、typelib の ID です
-[assembly: Guid("faa1a9aa-8c57-4ff1-8933-614001b33e92")]
+[assembly: Guid("02cdaa42-30e2-4f73-85d5-bb784801d924")]
 
 // アセンブリのバージョン情報は、以下の 4 つの値で構成されています:
 //
