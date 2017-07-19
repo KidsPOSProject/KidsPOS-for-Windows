@@ -3,10 +3,11 @@
 /bin/*/*.vshost.exe
 /bin/*/*.vshost.exe.manifest
 /bin/*/*.xml
-/*/bin
-/*/Debug
-/*/Release
-/*/obj
+*/bin/
+*/Debug/
+*/Release/
+*/obj/
 /*/Service References
 /*/StyleCop.Cache
-.vs
+.vs/
+packages/
