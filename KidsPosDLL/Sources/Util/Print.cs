@@ -48,7 +48,7 @@ namespace KidsPos.Sources.Util
                 for (var i = 0; i < colNum + 1; i++)
                 {
                     // 線の太さ
-                    var penSize = 0.1f;
+                    const float penSize = 0.1f;
                     //横の線
                     graphics.DrawLine(new Pen(Brushes.Black, penSize),
                         new Point((int) marginPageLeft, (int) (marginPageTop + marginPrintHeight * i)),
@@ -99,10 +99,10 @@ namespace KidsPos.Sources.Util
 
         public void PrintReceipt(ListView itemList, string deposit, PrintPageEventArgs e, string accountCode)
         {
-            var marginMin = 3;
-            var marginMax = 70;
-            var alignCenter = 27;
-            var lineHeight = 7;
+            const int marginMin = 3;
+            const int marginMax = 70;
+            const int alignCenter = 27;
+            const int lineHeight = 7;
 
             var drawHeightPosition = 0;
 
@@ -188,18 +188,18 @@ namespace KidsPos.Sources.Util
         {
             var config = new PrintConfigSystemBarcode(e.Graphics);
 
-            config.DrawHeightPosition += config.LineHeight + 22;
+            config.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight + 22;
 
-            DrawString(config.Graphics, config.FontBig, "<システムバーコード>", config.AlignCenter - 20,
+            DrawString(config.Graphics, config.FontBig, "<システムバーコード>", PrintConfigSystemBarcode.AlignCenter - 20,
                 config.DrawHeightPosition);
 
-            config.DrawHeightPosition += config.LineHeight + 3;
+            config.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight + 3;
 
             config.Graphics.DrawLine(new Pen(Brushes.Black),
-                new Point(config.MarginMin, config.DrawHeightPosition),
-                new Point(config.MarginMax, config.DrawHeightPosition));
+                new Point(PrintConfigSystemBarcode.MarginMin, config.DrawHeightPosition),
+                new Point(PrintConfigSystemBarcode.MarginMax, config.DrawHeightPosition));
 
-            config.DrawHeightPosition += config.LineHeight + 2;
+            config.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight + 2;
 
             /* ---  バーコード生成  --- */
 
@@ -210,8 +210,8 @@ namespace KidsPos.Sources.Util
             DrawBarcode("デバッグ用ツールバー表示切り替え", BarcodeConfig.ChangeVisibleDebugToolbar, ref config);
 
             config.Graphics.DrawLine(new Pen(Brushes.Black),
-                new Point(config.MarginMin, config.DrawHeightPosition),
-                new Point(config.MarginMax, config.DrawHeightPosition));
+                new Point(PrintConfigSystemBarcode.MarginMin, config.DrawHeightPosition),
+                new Point(PrintConfigSystemBarcode.MarginMax, config.DrawHeightPosition));
 
             e.HasMorePages = false;
         }
@@ -220,44 +220,46 @@ namespace KidsPos.Sources.Util
         {
             var config = new PrintConfigSystemBarcode(e.Graphics);
 
-            config.DrawHeightPosition += config.LineHeight + 22;
+            config.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight + 22;
 
-            DrawString(config.Graphics, config.FontBig, "<ダミーユーザ>", config.AlignCenter - 20, config.DrawHeightPosition);
+            DrawString(config.Graphics, config.FontBig, "<ダミーユーザ>", PrintConfigSystemBarcode.AlignCenter - 20,
+                config.DrawHeightPosition);
 
-            config.DrawHeightPosition += config.LineHeight + 3;
+            config.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight + 3;
 
             config.Graphics.DrawLine(new Pen(Brushes.Black),
-                new Point(config.MarginMin, config.DrawHeightPosition),
-                new Point(config.MarginMax, config.DrawHeightPosition));
+                new Point(PrintConfigSystemBarcode.MarginMin, config.DrawHeightPosition),
+                new Point(PrintConfigSystemBarcode.MarginMax, config.DrawHeightPosition));
 
-            config.DrawHeightPosition += config.LineHeight + 2;
+            config.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight + 2;
 
             /* ---  バーコード生成  --- */
 
             DrawBarcode("ダミー", new StaffObject(9999, "").Barcode, ref config);
 
             config.Graphics.DrawLine(new Pen(Brushes.Black),
-                new Point(config.MarginMin, config.DrawHeightPosition),
-                new Point(config.MarginMax, config.DrawHeightPosition));
+                new Point(PrintConfigSystemBarcode.MarginMin, config.DrawHeightPosition),
+                new Point(PrintConfigSystemBarcode.MarginMax, config.DrawHeightPosition));
 
             e.HasMorePages = false;
         }
 
-        private void DrawString(Graphics g, Font f, string s, int x, int y)
+        private static void DrawString(Graphics g, Font f, string s, int x, int y)
         {
             g.DrawString(s, f, Brushes.Black, new PointF(x, y));
         }
 
-        private void DrawBarcode(
+        private static void DrawBarcode(
             string sysName, string sysCode, ref PrintConfigSystemBarcode c)
         {
-            DrawString(c.Graphics, c.Font, sysName, c.AlignCenter - 12, c.DrawHeightPosition);
-            c.DrawHeightPosition += c.LineHeight - 3;
+            DrawString(c.Graphics, c.Font, sysName, PrintConfigSystemBarcode.AlignCenter - 12, c.DrawHeightPosition);
+            c.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight - 3;
 
             var barcode = new BarcodeObject(sysCode).GetBitmap();
-            c.Graphics.DrawImage(barcode, c.AlignCenter - 13, c.DrawHeightPosition, barcode.Width * 0.34f,
+            c.Graphics.DrawImage(barcode, PrintConfigSystemBarcode.AlignCenter - 13, c.DrawHeightPosition,
+                barcode.Width * 0.34f,
                 barcode.Height * 0.14f);
-            c.DrawHeightPosition += c.LineHeight + 10;
+            c.DrawHeightPosition += PrintConfigSystemBarcode.LineHeight + 10;
         }
 
         public static bool PingToPrinter(string printerIp)
@@ -270,13 +272,13 @@ namespace KidsPos.Sources.Util
 
         private class PrintConfigSystemBarcode
         {
-            public readonly int AlignCenter = 27;
+            public const int AlignCenter = 27;
             public readonly Font Font = new Font("MS UI Gothic", 10);
             public readonly Font FontBig = new Font("MS UI Gothic", 13);
             public readonly Graphics Graphics;
-            public readonly int LineHeight = 7;
-            public readonly int MarginMax = 70;
-            public readonly int MarginMin = 3;
+            public const int LineHeight = 7;
+            public const int MarginMax = 70;
+            public const int MarginMin = 3;
             public int DrawHeightPosition;
 
             public PrintConfigSystemBarcode(Graphics g)
