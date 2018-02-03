@@ -5,21 +5,24 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using KidsPos.Object;
 
-namespace KidsPos.Util
+namespace KidsPos.Sources.Util
 {
-    public class SocketServer :SocketBase
+    public class SocketServer : SocketBase
     {
         private static readonly SocketServer Instance = new SocketServer();
+        private readonly List<ClientHandler> _hClient = new List<ClientHandler>();
+
+        private TcpListener _tcpClient;
+
+        private SocketServer()
+        {
+        }
+
         public static SocketServer GetInstance()
         {
             return Instance;
         }
-
-        private TcpListener _tcpClient;
-        private readonly List<ClientHandler> _hClient = new List<ClientHandler>();
-        private SocketServer() { }
 
         public bool ServerStart()
         {
@@ -34,6 +37,7 @@ namespace KidsPos.Util
                 return false;
             }
         }
+
         private void ServerListen()
         {
             _tcpClient = new TcpListener(IPAddress.Any, Config.GetInstance().TargetPort);
@@ -53,18 +57,19 @@ namespace KidsPos.Util
                 // ignored
             }
         }
+
         public List<ClientHandler> GetClient()
         {
             return _hClient;
         }
+
         private void DeleteClient(ClientHandler cl)
         {
             Console.WriteLine("クライアントが抜けました");
             if (_hClient.Any(handler => handler == cl))
-            {
                 _hClient.Remove(cl);
-            }
         }
+
         public void CloseServer()
         {
             if (_tcpClient != null)
@@ -80,12 +85,12 @@ namespace KidsPos.Util
 
         public class ClientHandler
         {
-            private readonly SocketServer _parent;
             private readonly byte[] _buffer;
-            private Socket _socket;
-            private NetworkStream _networkStream;
             private readonly AsyncCallback _callbackRead;
             private readonly AsyncCallback _callbackWrite;
+            private readonly SocketServer _parent;
+            private NetworkStream _networkStream;
+            private Socket _socket;
 
             public ClientHandler(SocketServer parent, Socket socketForClient)
             {
@@ -116,9 +121,9 @@ namespace KidsPos.Util
                         var getByte = new byte[bytesRead];
                         for (var i = 0; i < bytesRead; i++)
                             getByte[i] = _buffer[i];
-                        _parent.Listener.OnReceive(_parent.EcUni.GetString(Encoding.Convert(_parent.EcSjis, _parent.EcUni, getByte)));
+                        _parent.Listener.OnReceive(
+                            _parent.EcUni.GetString(Encoding.Convert(_parent.EcSjis, _parent.EcUni, getByte)));
                         StartRead();
-
                     }
                     else
                     {
@@ -136,10 +141,12 @@ namespace KidsPos.Util
                     // ignored
                 }
             }
+
             public void WriteString(byte[] buffer)
             {
                 _networkStream.BeginWrite(buffer, 0, buffer.Length, _callbackWrite, null);
             }
+
             private void OnWriteComplete(IAsyncResult ar)
             {
                 _networkStream.EndWrite(ar);

@@ -5,21 +5,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using KidsPos.Object;
 
-namespace KidsPos.Util
+namespace KidsPos.Sources.Util
 {
     public class Csv
     {
         public const string ConfigPath = "config.csv";
-        public static class ConfigHead
-        {
-            public const string StoreNum = "#StoreNum";
-            public const string TargetIp = "#TargetIP";
-            public const string TargetPort = "#TargetPort";
-            public const string Mode = "#Mode";
-            public const string PrintEnable = "#PrintReceipt";
-        }
 
         public void LoadConfig()
         {
@@ -75,6 +66,7 @@ namespace KidsPos.Util
             }
             Config.GetInstance().Init(storeNum, targetHost, table);
         }
+
         private static List<string> LoadCsv(string path)
         {
             var ret = new List<string>();
@@ -82,15 +74,23 @@ namespace KidsPos.Util
             using (var sr = new StreamReader(path, Encoding.GetEncoding("Shift_JIS")))
             {
                 while (!sr.EndOfStream)
-                {
-                    ret.Add(sr.ReadLine()?.Replace(" ","").Replace("\t",""));
-                }
+                    ret.Add(sr.ReadLine()?.Replace(" ", "").Replace("\t", ""));
             }
             return ret;
         }
+
         public static void RunNotePad()
         {
-            Process.Start("Notepad", Environment.CurrentDirectory + "\\" +ConfigPath);
+            Process.Start("Notepad", Environment.CurrentDirectory + "\\" + ConfigPath);
+        }
+
+        public static class ConfigHead
+        {
+            public const string StoreNum = "#StoreNum";
+            public const string TargetIp = "#TargetIP";
+            public const string TargetPort = "#TargetPort";
+            public const string Mode = "#Mode";
+            public const string PrintEnable = "#PrintReceipt";
         }
     }
 }

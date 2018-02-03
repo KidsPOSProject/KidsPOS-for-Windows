@@ -2,7 +2,7 @@
 using System.Drawing.Printing;
 using System.Windows.Forms;
 
-namespace PosSystem.Source
+namespace PosSystem.Sources
 {
     partial class AccountChange
     {

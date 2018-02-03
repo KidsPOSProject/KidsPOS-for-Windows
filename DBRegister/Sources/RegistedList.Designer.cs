@@ -2,7 +2,7 @@
 using System.Drawing.Printing;
 using System.Windows.Forms;
 
-namespace DBRegister
+namespace DBRegister.Sources
 {
     partial class RegistedList
     {

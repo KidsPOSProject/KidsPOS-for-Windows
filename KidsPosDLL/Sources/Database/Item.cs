@@ -3,9 +3,9 @@ using KidsPos.Sources.Setting;
 
 namespace KidsPos.Sources.Database
 {
-    public class ItemObject : RecordObject
+    public class Item : Record
     {
-        public ItemObject(string barcode, string name, int price, int storeNum, int genreNum) : base(DbPath.Item)
+        public Item(string barcode, string name, int price, int storeNum, int genreNum) : base(DbPath.Item)
         {
             Barcode = barcode;
             Name = name;
@@ -15,7 +15,7 @@ namespace KidsPos.Sources.Database
             GenerateInsertQuery();
         }
 
-        public ItemObject(SQLiteDataReader reader) : base(DbPath.Item, reader)
+        public Item(SQLiteDataReader reader) : base(DbPath.Item, reader)
         {
             SetData();
         }

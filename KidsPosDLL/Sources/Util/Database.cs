@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using KidsPos.Object.Database;
-using KidsPos.Setting;
+using KidsPos.Sources.Database;
+using KidsPos.Sources.Setting;
 
-namespace KidsPos.Util
+namespace KidsPos.Sources.Util
 {
     public class Database
     {
@@ -14,10 +14,12 @@ namespace KidsPos.Util
         {
             return QueryImpl(obj.Db, obj.QueryInsert);
         }
+
         public bool Insert<T>(List<T> obj) where T : RecordObject
         {
             return InsertImpl(obj);
         }
+
         public void CreateTable()
         {
             QueryImpl(DbPath.Item, DbQueryCreate.Item);
@@ -26,6 +28,7 @@ namespace KidsPos.Util
             QueryImpl(DbPath.Store, DbQueryCreate.Store);
             QueryImpl(DbPath.Staff, DbQueryCreate.Staff);
         }
+
         public List<ItemObject> GetItem(string barcode)
         {
             return SelectMulti<ItemObject>();
@@ -37,6 +40,7 @@ namespace KidsPos.Util
                 DbPath.GetPath<T>(),
                 "SELECT * FROM " + TableList.GetTableName<T>() + " " + where);
         }
+
         public List<T> SelectMulti<T>(string where = "") where T : RecordObject
         {
             return QuerySelectImpl<T>(
@@ -65,11 +69,13 @@ namespace KidsPos.Util
             var ret = SelectSingle<StoreObject>($"WHERE id = '{id}'");
             return ret;
         }
+
         public int find_store(string storeName)
         {
             var ret = SelectSingle<StoreObject>($"WHERE name = '{storeName}'");
             return ret?.Id ?? -1;
         }
+
         public int find_ganre(string genre, int storeNum)
         {
             var ret = SelectSingle<ItemGenreObject>($"WHERE name = '{genre}' AND store = '{storeNum}'");
@@ -82,6 +88,7 @@ namespace KidsPos.Util
                 $"WHERE name = '{itemName}' AND price = '{price}' AND shop = '{storeNum}'");
             return ret?.Id ?? -1;
         }
+
         public void UpdateItem(ItemObject item)
         {
             QueryImpl(item.Db, "UPDATE " + TableList.Item +
@@ -113,6 +120,7 @@ namespace KidsPos.Util
             }
             return true;
         }
+
         private T QuerySelectImplSingle<T>(string db, string where) where T : RecordObject
         {
             T ret = null;
@@ -126,9 +134,7 @@ namespace KidsPos.Util
                         com.CommandText = where;
                         var reader = com.ExecuteReader();
                         while (reader.Read())
-                        {
-                            ret = (T)Activator.CreateInstance(typeof(T), reader);
-                        }
+                            ret = (T) Activator.CreateInstance(typeof(T), reader);
                         com.Dispose();
                     }
                 }
@@ -136,6 +142,7 @@ namespace KidsPos.Util
             }
             return ret;
         }
+
         private static List<T> QuerySelectImpl<T>(string db, string where) where T : RecordObject
         {
             var ret = new List<T>();
@@ -149,9 +156,7 @@ namespace KidsPos.Util
                         com.CommandText = where;
                         var reader = com.ExecuteReader();
                         while (reader.Read())
-                        {
-                            ret.Add((T)Activator.CreateInstance(typeof(T), reader));
-                        }
+                            ret.Add((T) Activator.CreateInstance(typeof(T), reader));
                         com.Dispose();
                     }
                 }
@@ -159,6 +164,7 @@ namespace KidsPos.Util
             }
             return ret;
         }
+
         private static bool InsertImpl<T>(IList<T> tbl) where T : RecordObject
         {
             if (1 > tbl.Count) return true;
@@ -189,18 +195,20 @@ namespace KidsPos.Util
             }
             return true;
         }
+
         public bool UpdateItem(int id, string name, int price)
         {
             return QueryImpl(DbPath.Item,
                 "UPDATE " + TableList.Item + $" SET name = '{name}', price = '{price}' WHERE id = '{id}'");
         }
+
         // Insertview
         public void InsertView<T>(DataTable dt, string query = "") where T : RecordObject
         {
             using (var con = new SQLiteConnection("Data Source=" + DbPath.GetPath<T>()))
             {
                 using (var adapter = new SQLiteDataAdapter(
-                    (query.Equals("")) ? "SELECT * FROM " + TableList.GetTableName<T>() : query, con))
+                    query.Equals("") ? "SELECT * FROM " + TableList.GetTableName<T>() : query, con))
                 {
                     adapter.Fill(dt);
                 }
@@ -211,16 +219,19 @@ namespace KidsPos.Util
 
     public class SqLiteItem
     {
-        private SQLiteDataReader Reader { get; set; }
         public SqLiteItem(SQLiteDataReader reader)
         {
             Reader = reader;
         }
+
+        private SQLiteDataReader Reader { get; }
+
         public string GetString(string item)
         {
             if (Reader?[item] == null || Reader[item].Equals("")) return "";
             return Reader[item].ToString();
         }
+
         public int GetInt(string item)
         {
             if (Reader?[item] == null || Reader[item].Equals("")) return 0;
@@ -231,10 +242,20 @@ namespace KidsPos.Util
 
     public class DbQueryCreate
     {
-        public const string Item = "CREATE TABLE " + TableList.Item + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)";
-        public const string ItemGenre = "CREATE TABLE " + TableList.ItemGenre + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
-        public const string Sale = "CREATE TABLE " + TableList.Sale + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER, staff INTEGER)";
-        public const string Store = "CREATE TABLE " + TableList.Store + "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
+        public const string Item = "CREATE TABLE " + TableList.Item +
+                                   "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode INTEGER UNIQUE, name TEXT, price INTEGER, shop INT, genre TEXT)"
+            ;
+
+        public const string ItemGenre = "CREATE TABLE " + TableList.ItemGenre +
+                                        "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT, store TEXT)";
+
+        public const string Sale = "CREATE TABLE " + TableList.Sale +
+                                   "(id INTEGER  PRIMARY KEY AUTOINCREMENT, barcode TEXT UNIQUE, created_at TEXT, points INTEGER, price INTEGER, items TEXT, store INTEGER, staff INTEGER)"
+            ;
+
+        public const string Store = "CREATE TABLE " + TableList.Store +
+                                    "(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)";
+
         public const string Staff = "CREATE TABLE " + TableList.Staff + "(barcode INTEGER PRIMARY KEY, name TEXT)";
     }
 }

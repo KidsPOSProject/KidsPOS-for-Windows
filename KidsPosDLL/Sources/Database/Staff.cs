@@ -3,23 +3,23 @@ using KidsPos.Sources.Setting;
 
 namespace KidsPos.Sources.Database
 {
-    public class StaffObject : RecordObject
+    public class Staff : Record
     {
-        public StaffObject(int staffId, string name) : base(DbPath.Staff)
+        public Staff(int staffId, string name) : base(DbPath.Staff)
         {
             Barcode = CreateStaffBarcode(staffId);
             Name = name;
             GenerateInsertQuery();
         }
 
-        public StaffObject(string staffId, string name) : base(DbPath.Staff)
+        public Staff(string staffId, string name) : base(DbPath.Staff)
         {
             Barcode = CreateStaffBarcode(int.Parse(staffId));
             Name = name;
             GenerateInsertQuery();
         }
 
-        public StaffObject(SQLiteDataReader reader) : base(DbPath.Staff, reader)
+        public Staff(SQLiteDataReader reader) : base(DbPath.Staff, reader)
         {
             SetData();
         }

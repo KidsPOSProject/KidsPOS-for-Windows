@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace DBRegister
+namespace DBRegister.Sources
 {
     partial class RegistedUser
     {

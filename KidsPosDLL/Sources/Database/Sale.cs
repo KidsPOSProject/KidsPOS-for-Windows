@@ -4,9 +4,9 @@ using KidsPos.Sources.Util;
 
 namespace KidsPos.Sources.Database
 {
-    public class SaleObject : RecordObject
+    public class Sale : Record
     {
-        public SaleObject(int points, int price, string items, int storeId, string staffId) : base(DbPath.Sale)
+        public Sale(int points, int price, string items, int storeId, string staffId) : base(DbPath.Sale)
         {
             CreatedAt = new Time().GetTime();
             Points = points;
@@ -18,7 +18,7 @@ namespace KidsPos.Sources.Database
             GenerateInsertQuery();
         }
 
-        public SaleObject(SQLiteDataReader reader) : base(DbPath.Sale, reader)
+        public Sale(SQLiteDataReader reader) : base(DbPath.Sale, reader)
         {
             SetData();
         }
@@ -53,7 +53,7 @@ namespace KidsPos.Sources.Database
                 BarcodeConfig.Prefix +
                 BarcodeConfig.Sale +
                 StoreId.ToString("D" + BarcodeConfig.DataMidLength) +
-                new Util.Database().Count<SaleObject>(
+                new Util.Database().Count<Sale>(
                     $"where store = '{StoreId}'").ToString("D" + BarcodeConfig.DataLength);
         }
 

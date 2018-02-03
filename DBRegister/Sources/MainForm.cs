@@ -5,13 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using KidsPos.Object;
-using KidsPos.Object.Database;
-using KidsPos.Setting;
-using KidsPos.Util;
+using KidsPos.Sources;
+using KidsPos.Sources.Database;
+using KidsPos.Sources.Setting;
+using KidsPos.Sources.Util;
 using Microsoft.VisualBasic.FileIO;
 
-namespace DBRegister
+namespace DBRegister.Sources
 {
     public partial class MainForm : Form
     {
@@ -30,6 +30,9 @@ namespace DBRegister
             MaximizeBox = false;
             PosInformation.GetInstance().Init(this);
         }
+
+        public int CntSuccess { get; private set; }
+        public int CntMissing { get; private set; }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -53,9 +56,6 @@ namespace DBRegister
             load_csv(LoadType.User);
         }
 
-        public int CntSuccess { get; private set; }
-        public int CntMissing { get; private set; }
-
         public void load_csv(LoadType type)
         {
             var al = new ArrayList();
@@ -76,21 +76,18 @@ namespace DBRegister
             {
                 // 1行読み込み
                 var row = parser.ReadFields();
-               
+
                 switch (type)
                 {
                     case LoadType.Item:
                         if (row != null)
-                        {
                             foreach (var field in row)
                             {
                                 var f = field;
                                 f = f.Replace("\r\n", "n");
                                 f = f.Replace(" ", "");
                                 if (f != "") al.Add(f);
-
                             }
-                        }
                         break;
                     case LoadType.User:
                         if (row != null && CheckFormatUser(row))
@@ -138,9 +135,9 @@ namespace DBRegister
                     storePosition = i;
                     break;
                 }
-                if (storePosition == -1)throw new InvalidDataException();
+                if (storePosition == -1) throw new InvalidDataException();
                 var storeName = csv[storePosition + 1].ToString();
-                int storeNum = db.find_store(storeName);
+                var storeNum = db.find_store(storeName);
                 if (storeNum == -1)
                 {
                     isFirst = true;
@@ -164,34 +161,28 @@ namespace DBRegister
                 //商品ジャンルの行から、商品リストまでの行を読み取って、その間をデータベースに追加する。
                 var itemPosition = -1;
                 for (var i = storePosition; i < csv.Count; i++)
-                {
                     if (csv[i].ToString().StartsWith("#商品ジャンル"))
                     {
                         itemPosition = i;
                         break;
                     }
-                }
                 var itemList = -1;
                 for (var i = storePosition; i < csv.Count; i++)
-                {
                     if (csv[i].ToString().StartsWith("##商品リスト"))
                     {
                         itemList = i;
                         break;
                     }
-                }
 
                 if (itemPosition == itemList) throw new InvalidDataException();
-                
+
                 var g = db.SelectMulti<ItemGenreObject>($"WHERE store = '{storeNum}'").Select(_ => _.Name).ToList();
                 var tempGenre = new List<ItemGenreObject>();
                 for (var i = itemPosition + 1; i < itemList; i++)
                 {
                     var genreName = csv[i].ToString();
                     if (g.IndexOf(genreName) == -1)
-                    {
                         tempGenre.Add(new ItemGenreObject(genreName, storeNum));
-                    }
                 }
                 db.Insert(tempGenre);
 
@@ -222,25 +213,22 @@ namespace DBRegister
                     var name = csv[i].ToString();
                     var genreName = csv[i + 1].ToString();
                     var price = Convert.ToInt32(csv[i + 2].ToString());
-                    int itemNum = db.find_item(name, price, storeNum);
+                    var itemNum = db.find_item(name, price, storeNum);
                     if (itemNum == -1)
                     {
                         count++;
                         if (db.find_ganre(genreName, storeNum) == -1)
                         {
                             //商品登録の時に、変なジャンルが混ざってたら・・・
-                            var dr = MessageBox.Show(@"未定義のジャンルがありました。追加しますか？" + Environment.NewLine + csv[i + 1], @"読み込みエラー", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            var dr = MessageBox.Show(@"未定義のジャンルがありました。追加しますか？" + Environment.NewLine + csv[i + 1],
+                                @"読み込みエラー", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                             if (dr == DialogResult.Yes)
-                            {
                                 db.Insert(new ItemGenreObject(csv[i * 1].ToString(), storeNum));
-                            }
                             else
-                            {
                                 continue;
-                            }
                         }
                         list.Add(new ItemObject(
-                            new BarcodeObject(storeNum, count).Barcode, //barcode
+                                new BarcodeObject(storeNum, count).Barcode, //barcode
                                 name, //name
                                 price, //price
                                 storeNum, //shop
@@ -258,20 +246,22 @@ namespace DBRegister
                     @"・CSV形式であるか" + Environment.NewLine +
                     @"・しっかりフォーマットに沿っているか" + Environment.NewLine +
                     @"を確認してください", @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
-                    );
+                );
                 return false;
             }
             finally
             {
-                if(isFirst) MessageBox.Show(@"何らかの原因で登録できませんでした。");
+                if (isFirst) MessageBox.Show(@"何らかの原因で登録できませんでした。");
                 else MessageBox.Show(@"何らかの原因で登録できませんでした。");
             }
             return true;
         }
+
         public void RegistUser(ArrayList csv)
         {
             var result = new Database()
-                .Insert((from string row in csv select row.Split(',') into s select new StaffObject(s[0], s[1])).ToList());
+                .Insert(
+                    (from string row in csv select row.Split(',') into s select new StaffObject(s[0], s[1])).ToList());
             MessageBox.Show(result ? @"商品リストを更新しました" : @"??");
         }
 

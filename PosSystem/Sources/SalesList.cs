@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
-using KidsPos.Object;
-using KidsPos.Object.Database;
-using KidsPos.Setting;
-using KidsPos.Util;
+using KidsPos.Sources;
+using KidsPos.Sources.Database;
+using KidsPos.Sources.Setting;
+using KidsPos.Sources.Util;
 
-namespace PosSystem.Source
+namespace PosSystem.Sources
 {
     public partial class SalesList : Form
     {
         private readonly DataTable _table = new DataTable();
         private List<SaleObject> _list = new List<SaleObject>();
+
         public SalesList()
         {
             InitializeComponent();
@@ -22,6 +23,7 @@ namespace PosSystem.Source
             mGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             mGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
         }
+
         protected override void OnLoad(EventArgs e)
         {
             mGridView.DataSource = _table;
@@ -30,7 +32,7 @@ namespace PosSystem.Source
 
         private void Sales_List_Load(object sender, EventArgs e)
         {
-            Database db = new Database();
+            var db = new Database();
             db.InsertView<SaleObject>(_table,
                 $"SELECT barcode, created_at, price, points FROM {TableList.Sale} WHERE store ='{Config.GetInstance().Store.Id}'");
             _list = db.SelectMulti<SaleObject>(string.Format("WHERE store = '{0}'", Config.GetInstance().Store.Id));
@@ -40,10 +42,8 @@ namespace PosSystem.Source
         public string calc_turnover()
         {
             var sum = 0;
-            foreach (SaleObject item in _list)
-            {
+            foreach (var item in _list)
                 sum += item.Price;
-            }
             return sum.ToString();
         }
 
@@ -52,9 +52,8 @@ namespace PosSystem.Source
             var sl = new Sales(
                 new Database().SelectSingle<SaleObject>(
                     $"WHERE barcode = '{mGridView[0, mGridView.CurrentCell.RowIndex].Value}'"));
-            sl.ShowDialog(this); 
+            sl.ShowDialog(this);
             sl.Dispose();
         }
-
     }
 }

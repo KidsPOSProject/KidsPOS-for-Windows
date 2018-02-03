@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 
-namespace KidsPos.Util
+namespace KidsPos.Sources.Util
 {
     public class Time
     {
         private readonly Hashtable _dow = new Hashtable();
+
         public Time()
         {
             _dow.Add(DayOfWeek.Sunday, "日");

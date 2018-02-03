@@ -1,15 +1,10 @@
 ﻿using System.Data.SQLite;
-using KidsPos.Util;
+using KidsPos.Sources.Util;
 
-namespace KidsPos.Object.Database
+namespace KidsPos.Sources.Database
 {
     public abstract class RecordObject
     {
-        public string Db { get; private set; }
-        public string QueryInsert { get; private set; }
-        public SqLiteItem Record { get; private set; }
-        public int Id { get; set; }
-
         protected RecordObject(string path)
         {
             Db = path;
@@ -20,6 +15,11 @@ namespace KidsPos.Object.Database
             Db = path;
             Record = new SqLiteItem(reader);
         }
+
+        public string Db { get; }
+        public string QueryInsert { get; private set; }
+        public SqLiteItem Record { get; }
+        public int Id { get; set; }
         public abstract void GenerateInsertQuery();
 
         public void SetQueryInsert(string query)

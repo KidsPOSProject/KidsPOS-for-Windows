@@ -4,17 +4,24 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Printing;
 using System.Management;
 using System.Windows.Forms;
-using KidsPos.Object;
-using KidsPos.Object.Database;
-using KidsPos.Setting;
+using KidsPos.Sources.Database;
+using KidsPos.Sources.Setting;
 
-namespace KidsPos.Util
+namespace KidsPos.Sources.Util
 {
     public class Print
     {
         private static readonly Print Instance = new Print();
-        private Print(){}
-        public static Print GetInstance() { return Instance; }
+
+        private Print()
+        {
+        }
+
+        public static Print GetInstance()
+        {
+            return Instance;
+        }
+
         public void PrintItemBarcode(PrintItemObject obj, bool drawGrid, PrintPageEventArgs e)
         {
             // 縦横の印刷数
@@ -37,63 +44,59 @@ namespace KidsPos.Util
 
             // グリッド線を印刷のチェックが入っている時
             if (drawGrid)
-            {
-                //線引いてみる
                 for (var j = 0; j < rowNum + 1; j++)
+                for (var i = 0; i < colNum + 1; i++)
                 {
-                    for (var i = 0; i < colNum + 1; i++)
-                    {
-                        // 線の太さ
-                        var penSize = 0.1f;
-                        //横の線
-                        graphics.DrawLine(new Pen(Brushes.Black, penSize),
-                            new Point((int)marginPageLeft, (int)(marginPageTop + marginPrintHeight * i)),
-                            new Point((int)(marginPageLeft + (marginPrintWeight * rowNum)), (int)(marginPageTop + (marginPrintHeight * i))));
+                    // 線の太さ
+                    var penSize = 0.1f;
+                    //横の線
+                    graphics.DrawLine(new Pen(Brushes.Black, penSize),
+                        new Point((int) marginPageLeft, (int) (marginPageTop + marginPrintHeight * i)),
+                        new Point((int) (marginPageLeft + marginPrintWeight * rowNum),
+                            (int) (marginPageTop + marginPrintHeight * i)));
 
-                        //縦の線
-                        graphics.DrawLine(new Pen(Brushes.Black, penSize),
-                            new Point((int)(marginPageLeft + (marginPrintWeight * j)), (int)marginPageTop),
-                            new Point((int)(marginPageLeft + (marginPrintWeight * j)), (int)(marginPageTop + (marginPrintHeight * colNum))));
-                    }
+                    //縦の線
+                    graphics.DrawLine(new Pen(Brushes.Black, penSize),
+                        new Point((int) (marginPageLeft + marginPrintWeight * j), (int) marginPageTop),
+                        new Point((int) (marginPageLeft + marginPrintWeight * j),
+                            (int) (marginPageTop + marginPrintHeight * colNum)));
                 }
-            }
 
             var barcode = obj.Barcode.GetBitmap();
             //バーコードの印刷
             for (var j = 0; j < rowNum; j++)
+            for (var i = 0; i < colNum; i++)
             {
-                for (var i = 0; i < colNum; i++)
-                {
-                    var hei = i * marginPrintHeight;
-                    var wei = j * marginPrintWeight;
-                    graphics.DrawImage(
-                        barcode,
-                        marginPageLeft + wei + 3.2f,
-                        marginPageTop + hei + 7f,
-                        barcode.Width * 0.3f, barcode.Height * 0.14f
-                        );
+                var hei = i * marginPrintHeight;
+                var wei = j * marginPrintWeight;
+                graphics.DrawImage(
+                    barcode,
+                    marginPageLeft + wei + 3.2f,
+                    marginPageTop + hei + 7f,
+                    barcode.Width * 0.3f, barcode.Height * 0.14f
+                );
 
-                    graphics.DrawString(
-                        obj.ItemName,
-                        new Font("MS UI Gothic", 9),
-                        Brushes.Black,
-                        new PointF(
-                            marginPageLeft + wei + 1f,
-                            marginPageTop + hei + 0.2f
-                            )
-                        );
+                graphics.DrawString(
+                    obj.ItemName,
+                    new Font("MS UI Gothic", 9),
+                    Brushes.Black,
+                    new PointF(
+                        marginPageLeft + wei + 1f,
+                        marginPageTop + hei + 0.2f
+                    )
+                );
 
-                    graphics.DrawString(
-                        "おみせ: " + obj.StoreName,
-                        new Font("MS UI Gothic", 8), Brushes.Black,
-                        new PointF(
-                            marginPageLeft + wei + 1f,
-                            marginPageTop + hei + 3.5f
-                            )
-                        );
-                }
+                graphics.DrawString(
+                    "おみせ: " + obj.StoreName,
+                    new Font("MS UI Gothic", 8), Brushes.Black,
+                    new PointF(
+                        marginPageLeft + wei + 1f,
+                        marginPageTop + hei + 3.5f
+                    )
+                );
             }
         }
+
         public void PrintReceipt(ListView itemList, string deposit, PrintPageEventArgs e, string accountCode)
         {
             var marginMin = 3;
@@ -127,7 +130,8 @@ namespace KidsPos.Util
             for (var i = 0; i < itemList.Items.Count; i++)
             {
                 var lvi = itemList.Items[i];
-                DrawString(graphics, fontBig, lvi.SubItems[0].Text + "  " + lvi.SubItems[1].Text, marginMin, drawHeightPosition);
+                DrawString(graphics, fontBig, lvi.SubItems[0].Text + "  " + lvi.SubItems[1].Text, marginMin,
+                    drawHeightPosition);
                 DrawString(graphics, fontBig, "\t\t\\" + lvi.SubItems[3].Text, marginMin + 15, drawHeightPosition);
                 drawHeightPosition += lineHeight;
             }
@@ -156,7 +160,8 @@ namespace KidsPos.Util
             DrawString(graphics, fontBig, "おみせ：　" + Config.GetInstance().Store.Name, marginMin, drawHeightPosition);
             drawHeightPosition += lineHeight;
 
-            DrawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.GetInstance().GetStaffName(), marginMin, drawHeightPosition);
+            DrawString(graphics, fontBig, "れじのたんとう：　" + PosInformation.GetInstance().GetStaffName(), marginMin,
+                drawHeightPosition);
             drawHeightPosition += lineHeight + 5;
 
 
@@ -168,7 +173,8 @@ namespace KidsPos.Util
 
             var barcode = new BarcodeObject(accountCode).GetBitmap();
 
-            graphics.DrawImage(barcode, alignCenter - 13, drawHeightPosition, barcode.Width * 0.34f, barcode.Height * 0.14f);
+            graphics.DrawImage(barcode, alignCenter - 13, drawHeightPosition, barcode.Width * 0.34f,
+                barcode.Height * 0.14f);
             drawHeightPosition += lineHeight + 10;
 
             graphics.DrawLine(new Pen(Brushes.Black),
@@ -177,31 +183,15 @@ namespace KidsPos.Util
 
             e.HasMorePages = false;
         }
-        private class PrintConfigSystemBarcode
-        {
-            public int DrawHeightPosition;
-            public readonly Graphics Graphics;
-            public readonly int MarginMin = 3;
-            public readonly int MarginMax = 70;
-            public readonly int AlignCenter = 27;
-            public readonly int LineHeight = 7;
-            public readonly Font Font = new Font("MS UI Gothic", 10);
-            public readonly Font FontBig = new Font("MS UI Gothic", 13);
 
-            public PrintConfigSystemBarcode(Graphics g)
-            {
-                Graphics = g;
-                g.PageUnit = GraphicsUnit.Millimeter;
-                g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
-            }
-        }
         public void PrintSystemBarcode(object sender, PrintPageEventArgs e)
         {
             var config = new PrintConfigSystemBarcode(e.Graphics);
 
             config.DrawHeightPosition += config.LineHeight + 22;
 
-            DrawString(config.Graphics, config.FontBig, "<システムバーコード>", config.AlignCenter - 20, config.DrawHeightPosition);
+            DrawString(config.Graphics, config.FontBig, "<システムバーコード>", config.AlignCenter - 20,
+                config.DrawHeightPosition);
 
             config.DrawHeightPosition += config.LineHeight + 3;
 
@@ -225,6 +215,7 @@ namespace KidsPos.Util
 
             e.HasMorePages = false;
         }
+
         public void PrintDummyUserBarcode(object sender, PrintPageEventArgs e)
         {
             var config = new PrintConfigSystemBarcode(e.Graphics);
@@ -256,6 +247,7 @@ namespace KidsPos.Util
         {
             g.DrawString(s, f, Brushes.Black, new PointF(x, y));
         }
+
         private void DrawBarcode(
             string sysName, string sysCode, ref PrintConfigSystemBarcode c)
         {
@@ -263,15 +255,36 @@ namespace KidsPos.Util
             c.DrawHeightPosition += c.LineHeight - 3;
 
             var barcode = new BarcodeObject(sysCode).GetBitmap();
-            c.Graphics.DrawImage(barcode, c.AlignCenter - 13, c.DrawHeightPosition, barcode.Width * 0.34f, barcode.Height * 0.14f);
+            c.Graphics.DrawImage(barcode, c.AlignCenter - 13, c.DrawHeightPosition, barcode.Width * 0.34f,
+                barcode.Height * 0.14f);
             c.DrawHeightPosition += c.LineHeight + 10;
         }
+
         public static bool PingToPrinter(string printerIp)
         {
             var mo = new ManagementObject($"Win32_PingStatus.address='{printerIp}'");
-            var ret = (uint)mo.Properties["StatusCode"].Value == 0;
+            var ret = (uint) mo.Properties["StatusCode"].Value == 0;
             mo.Dispose();
             return ret;
+        }
+
+        private class PrintConfigSystemBarcode
+        {
+            public readonly int AlignCenter = 27;
+            public readonly Font Font = new Font("MS UI Gothic", 10);
+            public readonly Font FontBig = new Font("MS UI Gothic", 13);
+            public readonly Graphics Graphics;
+            public readonly int LineHeight = 7;
+            public readonly int MarginMax = 70;
+            public readonly int MarginMin = 3;
+            public int DrawHeightPosition;
+
+            public PrintConfigSystemBarcode(Graphics g)
+            {
+                Graphics = g;
+                g.PageUnit = GraphicsUnit.Millimeter;
+                g.DrawImage(Image.FromFile(@"Kids.jpg"), 3, 3, 67, 20);
+            }
         }
     }
 }

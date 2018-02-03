@@ -3,23 +3,27 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using KidsPos.Object;
-using KidsPos.Object.Database;
+using KidsPos.Sources.Database;
 
-namespace KidsPos.Util
+namespace KidsPos.Sources.Util
 {
     public class SocketClient : SocketBase
     {
         private static readonly SocketClient Instance = new SocketClient();
+
+        private TcpClient _client;
+
+        private string _ip;
+
+        private SocketClient()
+        {
+        }
+
         public static SocketClient GetInstance()
         {
             return Instance;
         }
 
-        private TcpClient _client;
-        private SocketClient() { }
-
-        private string _ip;
         public bool ClientStart(string targetIp)
         {
             try
@@ -41,7 +45,6 @@ namespace KidsPos.Util
             var stream = _client.GetStream();
             var bytes = new byte[100];
             while (true)
-            {
                 try
                 {
                     if (stream != null)
@@ -55,14 +58,14 @@ namespace KidsPos.Util
 
                             var uniBytes = Encoding.Convert(EcSjis, EcUni, bytes);
                             var strGetText = EcUni.GetString(uniBytes);
-                            strGetText = strGetText.Substring(0, strGetText.IndexOf((char)0));
+                            strGetText = strGetText.Substring(0, strGetText.IndexOf((char) 0));
                             Listener.OnReceive(strGetText);
                         }
                         else
                         {
                             stream.Close();
                             stream = null;
-                            Thread.Sleep(20);//これを入れないとNullReferenceExceptionが起きる
+                            Thread.Sleep(20); //これを入れないとNullReferenceExceptionが起きる
                             MessageBox.Show(@"何らかの原因で登録できませんでした。");
                             StopSock();
                         }
@@ -72,12 +75,13 @@ namespace KidsPos.Util
                 {
                     return;
                 }
-            }
         }
+
         public void StopSock(SocketCloseType type = SocketCloseType.Correct)
         {
             CloseClient(type);
         }
+
         private void CloseClient(SocketCloseType type)
         {
             try
@@ -96,6 +100,7 @@ namespace KidsPos.Util
 
             Thread?.Abort();
         }
+
         public void SendData(string dataText)
         {
             var data = EcSjis.GetBytes(dataText);
@@ -109,11 +114,13 @@ namespace KidsPos.Util
                 MessageBox.Show(e + Environment.NewLine + "送信できませんでした。", "送信エラー");
             }
         }
+
         public void RegistUser(StaffObject staff)
         {
             if (_client != null) SendData($"staff,{staff.Name},{staff.Barcode}");
             new Database().Insert(staff);
         }
+
         public void RestartServer()
         {
             StopSock();

@@ -3,37 +3,38 @@ using KidsPos.Sources.Setting;
 
 namespace KidsPos.Sources.Database
 {
-    public class ItemGenreObject : RecordObject
+    public class Store : Record
     {
-        public ItemGenreObject(string name, int storeNum)
-            : base(DbPath.ItemGenre)
+        public Store(string name) : base(DbPath.Store)
         {
             Name = name;
-            StoreNum = storeNum;
             GenerateInsertQuery();
         }
 
-        public ItemGenreObject(SQLiteDataReader reader) : base(DbPath.ItemGenre, reader)
+        public Store(SQLiteDataReader reader) : base(DbPath.Store, reader)
         {
             SetData();
         }
 
         public string Name { get; private set; }
-        public int StoreNum { get; private set; }
 
         public sealed override void SetData()
         {
             Id = Record.GetInt("id");
             Name = Record.GetString("name");
-            StoreNum = Record.GetInt("store");
             GenerateInsertQuery();
         }
 
         public sealed override void GenerateInsertQuery()
         {
             SetQueryInsert(
-                "INSERT INTO " + TableList.ItemGenre + $" (name,store) values('{Name}','{StoreNum}')"
+                "INSERT INTO " + TableList.Store + $" (name) values('{Name}')"
             );
+        }
+
+        public string GetId()
+        {
+            return Id.ToString("D" + BarcodeConfig.DataMidLength);
         }
     }
 }

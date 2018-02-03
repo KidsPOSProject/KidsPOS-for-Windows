@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace PosSystem.Source
+namespace PosSystem.Sources
 {
     partial class ItemList
     {

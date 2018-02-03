@@ -1,6 +1,6 @@
 ﻿using ZXing;
 
-namespace KidsPos.Setting
+namespace KidsPos.Sources.Setting
 {
     public class BarcodeConfig
     {
@@ -8,6 +8,7 @@ namespace KidsPos.Setting
 
         // 00 11 22 33 4444
         public const int BarcodeNum = 10;
+
         public const int PrefixLength = 4;
         public const int DataLength = 4;
 
@@ -16,12 +17,14 @@ namespace KidsPos.Setting
 
         // prefix
         public const string Prefix = "10";
+
         public const string Staff = "00";
         public const string Item = "01";
         public const string Sale = "02"; // レシート
 
         //画面遷移
         public const string ItemRegist = "17";
+
         public const string ItemList = "11";
         public const string SaleList = "12";
         public const string Account = "13";
@@ -31,12 +34,14 @@ namespace KidsPos.Setting
 
         //操作
         public const string Enter = "20";
+
         public const string Back = "21";
         public const string ChangeVisibleDebugToolbar = "22";
         public const string ChangeVisibleToolbar = "23";
 
         //動作モード変更
         public const string ModeTake = "30";
+
         public const string ModePractice = "31";
     }
 }
