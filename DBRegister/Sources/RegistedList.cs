@@ -12,7 +12,13 @@ namespace DBRegister
 {
     public partial class RegistedList : Form
     {
+        private readonly DataTable _dataTable = new DataTable();
+        private readonly DataTable _dataTable2 = new DataTable();
+        private readonly DataTable _dataTable3 = new DataTable();
+        private readonly DataTable _dataTable4 = new DataTable();
         private readonly List<PrintItemObject> _selectedItem = new List<PrintItemObject>();
+
+        private int _count;
 
         public RegistedList()
         {
@@ -25,10 +31,7 @@ namespace DBRegister
             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
-        private readonly DataTable _dataTable = new DataTable();
-        private readonly DataTable _dataTable2 = new DataTable();
-        private readonly DataTable _dataTable3 = new DataTable();
-        private readonly DataTable _dataTable4 = new DataTable();
+
         protected override void OnLoad(EventArgs e)
         {
             dataGridView1.DataSource = _dataTable;
@@ -37,19 +40,20 @@ namespace DBRegister
             dataGridView4.DataSource = _dataTable4;
             base.OnLoad(e);
         }
+
         private void Registed_List_Load(object sender, EventArgs e)
         {
             var db = new Database();
             db.InsertView<ItemObject>(_dataTable,
-                "SELECT il.id,il.barcode AS バーコード,sk.Name AS お店, il.Name AS 商品名,ig.Name AS ジャンル,il.price AS 値段 FROM " 
-                + TableList.Item + " AS il," 
-                + TableList.ItemGenre + " AS ig," + TableList.Store +" AS sk WHERE il.genre = ig.id AND il.shop = sk.id;");
+                "SELECT il.id,il.barcode AS バーコード,sk.Name AS お店, il.Name AS 商品名,ig.Name AS ジャンル,il.price AS 値段 FROM "
+                + TableList.Item + " AS il,"
+                + TableList.ItemGenre + " AS ig," + TableList.Store +
+                " AS sk WHERE il.genre = ig.id AND il.shop = sk.id;");
             db.InsertView<ItemObject>(_dataTable2);
             db.InsertView<ItemGenreObject>(_dataTable3);
             db.InsertView<StoreObject>(_dataTable4);
         }
 
-        private int _count;
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
         {
             Print.GetInstance().PrintItemBarcode(_selectedItem[_count], print_grid.Checked, e);
@@ -65,8 +69,8 @@ namespace DBRegister
             var li = new List<int>();
             var db = new Database();
             foreach (DataGridViewCell r in dataGridView2.SelectedCells)
-            {
-                if(0 > li.BinarySearch(r.RowIndex)){
+                if (0 > li.BinarySearch(r.RowIndex))
+                {
                     var index = r.RowIndex;
                     li.Add(r.RowIndex);
                     li.Sort();
@@ -79,7 +83,7 @@ namespace DBRegister
                             dataGridView2.Rows[index].Cells[2].Value.ToString(),
                             store.Name));
                 }
-            }
+
             if (_selectedItem.Count > 0)
             {
                 var pd = new PrintDocument();
@@ -104,6 +108,7 @@ namespace DBRegister
                         r.Cells[2].Value.ToString(),
                         store.Name));
             }
+
             if (_selectedItem.Count > 0)
             {
                 var pd = new PrintDocument();

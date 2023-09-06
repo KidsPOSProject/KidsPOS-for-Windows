@@ -8,19 +8,21 @@ namespace KidsPos.Object
         public static bool IsPrintEnable = false;
         public static bool IsClient = true;
         private static readonly Config Instance = new Config();
+        public Hashtable TargetIp = new Hashtable();
+
         private Config()
         {
-
         }
+
+        public int StoreNumber { get; set; }
+        public int TargetPort { get; set; }
+        public StoreObject Store { get; set; }
 
         public static Config GetInstance()
         {
             return Instance;
         }
-        public int StoreNumber { get; set; }
-        public Hashtable TargetIp = new Hashtable();
-        public int TargetPort { get; set; }
-        public StoreObject Store { get; set; }
+
         public void Init(int storeNumber, int targetPort, Hashtable hostList)
         {
             TargetPort = targetPort;

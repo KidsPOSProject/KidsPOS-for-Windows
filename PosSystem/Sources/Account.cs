@@ -5,13 +5,13 @@ namespace PosSystem.Source
 {
     public partial class Account : Form
     {
+        private readonly ListView _mainList;
+
         //フォームの名前
         public string FormName = "かいけい";
 
-        private readonly ListView _mainList;
         public Account(ListView mainList)
         {
-            
             InitializeComponent();
             Form1.InitializeListView(reg_goods_list);
             reg_goods_list_SizeChanged(reg_goods_list, new EventArgs());
@@ -23,13 +23,13 @@ namespace PosSystem.Source
             reg_goods_sum.Text = Form1.RegItemPriceSum.ToString();
 
             ActiveControl = received_money;
-
         }
 
         private void Account_Load(object sender, EventArgs e)
         {
             copy_listview(_mainList);
         }
+
         private void copy_listview(ListView seme)
         {
             for (var icnt = 0; icnt < seme.Items.Count; icnt++)
@@ -40,8 +40,28 @@ namespace PosSystem.Source
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var check = 0 >= int.Parse(reg_goods_sum.Text) - int.Parse(received_money.Text);
+            if (reg_goods_sum.Text != "" && received_money.Text != "" && check)
+            {
+                var ac = new AccountChange(received_money.Text, reg_goods_list, Form1.ItemList);
+                Form1.ItemList = "";
+                ac.ShowDialog();
+                ac.Dispose();
+                Dispose();
+            }
+        }
+
+        private void Account_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) button1.PerformClick();
+        }
+
         #region リストのカラム幅調整
+
         private bool _resizing;
+
         private void reg_goods_list_SizeChanged(object sender, EventArgs e)
         {
             if (!_resizing)
@@ -58,34 +78,15 @@ namespace PosSystem.Source
 
                     for (var i = 0; i < listView.Columns.Count; i++)
                     {
-                        var colPercentage = (Convert.ToInt32(listView.Columns[i].Tag) / totalColumnWidth);
+                        var colPercentage = Convert.ToInt32(listView.Columns[i].Tag) / totalColumnWidth;
                         listView.Columns[i].Width = (int)(colPercentage * listView.ClientRectangle.Width);
                     }
                 }
             }
+
             _resizing = false;
         }
+
         #endregion
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            var check = 0 >= (int.Parse(reg_goods_sum.Text) - int.Parse(received_money.Text));
-            if (reg_goods_sum.Text != "" && received_money.Text != "" && check)
-            {
-                var ac = new AccountChange(received_money.Text, reg_goods_list, Form1.ItemList);
-                Form1.ItemList = "";
-                ac.ShowDialog();
-                ac.Dispose();
-                Dispose();
-            }
-        }
-
-        private void Account_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                button1.PerformClick();
-            }
-        }
     }
 }
