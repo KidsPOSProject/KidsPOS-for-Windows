@@ -11,9 +11,9 @@ using KidsPos.Setting;
 using KidsPos.Util;
 using Microsoft.VisualBasic.FileIO;
 
-namespace DBRegister
+namespace DBRegister.Sources
 {
-    public partial class MainForm : Form
+    public partial class TopScreenForm : Form
     {
         public enum LoadType
         {
@@ -21,7 +21,7 @@ namespace DBRegister
             User
         }
 
-        public MainForm()
+        public TopScreenForm()
         {
             InitializeComponent();
             new Database().CreateTable();
@@ -31,16 +31,17 @@ namespace DBRegister
             PosInformation.GetInstance().Init(this);
         }
 
+        private int CntSuccess { get; set; }
+        private int CntMissing { get; set; }
+
         private void Form1_Load(object sender, EventArgs e)
         {
-            var dt = DateTime.Now;
-            var stPrompt1 = dt.ToString("yyyy");
-            lKidsDate.Text = stPrompt1 + @" 年のキッズ用に登録されます" + Environment.NewLine;
-            lKidsDate.Text += @"出力ユーザバーコード例: " + BarcodeConfig.Prefix +
-                              BarcodeConfig.Staff + stPrompt1.Substring(2) + @"0001" +
-                              Environment.NewLine;
-            lKidsDate.Text += @"出力商品バーコード例　: " + BarcodeConfig.Prefix +
-                              BarcodeConfig.Item + @"010001";
+            var currentYear = DateTime.Now.ToString("yyyy");
+            lKidsDate.Text = $"""
+                              {currentYear} 年のキッズ用に登録されます
+                              出力ユーザバーコード例: {BarcodeConfig.Prefix}{BarcodeConfig.Staff}{currentYear.Substring(2)}0001
+                              出力商品バーコード例　: {BarcodeConfig.Prefix}{BarcodeConfig.Item}010001
+                              """;
         }
 
         private void load_csv_file_Click(object sender, EventArgs e)
@@ -53,10 +54,7 @@ namespace DBRegister
             load_csv(LoadType.User);
         }
 
-        public int CntSuccess { get; private set; }
-        public int CntMissing { get; private set; }
-
-        public void load_csv(LoadType type)
+        private void load_csv(LoadType type)
         {
             var al = new ArrayList();
 
@@ -76,21 +74,19 @@ namespace DBRegister
             {
                 // 1行読み込み
                 var row = parser.ReadFields();
-               
+
                 switch (type)
                 {
                     case LoadType.Item:
                         if (row != null)
-                        {
                             foreach (var field in row)
                             {
                                 var f = field;
                                 f = f.Replace("\r\n", "n");
                                 f = f.Replace(" ", "");
                                 if (f != "") al.Add(f);
-
                             }
-                        }
+
                         break;
                     case LoadType.User:
                         if (row != null && CheckFormatUser(row))
@@ -104,16 +100,20 @@ namespace DBRegister
                         {
                             CntMissing++;
                         }
+
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
                 }
             }
+
             switch (type)
             {
                 case LoadType.Item:
                     RegistItem(al);
                     break;
                 case LoadType.User:
-                    RegistUser(al);
+                    RegistrationUser(al);
                     break;
             }
         }
@@ -138,9 +138,10 @@ namespace DBRegister
                     storePosition = i;
                     break;
                 }
-                if (storePosition == -1)throw new InvalidDataException();
+
+                if (storePosition == -1) throw new InvalidDataException();
                 var storeName = csv[storePosition + 1].ToString();
-                int storeNum = db.find_store(storeName);
+                var storeNum = db.find_store(storeName);
                 if (storeNum == -1)
                 {
                     isFirst = true;
@@ -164,35 +165,30 @@ namespace DBRegister
                 //商品ジャンルの行から、商品リストまでの行を読み取って、その間をデータベースに追加する。
                 var itemPosition = -1;
                 for (var i = storePosition; i < csv.Count; i++)
-                {
                     if (csv[i].ToString().StartsWith("#商品ジャンル"))
                     {
                         itemPosition = i;
                         break;
                     }
-                }
+
                 var itemList = -1;
                 for (var i = storePosition; i < csv.Count; i++)
-                {
                     if (csv[i].ToString().StartsWith("##商品リスト"))
                     {
                         itemList = i;
                         break;
                     }
-                }
 
                 if (itemPosition == itemList) throw new InvalidDataException();
-                
+
                 var g = db.SelectMulti<ItemGenreObject>($"WHERE store = '{storeNum}'").Select(_ => _.Name).ToList();
                 var tempGenre = new List<ItemGenreObject>();
                 for (var i = itemPosition + 1; i < itemList; i++)
                 {
                     var genreName = csv[i].ToString();
-                    if (g.IndexOf(genreName) == -1)
-                    {
-                        tempGenre.Add(new ItemGenreObject(genreName, storeNum));
-                    }
+                    if (g.IndexOf(genreName) == -1) tempGenre.Add(new ItemGenreObject(genreName, storeNum));
                 }
+
                 db.Insert(tempGenre);
 
                 /* ---- ここまで　ジャンルの追加 ---- */
@@ -206,6 +202,7 @@ namespace DBRegister
                     itemPosition = i;
                     break;
                 }
+
                 if (itemPosition == -1) throw new InvalidDataException();
 
                 var columnCount = 0;
@@ -214,6 +211,7 @@ namespace DBRegister
                     if (!csv[i].ToString().StartsWith("#")) continue;
                     columnCount++;
                 }
+
                 if (columnCount == 0) throw new InvalidDataException();
                 var list = new List<ItemObject>();
                 var count = db.Count<ItemObject>();
@@ -222,25 +220,23 @@ namespace DBRegister
                     var name = csv[i].ToString();
                     var genreName = csv[i + 1].ToString();
                     var price = Convert.ToInt32(csv[i + 2].ToString());
-                    int itemNum = db.find_item(name, price, storeNum);
+                    var itemNum = db.find_item(name, price, storeNum);
                     if (itemNum == -1)
                     {
                         count++;
                         if (db.find_ganre(genreName, storeNum) == -1)
                         {
                             //商品登録の時に、変なジャンルが混ざってたら・・・
-                            var dr = MessageBox.Show(@"未定義のジャンルがありました。追加しますか？" + Environment.NewLine + csv[i + 1], @"読み込みエラー", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            var dr = MessageBox.Show(@"未定義のジャンルがありました。追加しますか？" + Environment.NewLine + csv[i + 1],
+                                @"読み込みエラー", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                             if (dr == DialogResult.Yes)
-                            {
                                 db.Insert(new ItemGenreObject(csv[i * 1].ToString(), storeNum));
-                            }
                             else
-                            {
                                 continue;
-                            }
                         }
+
                         list.Add(new ItemObject(
-                            new BarcodeObject(storeNum, count).Barcode, //barcode
+                                new BarcodeObject(storeNum, count).Barcode, //barcode
                                 name, //name
                                 price, //price
                                 storeNum, //shop
@@ -248,6 +244,7 @@ namespace DBRegister
                         );
                     }
                 }
+
                 db.Insert(list);
                 /* ---- ここまで　商品リストの追加 ---- */
             }
@@ -258,20 +255,23 @@ namespace DBRegister
                     @"・CSV形式であるか" + Environment.NewLine +
                     @"・しっかりフォーマットに沿っているか" + Environment.NewLine +
                     @"を確認してください", @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Question
-                    );
+                );
                 return false;
             }
             finally
             {
-                if(isFirst) MessageBox.Show(@"何らかの原因で登録できませんでした。");
+                if (isFirst) MessageBox.Show(@"何らかの原因で登録できませんでした。");
                 else MessageBox.Show(@"何らかの原因で登録できませんでした。");
             }
+
             return true;
         }
-        public void RegistUser(ArrayList csv)
+
+        public void RegistrationUser(ArrayList csv)
         {
             var result = new Database()
-                .Insert((from string row in csv select row.Split(',') into s select new StaffObject(s[0], s[1])).ToList());
+                .Insert(
+                    (from string row in csv select row.Split(',') into s select new StaffObject(s[0], s[1])).ToList());
             MessageBox.Show(result ? @"商品リストを更新しました" : @"??");
         }
 

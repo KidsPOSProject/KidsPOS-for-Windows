@@ -5,13 +5,6 @@ namespace KidsPos.Object.Database
 {
     public class ItemObject : RecordObject
     {
-        public string Barcode { get; private set; }
-        public string Name { get; private set; }
-        public int Price { get; private set; }
-        public int StoreNum { get; private set; }
-        public int GenreNum { get; private set; }
-        public string QueryUpdate { get; private set; }
-
         public ItemObject(string barcode, string name, int price, int storeNum, int genreNum) : base(DbPath.Item)
         {
             Barcode = barcode;
@@ -21,7 +14,19 @@ namespace KidsPos.Object.Database
             GenreNum = genreNum;
             GenerateInsertQuery();
         }
-        public ItemObject(SQLiteDataReader reader) : base(DbPath.Item, reader) { SetData(); }
+
+        public ItemObject(SQLiteDataReader reader) : base(DbPath.Item, reader)
+        {
+            SetData();
+        }
+
+        public string Barcode { get; private set; }
+        public string Name { get; private set; }
+        public int Price { get; private set; }
+        public int StoreNum { get; private set; }
+        public int GenreNum { get; private set; }
+        public string QueryUpdate { get; private set; }
+
         public sealed override void SetData()
         {
             Id = Record.GetInt("id");

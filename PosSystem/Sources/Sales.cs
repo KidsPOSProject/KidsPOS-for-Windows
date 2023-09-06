@@ -8,6 +8,7 @@ namespace PosSystem.Source
     public partial class Sales : Form
     {
         private readonly SaleObject _sale;
+
         public Sales(SaleObject sale)
         {
             InitializeComponent();
@@ -21,10 +22,11 @@ namespace PosSystem.Source
         private void Sales_Load(object sender, EventArgs e)
         {
             buy_time.Text = _sale.CreatedAt;
-            scan_goods(_sale.Items.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries));
-            StaffObject staff = new Database().SelectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", _sale.StaffId));
-            if(staff != null) sale_staff_name.Text = staff.Name;
+            scan_goods(_sale.Items.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+            var staff = new Database().SelectSingle<StaffObject>(string.Format("WHERE barcode = '{0}'", _sale.StaffId));
+            if (staff != null) sale_staff_name.Text = staff.Name;
         }
+
         public static void InitializeListView(ListView listview)
         {
             // ListViewコントロールのプロパティを設定
@@ -65,21 +67,17 @@ namespace PosSystem.Source
 
         public void scan_goods(string[] itemNum)
         {
-            Database db = new Database();
+            var db = new Database();
             for (var i = 0; i < itemNum.Length; i++)
             {
-                ItemObject item = db.SelectSingle<ItemObject>($"where id = '{itemNum[i]}'");
+                var item = db.SelectSingle<ItemObject>($"where id = '{itemNum[i]}'");
                 if (item != null)
-                {
-                    sales_list.Items.Add(new ListViewItem(new[] {item.Id.ToString(), item.Name, "1", item.Price.ToString(), "×"}));
-                }
+                    sales_list.Items.Add(new ListViewItem(new[]
+                        { item.Id.ToString(), item.Name, "1", item.Price.ToString(), "×" }));
                 else
-                { 
-                     MessageBox.Show(@"現在は登録されていない商品がありました
+                    MessageBox.Show(@"現在は登録されていない商品がありました
  [" + itemNum[i] + "]", @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
             }
-            
         }
     }
 }
