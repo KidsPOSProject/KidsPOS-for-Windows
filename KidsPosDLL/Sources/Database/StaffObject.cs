@@ -5,9 +5,6 @@ namespace KidsPos.Object.Database
 {
     public class StaffObject : RecordObject
     {
-        public string Barcode { get; private set; }
-        public string Name { get; private set; }
-
         public StaffObject(int staffId, string name) : base(DbPath.Staff)
         {
             Barcode = CreateStaffBarcode(staffId);
@@ -26,6 +23,9 @@ namespace KidsPos.Object.Database
         {
             SetData();
         }
+
+        public string Barcode { get; private set; }
+        public string Name { get; private set; }
 
         public sealed override void SetData()
         {

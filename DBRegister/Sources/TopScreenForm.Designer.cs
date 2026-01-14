@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace DBRegister
+namespace DBRegister.Sources
 {
-    partial class MainForm
+    partial class TopScreenForm
     {
         /// <summary>
         /// 必要なデザイナー変数です。

@@ -5,9 +5,6 @@ namespace KidsPos.Object.Database
 {
     public class ItemGenreObject : RecordObject
     {
-        public string Name { get; private set; }
-        public int StoreNum { get; private set; }
-
         public ItemGenreObject(string name, int storeNum)
             : base(DbPath.ItemGenre)
         {
@@ -16,7 +13,14 @@ namespace KidsPos.Object.Database
             GenerateInsertQuery();
         }
 
-        public ItemGenreObject(SQLiteDataReader reader) : base(DbPath.ItemGenre, reader) { SetData(); }
+        public ItemGenreObject(SQLiteDataReader reader) : base(DbPath.ItemGenre, reader)
+        {
+            SetData();
+        }
+
+        public string Name { get; private set; }
+        public int StoreNum { get; private set; }
+
         public sealed override void SetData()
         {
             Id = Record.GetInt("id");
@@ -24,6 +28,7 @@ namespace KidsPos.Object.Database
             StoreNum = Record.GetInt("store");
             GenerateInsertQuery();
         }
+
         public sealed override void GenerateInsertQuery()
         {
             SetQueryInsert(

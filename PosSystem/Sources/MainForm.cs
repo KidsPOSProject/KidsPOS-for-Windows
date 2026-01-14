@@ -11,15 +11,18 @@ namespace PosSystem.Source
 {
     public partial class Form1 : Form
     {
+        public static string ItemList = "";
+
+        public static int RegItemPriceSum;
+
+        private bool _resizing;
+
         //フォームの名前
         public string FormName = "POSシステム";
-        public static string ItemList = "";
+        public int InputCount;
 
         //読み取った数値格納
         public string[] ReadTextArray = new string[BarcodeConfig.BarcodeNum];
-        public int InputCount;
-
-        public static int RegItemPriceSum;
 
         public Form1()
         {
@@ -34,6 +37,7 @@ namespace PosSystem.Source
             PosInformation.GetInstance().Init(this);
             new Csv().LoadConfig();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             WindowState = FormWindowState.Maximized;
@@ -54,7 +58,7 @@ namespace PosSystem.Source
                 {
                     MessageBox.Show(@"config.csvの " + Csv.ConfigHead.TargetIp + @" の値が正しくありません。
 ソフトウェアを終了します。",
-                    @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Csv.RunNotePad();
                     Environment.Exit(0);
                 }
@@ -65,15 +69,16 @@ namespace PosSystem.Source
                 {
                     var builder = new StringBuilder();
                     builder.Append("192.168.0.100 にあるプリンターに到達出来ませんでした\n");
-                    builder.Append("ネットワーク接続を確認するか、config.csvの " + Csv.ConfigHead.Mode + " と " + 
-                        Csv.ConfigHead.PrintEnable + " の項目を確認してください\n");
+                    builder.Append("ネットワーク接続を確認するか、config.csvの " + Csv.ConfigHead.Mode + " と " +
+                                   Csv.ConfigHead.PrintEnable + " の項目を確認してください\n");
                     builder.Append("ソフトウェアを終了します。");
                     MessageBox.Show(builder.ToString(),
-                    @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        @"読み込みエラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Csv.RunNotePad();
                     Environment.Exit(0);
                 }
             }
+
             SetToolMenuItem();
             SocketServer.GetInstance().Init(new StreamCallback(this));
             SocketClient.GetInstance().Init(new StreamCallback(this));
@@ -94,15 +99,10 @@ namespace PosSystem.Source
 
         public void SetToolMenuItem()
         {
-            foreach (string key in Config.GetInstance().TargetIp.Keys)
-            {
-                接続先ToolStripMenuItem.DropDownItems.Add(key);
-            }
-            foreach (ToolStripDropDownItem item in 接続先ToolStripMenuItem.DropDownItems)
-            {
-                item.Click += 接続する;
-            }
+            foreach (string key in Config.GetInstance().TargetIp.Keys) 接続先ToolStripMenuItem.DropDownItems.Add(key);
+            foreach (ToolStripDropDownItem item in 接続先ToolStripMenuItem.DropDownItems) item.Click += 接続する;
         }
+
         public static void InitializeListView(ListView listview)
         {
             // ListViewコントロールのプロパティを設定
@@ -126,7 +126,7 @@ namespace PosSystem.Source
             goodsOrder.Width = 100;
             goodsOrder.Tag = 4;
             goodsOrder.TextAlign = HorizontalAlignment.Center;
-            
+
             goodsItem.Text = "個数";
             goodsItem.Width = 60;
             goodsItem.Tag = 1;
@@ -137,9 +137,10 @@ namespace PosSystem.Source
             goodsPrice.Tag = 2;
             goodsPrice.TextAlign = HorizontalAlignment.Right;
 
-            ColumnHeader[] colHeaderRegValue = {goodsId, goodsOrder, goodsItem, goodsPrice };
+            ColumnHeader[] colHeaderRegValue = { goodsId, goodsOrder, goodsItem, goodsPrice };
             listview.Columns.AddRange(colHeaderRegValue);
         }
+
         public void InitializeReg()
         {
             tItemList.Items.Clear();
@@ -157,7 +158,8 @@ namespace PosSystem.Source
             {
                 lScanItemName.Text = item.Name;
                 lScanItemPrice.Text = item.Price.ToString();
-                tItemList.Items.Add(new ListViewItem(new[] { (item.Id.ToString()), item.Name, "1", item.Price.ToString(), "×" }));
+                tItemList.Items.Add(new ListViewItem(new[]
+                    { item.Id.ToString(), item.Name, "1", item.Price.ToString(), "×" }));
                 RegItemPriceSum += item.Price;
                 tSumItemPrice.Text = RegItemPriceSum.ToString();
             }
@@ -166,40 +168,35 @@ namespace PosSystem.Source
                 MessageBox.Show(@"何らかの原因で登録できませんでした。");
             }
         }
-        
+
         //タイマー  ステータスバーの日付等更新
         private void display_timer_Tick(object sender, EventArgs e)
         {
             disp_now_time.Text = new Time().GetTime();
-        }        
-        
+        }
+
         private void reg_clear_Click(object sender, EventArgs e)
         {
             InitializeReg();
         }
+
         private void 会計()
         {
             if (tSumItemPrice.Text != "" && tSumItemPrice.Text != "0")
             {
                 var builder = new StringBuilder();
-                foreach (ListViewItem item in tItemList.Items)
-                {
-                    builder.Append(item.SubItems[0].Text).Append(",");
-                }
+                foreach (ListViewItem item in tItemList.Items) builder.Append(item.SubItems[0].Text).Append(",");
                 var items = builder.ToString();
-                if (items.IndexOf(',') > -1)
-                {
-                    items = items.Substring(0, items.Length - 1);
-                }
+                if (items.IndexOf(',') > -1) items = items.Substring(0, items.Length - 1);
                 ItemList = items;
                 var ac = new Account(tItemList);
                 ac.ShowDialog(this);
                 ac.Dispose();
             }
+
             InitializeReg();
         }
 
-        private bool _resizing;
         private void OnSizeChangedReadItemList(object sender, EventArgs e)
         {
             if (!_resizing)
@@ -216,11 +213,12 @@ namespace PosSystem.Source
 
                     for (var i = 0; i < listView.Columns.Count; i++)
                     {
-                        var colPercentage = (Convert.ToInt32(listView.Columns[i].Tag) / totalColumnWidth);
+                        var colPercentage = Convert.ToInt32(listView.Columns[i].Tag) / totalColumnWidth;
                         listView.Columns[i].Width = (int)(colPercentage * listView.ClientRectangle.Width);
                     }
                 }
             }
+
             _resizing = false;
         }
 
@@ -237,13 +235,13 @@ namespace PosSystem.Source
             {
                 var bar = GenBarcode(ReadTextArray);
                 init_input();
-                var barHead = bar.Substring(BarcodeConfig.Prefix.Length, BarcodeConfig.PrefixLength - BarcodeConfig.Prefix.Length);
+                var barHead = bar.Substring(BarcodeConfig.Prefix.Length,
+                    BarcodeConfig.PrefixLength - BarcodeConfig.Prefix.Length);
 
-                Database db = new Database();
+                var db = new Database();
 
                 switch (barHead)
                 {
-
                     case BarcodeConfig.Item:
                         OnReadItem(bar);
                         break;
@@ -276,17 +274,13 @@ namespace PosSystem.Source
 
                     case BarcodeConfig.ChangeVisibleToolbar:
                         if (Config.IsClient)
-                        {
                             toolMenuClient.Visible = !toolMenuClient.Visible;
-                        }
                         else
-                        {
                             toolMenuServer.Visible = !toolMenuServer.Visible;
-                        }
                         break;
                 }
             }
-            else if(InputCount > BarcodeConfig.BarcodeNum)
+            else if (InputCount > BarcodeConfig.BarcodeNum)
             {
                 init_input();
             }
@@ -297,27 +291,27 @@ namespace PosSystem.Source
             ReadTextArray = new string[BarcodeConfig.BarcodeNum];
             InputCount = 0;
         }
+
         public bool KeyCheck(KeyEventArgs e)
         {
             return BarcodeConfig.Prefix.Length > InputCount
-                && !e.KeyCode.ToString().Equals("D" + BarcodeConfig.Prefix[InputCount]);
+                   && !e.KeyCode.ToString().Equals("D" + BarcodeConfig.Prefix[InputCount]);
         }
 
         public string GenBarcode(string[] readValueArray)
         {
             var ret = "";
-            for (var i = 0; i < BarcodeConfig.BarcodeNum; i++)
-            {
-                ret += readValueArray[i][1];
-            }
+            for (var i = 0; i < BarcodeConfig.BarcodeNum; i++) ret += readValueArray[i][1];
             return ret;
         }
+
         private void OpenItemList()
         {
             var il = new ItemList();
             il.ShowDialog(this);
             il.Dispose();
         }
+
         private void OpenSalesList()
         {
             var sll = new SalesList();
@@ -338,19 +332,21 @@ namespace PosSystem.Source
             sl.ShowDialog();
             sl.Dispose();
         }
+
         private void 接続する(object sender, EventArgs e)
         {
             if (sender.GetType() == 接続先ToolStripMenuItem.GetType())
             {
-                string targetIp = Config.GetInstance().TargetIp[((ToolStripItem)sender).Text].ToString();
-                if (!SocketClient.GetInstance().ClientStart(targetIp)) MessageBox.Show(@"何らかの原因で登録できませんでした。");
+                var targetIp = Config.GetInstance().TargetIp[((ToolStripItem)sender).Text].ToString();
+                if (!SocketClient.GetInstance().ClientStart(targetIp))
+                {
+                    MessageBox.Show(@"何らかの原因で登録できませんでした。");
+                }
                 else
                 {
                     Text += ((ToolStripItem)sender).Text + @" へ接続中";
                     for (var i = 0; i < 接続先ToolStripMenuItem.DropDownItems.Count; i++)
-                    {
                         接続先ToolStripMenuItem.DropDownItems[i].Enabled = false;
-                    }
                 }
             }
         }
@@ -375,25 +371,6 @@ namespace PosSystem.Source
                 var staffRegist = new StaffRegistWindow(barcode);
                 staffRegist.ShowDialog(this);
                 staffRegist.Dispose();
-            }
-        }
-        public class StreamCallback : SocketListener
-        {
-            public StreamCallback(Form context) : base(context) { }
-            public override void OnReceive(string text)
-            {
-                var data = text.Split(',');
-                switch (data[0])
-                {
-                    // staff, [name], [barcode]
-                    case "staff":
-                        new Database().Insert(new StaffObject(data[2], data[1]));
-                        break;
-                }
-            }
-            public override void OnClose(SocketCloseType closeType)
-            {
-                //MessageBox.Show("接続解除");
             }
         }
 
@@ -428,9 +405,13 @@ namespace PosSystem.Source
         {
             ServerStart();
         }
+
         private void ServerStart()
         {
-            if (!SocketServer.GetInstance().ServerStart()) MessageBox.Show(@"何らかの原因で登録できませんでした。");
+            if (!SocketServer.GetInstance().ServerStart())
+            {
+                MessageBox.Show(@"何らかの原因で登録できませんでした。");
+            }
             else
             {
                 Text += " サーバー起動中";
@@ -464,6 +445,30 @@ namespace PosSystem.Source
             var pdlg = new PrintDialog();
             pdlg.Document = pd;
             pd.Print();
+        }
+
+        public class StreamCallback : SocketListener
+        {
+            public StreamCallback(Form context) : base(context)
+            {
+            }
+
+            public override void OnReceive(string text)
+            {
+                var data = text.Split(',');
+                switch (data[0])
+                {
+                    // staff, [name], [barcode]
+                    case "staff":
+                        new Database().Insert(new StaffObject(data[2], data[1]));
+                        break;
+                }
+            }
+
+            public override void OnClose(SocketCloseType closeType)
+            {
+                //MessageBox.Show("接続解除");
+            }
         }
     }
 }

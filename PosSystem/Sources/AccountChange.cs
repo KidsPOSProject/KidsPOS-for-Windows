@@ -12,6 +12,7 @@ namespace PosSystem.Source
     {
         private readonly ListView _itemList;
         private readonly SaleObject _sale;
+
         public AccountChange(string recMoney, ListView recPoints, string recItems)
         {
             InitializeComponent();
@@ -22,7 +23,7 @@ namespace PosSystem.Source
 
             reg_goods_sum.Text = Form1.RegItemPriceSum.ToString();
             received_money.Text = recMoney;
-            change.Text =   (int.Parse(received_money.Text) - int.Parse(reg_goods_sum.Text)).ToString();
+            change.Text = (int.Parse(received_money.Text) - int.Parse(reg_goods_sum.Text)).ToString();
 
             _itemList = recPoints;
 
@@ -46,6 +47,7 @@ namespace PosSystem.Source
                 pd.Print();
             }
         }
+
         private void Account_change_KeyDown(object sender, KeyEventArgs e)
         {
             Close();

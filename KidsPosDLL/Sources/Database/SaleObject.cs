@@ -6,15 +6,6 @@ namespace KidsPos.Object.Database
 {
     public class SaleObject : RecordObject
     {
-        public string Barcode { get; private set; }
-        public string CreatedAt { get; private set; }
-        public int Points { get; private set; }
-        public int Price { get; private set; }
-
-        // カンマ区切りのアイテムID  1, 42, 124, とか
-        public string Items { get; private set; }
-        public int StoreId {get; private set;}
-        public string StaffId {get; private set;}
         public SaleObject(int points, int price, string items, int storeId, string staffId) : base(DbPath.Sale)
         {
             CreatedAt = new Time().GetTime();
@@ -26,7 +17,22 @@ namespace KidsPos.Object.Database
             StaffId = staffId;
             GenerateInsertQuery();
         }
-        public SaleObject(SQLiteDataReader reader) : base(DbPath.Sale, reader) { SetData(); }
+
+        public SaleObject(SQLiteDataReader reader) : base(DbPath.Sale, reader)
+        {
+            SetData();
+        }
+
+        public string Barcode { get; private set; }
+        public string CreatedAt { get; private set; }
+        public int Points { get; private set; }
+        public int Price { get; private set; }
+
+        // カンマ区切りのアイテムID  1, 42, 124, とか
+        public string Items { get; private set; }
+        public int StoreId { get; private set; }
+        public string StaffId { get; private set; }
+
         public sealed override void SetData()
         {
             Id = Record.GetInt("id");
@@ -39,15 +45,17 @@ namespace KidsPos.Object.Database
             StaffId = Record.GetString("staff");
             GenerateInsertQuery();
         }
+
         private string GenBarcode()
         {
-            return 
-                BarcodeConfig.Prefix + 
-                BarcodeConfig.Sale + 
+            return
+                BarcodeConfig.Prefix +
+                BarcodeConfig.Sale +
                 StoreId.ToString("D" + BarcodeConfig.DataMidLength) +
                 new Util.Database().Count<SaleObject>(
                     $"where store = '{StoreId}'").ToString("D" + BarcodeConfig.DataLength);
         }
+
         public sealed override void GenerateInsertQuery()
         {
             SetQueryInsert(
